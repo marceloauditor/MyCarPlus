@@ -1,0 +1,21 @@
+MYCAR+ V4.0 — DATASET TRATADO
+
+Único banco do aplicativo:
+data/MyCarPlus.xlsx
+
+O arquivo contém somente as seis tabelas oficiais:
+1. Movimentacoes
+2. Veiculos
+3. Motoristas
+4. Fornecedores
+5. Subcategorias
+6. Formas_Pagamento
+
+Foram eliminadas:
+- LEIA-ME
+- Modelo_Firebase
+- Auditoria_Migracao
+- Revisao_Dataset
+- quaisquer bancos CSV ou estruturas herdadas
+
+A exportação também gera somente essas seis abas.

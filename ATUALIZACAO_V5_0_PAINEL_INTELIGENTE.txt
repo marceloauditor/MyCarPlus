@@ -1,0 +1,12 @@
+MYCAR+ V5.0 — PAINEL INTELIGENTE
+
+1. Implantado painel gerencial dinâmico na tela inicial.
+2. Indicadores: custo líquido, custo por km, custo diário e consumo médio.
+3. Tendências automáticas com comparação entre a primeira e a segunda metade do histórico.
+4. Composição dos custos por categoria, com percentuais e barras proporcionais.
+5. Destaques automáticos: maior despesa, categoria de maior custo, combustível e manutenção.
+6. Indicadores de utilização: distância, média diária, abastecimentos e último abastecimento.
+7. Implantado MyCar Score de 0 a 100, com classificação gerencial.
+8. Todos os resultados são calculados exclusivamente a partir dos dados do veículo selecionado.
+9. Layout responsivo para celular e computador.
+10. Cache do PWA atualizado para V5.0.

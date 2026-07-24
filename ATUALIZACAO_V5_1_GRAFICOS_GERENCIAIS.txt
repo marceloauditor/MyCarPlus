@@ -1,0 +1,21 @@
+MYCAR+ V5.1 — GRÁFICOS GERENCIAIS
+
+Atualização do módulo acessado pelo ícone Gráficos.
+
+DESempenho do veículo
+- Consumo médio de combustível por ano (km/L)
+- Evolução da quilometragem do veículo
+
+EVOLUÇÃO FINANCEIRA
+- Evolução do custo anual: custo bruto, receitas e custo líquido
+- Custo médio geral diário por ano
+
+COMPOSIÇÃO DOS CUSTOS
+- Custo por categoria por quilômetro
+- Custo médio por categoria por dia
+- Custo total por categoria
+- Top 10 subcategorias por valor
+
+Removidos: Gastos mensais, Custo total por grupo e gráficos duplicados.
+Filtros de veículo e período permanecem aplicados a todos os gráficos.
+Cache do PWA atualizado.

@@ -1,0 +1,20 @@
+MYCAR+ V4.1 — INTERFACES LIGADAS AO DATASET TRATADO
+
+Problema identificado:
+O arquivo MyCarPlus.xlsx tratado estava correto, porém o leitor interno
+montava incorretamente o caminho das seis planilhas:
+xl/xl/worksheets/sheetN.xml
+
+Isso interrompia o carregamento e deixava as interfaces sem dados.
+
+Correção:
+- leitura correta de /xl/worksheets/sheetN.xml;
+- carregamento das seis estruturas oficiais:
+  Movimentacoes, Veiculos, Motoristas, Fornecedores,
+  Subcategorias e Formas_Pagamento;
+- reinicialização controlada do banco local;
+- atualização do cache;
+- mensagem visível caso o XLSX não possa ser aberto.
+
+A interface permanece alimentada somente pelo dataset tratado
+data/MyCarPlus.xlsx.

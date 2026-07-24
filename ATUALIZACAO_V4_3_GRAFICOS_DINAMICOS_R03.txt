@@ -1,0 +1,13 @@
+MYCAR+ V4.3 — GRÁFICOS DINÂMICOS R-03
+
+Atualização baseada no padrão Meu Veículo R-03.
+
+ALTERAÇÕES
+- Gráficos recalculados dinamicamente pelo veículo e período selecionados.
+- Título corrigido para “Consumo médio de combustível geral por km, por ano”.
+- Mantidos: consumo anual, custo geral diário anual, gastos mensais, evolução do hodômetro e custo total por grupo.
+- Excluídos por duplicidade: participação do custo diário anual, gastos por km, custo diário e custo anual.
+- Valores completos permanecem disponíveis por interação nos gráficos.
+- Gastos mensais usam escala abreviada em milhares.
+- Evolução do hodômetro permanece sem valores sobre a linha.
+- Cache do PWA atualizado para V4.3.
