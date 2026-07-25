@@ -1,0 +1,7 @@
+MYCAR+ PWA V5.2 — CENTRAL DE CADASTROS
+Data: 23/07/2026
+
+- Central de Cadastros com menu lateral organizado por grupos.
+- Menu retrátil no celular e fixo em telas maiores.
+- Pesquisa, filtro por situação e contadores.
+- Preservados banco MyCarPlus.xlsx, Firebase e registros existentes.

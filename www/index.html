@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0788e8">
+<meta name="application-name" content="MyCar+">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MyCar+">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Controle de consumo de combustível, manutenção e despesas do veículo.">
+<title>MyCar+</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="splashScreen" class="splash-screen" aria-label="Carregando MyCar++">
+<img src="icon-192.png" alt="">
+<h1>MyCar+</h1>
+<p>Controle Automotivo</p>
+<span>
+</span>
+</div>
+<header>
+<div>
+<small>Controle automotivo</small>
+<h1>MyCar+</h1>
+<span class="app-version" id="homeVersion">v5.25</span>
+</div>
+<div class="header-menu-wrap">
+<button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
+<div id="headerMenu" class="header-menu" hidden>
+<small class="menu-group-title">OPERAÇÃO</small>
+<button data-menu-page="cadastros">⚙ Cadastros e parâmetros</button>
+<button data-menu-page="alertas">⚠ Alertas e manutenção</button>
+<button data-menu-page="intelligence">✦ Análise inteligente</button>
+<small class="menu-group-title">SISTEMA</small>
+<button data-menu-page="configuracoes">☷ Configurações</button>
+<button data-menu-page="seguranca">▣ Gestão de dados</button>
+<button id="installAppBtn" class="install-app-action">⬇ Instalação do aplicativo</button>
+<small class="menu-group-title">SUPORTE</small>
+<button data-menu-page="ajuda">? Central de ajuda</button>
+<button data-menu-page="sobre">ⓘ Sobre o MyCar+</button>
+</div>
+</div>
+</header>
+<main>
+<section id="inicio" class="page active">
+<select id="homeVehicle" hidden aria-hidden="true">
+</select>
+<div class="home-vehicle-head">
+<div>
+<small>PAINEL DO VEÍCULO</small>
+<h2>Selecione o veículo</h2>
+</div>
+<span>Ativos e inativos</span>
+</div>
+<div id="vehicleCards" class="vehicle-cards home-vehicle-selector">
+</div>
+<div class="hero">
+<small id="selectedVehicleLabel">Veículo selecionado · —</small>
+<b id="netTotal">—</b>
+<span><span id="vehicleOdo">— km</span> · Custo líquido histórico · <span id="periodLabel">—</span></span>
+</div>
+<div id="smartInsights" class="smart-insights">
+</div>
+<div class="metrics">
+<article>
+<small>Custo por km</small>
+<b id="costKm">—</b>
+</article>
+<article>
+<small>Km por dia</small>
+<b id="dailyKm">—</b>
+</article>
+<article>
+<small>Consumo médio</small>
+<b id="avgConsumption">—</b>
+</article>
+<article>
+<small>Último consumo</small>
+<b id="lastConsumption">—</b>
+</article>
+<article>
+<small>Distância percorrida entre os dois últimos abastecimentos</small>
+<b id="lastDistance">—</b>
+</article>
+<article>
+<small>Custo por dia</small>
+<b id="dailyCost">—</b>
+</article>
+</div>
+</section>
+<section id="movimentos" class="page launch-hub">
+<div class="launch-hub-head">
+<small>Lançamentos</small>
+<h2>Novo lançamento</h2>
+<p>Escolha o Grupo que deseja registrar.</p>
+</div>
+<div class="launch-group-list">
+<button type="button" data-entry-group="COMBUSTÍVEL">
+<span class="entry-group-icon fuel">⛽</span>
+<span>
+<b>Abastecimento</b>
+<small>Combustível, preço por litro e litros</small>
+</span>
+<i>›</i>
+</button>
+<button type="button" data-entry-group="MANUTENÇÃO">
+<span class="entry-group-icon maintenance">⚙</span>
+<span>
+<b>Manutenção</b>
+<small>Peças, serviços e oficina</small>
+</span>
+<i>›</i>
+</button>
+<button type="button" data-entry-group="ADMINISTRATIVO">
+<span class="entry-group-icon admin">▤</span>
+<span>
+<b>Administrativo</b>
+<small>IPVA, seguro, taxas e documentos</small>
+</span>
+<i>›</i>
+</button>
+<button type="button" data-entry-group="RECEITA">
+<span class="entry-group-icon income">R$</span>
+<span>
+<b>Receita</b>
+<small>Reembolsos e outros recebimentos</small>
+</span>
+<i>›</i>
+</button>
+</div>
+<div class="launch-manage">
+<small>CONSULTAR E GERENCIAR</small>
+<button type="button" data-go="consultaMovimentos">
+<span class="entry-group-icon movements-icon">☷</span>
+<span>
+<b>Movimentos</b>
+<small>Pesquisar, consultar, alterar ou excluir</small>
+</span>
+<i>›</i>
+</button>
+</div>
+</section>
+<section id="consultaMovimentos" class="page">
+<div class="page-title">
+<div>
+<small>Consulta e gerenciamento</small>
+<h2>Movimentos</h2>
+</div>
+<button type="button" class="round" data-go="movimentos" aria-label="Novo lançamento">＋</button>
+</div>
+<div class="filters">
+<select id="movementVehicle">
+</select>
+<select id="typeFilter">
+<option value="">Todos os grupos</option>
+</select>
+</div>
+<div class="period-filter" data-period="movement">
+<div>
+<small>Data inicial</small>
+<input id="movementStart" type="date">
+</div>
+<div>
+<small>Data final</small>
+<input id="movementEnd" type="date">
+</div>
+<button type="button" id="clearMovementPeriod">Limpar período</button>
+</div>
+<p id="movementPeriodError" class="period-error">
+</p>
+<input id="search" class="full-input" type="search" placeholder="Pesquisar por descrição, item, grupo ou local">
+<p id="movementCount" class="muted">
+</p>
+<div id="movementList" class="list">
+</div>
+</section>
+<section id="relatorios" class="page">
+<div class="page-title">
+<div>
+<small>Análises</small>
+<h2>Relatórios</h2>
+</div>
+</div>
+<select id="reportVehicle" hidden aria-hidden="true">
+</select>
+<div class="selected-vehicle-context">
+<small>Veículo definido na tela inicial</small>
+<strong id="reportVehicleName">—</strong>
+</div>
+<div class="period-filter" data-period="report">
+<div>
+<small>Data inicial</small>
+<input id="reportStart" type="date">
+</div>
+<div>
+<small>Data final</small>
+<input id="reportEnd" type="date">
+</div>
+<button type="button" id="clearReportPeriod">Limpar período</button>
+</div>
+<p id="reportPeriodError" class="period-error">
+</p>
+<p id="reportPeriodLabel" class="period-label">Período: Geral</p>
+<div class="report-grid">
+<article>
+<small>Despesas</small>
+<b id="grossTotal">—</b>
+</article>
+<article>
+<small>Custo líquido</small>
+<b id="reportNet">—</b>
+</article>
+<article>
+<small>Receitas</small>
+<b id="incomeTotal">—</b>
+</article>
+<article>
+<small>Distância</small>
+<b id="reportDistance">—</b>
+</article>
+</div>
+<h3>Consumo e custo por combustível</h3>
+<div id="fuelBars" class="bars">
+</div>
+<h3>Custos por grupo</h3>
+<div id="categoryBars">
+</div>
+<div class="export">
+<h3>Exportação</h3>
+<p>Exporte os dados em planilha ou gere um relatório pronto para salvar em PDF.</p>
+<button id="exportXlsx">Exportar XLSX</button> <button id="exportPdf">Gerar PDF</button>
+</div>
+<div class="intelligence-callout">
+<div><small>MYCAR+ INTELLIGENCE</small><strong>Análise e previsão veicular por IA</strong><p>Selecione o veículo e o período para gerar um relatório analítico.</p></div>
+<button type="button" class="primary" data-go="intelligence">Gerar análise inteligente</button>
+</div>
+</section>
+<section id="intelligence" class="page">
+<div class="page-title"><div><small>MyCar+ Intelligence</small><h2>Análise inteligente</h2></div></div>
+<div class="ai-online-notice"><span>◉</span><div><strong>Conexão com a internet necessária</strong><p>Os indicadores são calculados pelo aplicativo e enviados de forma consolidada para a IA interpretar. A IA não altera nem exclui movimentos.</p></div></div>
+<form id="aiAnalysisForm" class="ai-analysis-form">
+<label>Veículo *<select id="aiVehicle" required><option value="">Selecione o veículo</option></select></label>
+<div class="compact-grid">
+<label>Data inicial *<input id="aiStart" type="date" required></label>
+<label>Data final *<input id="aiEnd" type="date" required></label>
+</div>
+<label>Tipo de análise *<select id="aiType" required>
+<option value="completa">Análise completa</option>
+<option value="combustivel">Combustível e consumo</option>
+<option value="custos">Custos e despesas</option>
+<option value="manutencao">Manutenções</option>
+<option value="fornecedores">Fornecedores</option>
+</select></label>
+<p id="aiFormError" class="form-error" role="alert"></p>
+<button id="generateAiAnalysis" class="primary" type="submit">Gerar análise inteligente</button>
+</form>
+<div id="aiProgress" class="ai-progress" hidden><span></span><p>Calculando indicadores e preparando a análise…</p></div>
+<article id="aiResult" class="ai-result" hidden>
+<div class="ai-result-head"><div><small>RELATÓRIO GERADO</small><h3>Relatório de análise inteligente veicular</h3></div><span id="aiConfidence" class="insight-badge">—</span></div>
+<div id="aiReportContent"></div>
+<div class="export"><button type="button" id="viewAiReport">Visualizar relatório</button><button type="button" id="exportAiPdf">Gerar PDF</button><button type="button" id="newAiAnalysis">Gerar nova análise</button></div>
+</article>
+</section>
+<section id="graficos" class="page">
+<div class="page-title">
+<div>
+<small>Visão gráfica</small>
+<h2>Gráficos</h2>
+</div>
+</div>
+<select id="chartVehicle" hidden aria-hidden="true">
+</select>
+<div class="selected-vehicle-context">
+<small>Veículo definido na tela inicial</small>
+<strong id="chartVehicleName">—</strong>
+</div>
+<div class="period-filter" data-period="chart">
+<div>
+<small>Data inicial</small>
+<input id="chartStart" type="date">
+</div>
+<div>
+<small>Data final</small>
+<input id="chartEnd" type="date">
+</div>
+<button type="button" id="clearChartPeriod">Limpar período</button>
+</div>
+<p id="chartPeriodError" class="period-error">
+</p>
+<p id="chartPeriodLabel" class="period-label">Período: Geral</p>
+<div id="chartEmpty" class="empty-state" hidden>Nenhum lançamento encontrado no período selecionado.</div>
+<div id="chartContent">
+<h3 class="chart-section-title">Desempenho do veículo</h3>
+<div class="chart-card">
+<h3>Consumo médio de combustível por ano (km/L)</h3>
+<p class="chart-note">Distância entre abastecimentos válidos ÷ litros abastecidos.</p>
+<canvas id="chartAnnualConsumption">
+</canvas>
+</div>
+<div class="chart-card">
+<h3>Evolução da quilometragem do veículo</h3>
+<p class="chart-note">Escala do hodômetro iniciada no primeiro registro, com acompanhamento da evolução da quilometragem.</p>
+<canvas id="chartOdometer">
+</canvas>
+</div>
+<h3 class="chart-section-title">Evolução financeira</h3>
+<div class="chart-card">
+<h3>Evolução do custo anual</h3>
+<p class="chart-note">Compara custo bruto, receitas e custo líquido em cada ano.</p>
+<canvas id="chartAnnualCost">
+</canvas>
+</div>
+<div class="chart-card">
+<h3>Custo médio geral diário por ano</h3>
+<p class="chart-note">Custo líquido anual ÷ dias abrangidos no período de cada ano.</p>
+<canvas id="chartAnnualDaily">
+</canvas>
+</div>
+<h3 class="chart-section-title">Composição dos custos</h3>
+<div class="chart-card">
+<h3>Custo por grupo por quilômetro</h3>
+<p class="chart-note">Valor acumulado de cada grupo dividido pela distância percorrida.</p>
+<canvas id="chartCategoryKm">
+</canvas>
+</div>
+<div class="chart-card">
+<h3>Custo médio por grupo por dia</h3>
+<p class="chart-note">Valor acumulado de cada grupo dividido pelos dias abrangidos.</p>
+<canvas id="chartCategoryDay">
+</canvas>
+</div>
+<div class="chart-card">
+<h3>Custo total por grupo</h3>
+<p class="chart-note">Composição do custo bruto entre combustível, administrativo e manutenção.</p>
+<canvas id="chartCategoryTotal">
+</canvas>
+</div>
+<div class="chart-card">
+<h3>Top 10 itens de lançamento por valor</h3>
+<p class="chart-note">Apresenta os itens de lançamento com maior valor acumulado no período.</p>
+<canvas id="chartTopSubcategories">
+</canvas>
+</div>
+</div>
+</section>
+<section id="cadastros" class="page">
+<input type="hidden" id="registerGroup" value="ITEM">
+<div id="registerHub" class="register-hub">
+<div class="register-hub-head">
+<small>Configuração</small>
+<h2>Central de Cadastros</h2>
+<p>Selecione o cadastro que deseja consultar ou atualizar.</p>
+</div>
+<div class="register-hub-grid">
+<button type="button" class="register-module vehicle-module" data-register-group="VEICULO">
+<span class="register-module-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24">
+<path d="M5 11l1.5-4.2A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.8L19 11m-14 0h14a2 2 0 0 1 2 2v4h-2v2h-3v-2H8v2H5v-2H3v-4a2 2 0 0 1 2-2Zm2 2.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm10 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM7.5 10h9l-1-3h-7l-1 3Z"/>
+</svg>
+</span>
+<span class="register-module-copy">
+<b>Veículos</b>
+<small>Dados e situação dos veículos</small>
+</span>
+<em id="countVEICULO">0</em>
+<span class="register-module-arrow">›</span>
+</button>
+<button type="button" class="register-module driver-module" data-register-group="MOTORISTA">
+<span class="register-module-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24">
+<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5C21 16.5 17 14 12 14Z"/>
+</svg>
+</span>
+<span class="register-module-copy">
+<b>Motoristas</b>
+<small>Condutores e dados da CNH</small>
+</span>
+<em id="countMOTORISTA">0</em>
+<span class="register-module-arrow">›</span>
+</button>
+<button type="button" class="register-module subcategory-module" data-register-group="ITEM">
+<span class="register-module-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24">
+<path d="m22.7 19.3-6.4-6.4A7 7 0 0 0 7.4 4.2l4.2 4.2-3.2 3.2-4.2-4.2a7 7 0 0 0 8.7 8.9l6.4 6.4a1 1 0 0 0 1.4 0l2-2a1 1 0 0 0 0-1.4Z"/>
+</svg>
+</span>
+<span class="register-module-copy">
+<b>Itens de lançamento</b>
+<small>Classificação dos lançamentos</small>
+</span>
+<em id="countITEM">0</em>
+<span class="register-module-arrow">›</span>
+</button>
+<button type="button" class="register-module supplier-module" data-register-group="FORNECEDOR">
+<span class="register-module-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24">
+<path d="M3 10 12 3l9 7v11h-6v-7H9v7H3V10Zm2 1v8h2v-7h10v7h2v-8l-7-5.4L5 11Z"/>
+</svg>
+</span>
+<span class="register-module-copy">
+<b>Fornecedores</b>
+<small>Postos, oficinas e prestadores</small>
+</span>
+<em id="countFORNECEDOR">0</em>
+<span class="register-module-arrow">›</span>
+</button>
+<button type="button" class="register-module payment-module" data-register-group="FORMA_PAGAMENTO">
+<span class="register-module-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24">
+<path d="M13 3v2.1c2.3.3 4 1.7 4.1 3.9h-3c-.1-1-1-1.5-2.2-1.5-1.3 0-2.1.6-2.1 1.4 0 .9.9 1.3 3 1.8 3 .7 4.7 1.8 4.7 4.4 0 2.2-1.7 3.8-4.5 4.2V21h-2v-1.7c-2.8-.3-4.7-1.8-4.8-4.3h3c.2 1.2 1.2 1.8 2.8 1.8 1.4 0 2.3-.6 2.3-1.5 0-.9-.8-1.3-3.1-1.9-2.8-.7-4.6-1.8-4.6-4.4 0-2.1 1.7-3.6 4.4-3.9V3h2Z"/>
+</svg>
+</span>
+<span class="register-module-copy">
+<b>Formas de pagamento</b>
+<small>Meios utilizados nos pagamentos</small>
+</span>
+<em id="countFORMA_PAGAMENTO">0</em>
+<span class="register-module-arrow">›</span>
+</button>
+</div>
+</div>
+<div id="registerDetail" class="register-detail" hidden>
+<div class="register-detail-nav">
+<button type="button" id="backRegisterHub" class="register-back">‹ <span>Voltar à Central</span>
+</button>
+</div>
+<div class="register-content">
+<div class="register-content-head">
+<div>
+<small id="registerEyebrow">Classificação dos lançamentos</small>
+<h3 id="registerGroupTitle">Itens de lançamento</h3>
+<p id="registerCountText">0 cadastrados</p>
+</div>
+<button class="register-add" id="addRegister">＋ <span>Novo cadastro</span>
+</button>
+</div>
+<div class="register-toolbar">
+<label class="register-search">
+<span>⌕</span>
+<input id="registerSearch" type="search" placeholder="Pesquisar neste cadastro...">
+</label>
+<select id="registerStatusFilter">
+<option value="TODOS">Todos</option>
+<option value="ATIVOS">Ativos</option>
+<option value="INATIVOS">Inativos</option>
+<option value="PADRAO">Padrão</option>
+</select>
+</div>
+<div id="registerList" class="list register-list">
+</div>
+</div>
+</div>
+</section>
+<section id="alertas" class="page">
+<div class="page-title"><div><small>Controle técnico</small><h2>Alertas e manutenção</h2></div>
+<button type="button" class="round" id="newAlert" aria-label="Novo alerta">＋</button></div>
+<div id="alertSummary" class="alert-summary"></div>
+<div class="filters">
+<select id="alertVehicle"></select>
+<select id="alertStatus"><option value="">Todas as situações</option><option>PROGRAMADO</option><option>ATENÇÃO</option><option>VENCIDO</option><option>CONCLUÍDO</option><option>INATIVO</option></select>
+</div>
+<div id="alertList" class="list alert-list"></div>
+<div class="technical-report-actions">
+<button type="button" id="technicalPdf">Gerar PDF — Histórico técnico de manutenção</button>
+</div>
+</section>
+<section id="configuracoes" class="page">
+<div class="page-title">
+<div>
+<small>Sistema</small>
+<h2>Configurações</h2>
+</div>
+</div>
+<div class="settings-grid">
+<article class="settings-card">
+<div>
+<h3>Aparência</h3>
+<p>Defina como o MyCar+ acompanha o tema do aparelho.</p>
+</div>
+<div class="settings-options" id="themeOptions">
+<button type="button" data-theme-mode="auto">Automático</button>
+<button type="button" data-theme-mode="light">Claro</button>
+<button type="button" data-theme-mode="dark">Escuro</button>
+</div>
+</article>
+<article class="settings-card">
+<div>
+<h3>Localização de fornecedores</h3>
+<p>Distância máxima para sugerir um fornecedor cadastrado próximo.</p>
+</div>
+<label>Raio de proximidade
+<select id="gpsSupplierRadius">
+<option value="50">50 metros</option>
+<option value="100">100 metros</option>
+<option value="150">150 metros</option>
+<option value="250">250 metros</option>
+<option value="500">500 metros</option>
+</select>
+</label>
+</article>
+<article class="settings-card">
+<div>
+<h3>Veículo em uso</h3>
+<p>O veículo selecionado na tela inicial controla lançamentos, indicadores, relatórios e gráficos.</p>
+</div>
+<button type="button" class="secondary" data-go="inicio">Selecionar veículo</button>
+</article>
+</div>
+</section>
+
+<section id="ajuda" class="page">
+<div class="page-title">
+<div>
+<small>Orientações</small>
+<h2>Central de ajuda</h2>
+</div>
+</div>
+<div class="help-card">
+<h3>Manual rápido de utilização</h3>
+<details open>
+<summary>1. Visão geral</summary>
+<p>Na tela inicial, escolha um veículo ativo ou inativo. O selecionado controla automaticamente o painel, os relatórios e os gráficos; o selo Padrão identifica a preferência definida no cadastro.</p>
+</details>
+<details>
+<summary>2. Cadastros</summary>
+<p>No menu superior, abra Cadastros para incluir, alterar ou excluir itens de lançamento, motoristas e veículos. O item marcado como Padrão aparece primeiro nos lançamentos.</p>
+</details>
+<details>
+<summary>3. Abastecimento</summary>
+<p>Em Lançamentos, escolha Abastecimento e informe data, hodômetro, preço por litro e valor total. Os litros, a distância e o consumo são calculados automaticamente.</p>
+</details>
+<details>
+<summary>4. Manutenção, administrativo e receitas</summary>
+<p>Escolha o Grupo correspondente, informe os itens e valores e salve. Esses Grupos não exibem preço por litro nem litros.</p>
+</details>
+<details>
+<summary>5. Regra do hodômetro</summary>
+<p>O hodômetro atual deve ser inteiro e não pode ser inferior ao último hodômetro existente na data do lançamento.</p>
+</details>
+<details>
+<summary>6. Movimentos e edição</summary>
+<p>Em Lançamentos, abra Movimentos para pesquisar por data, descrição, item, Grupo ou local. Use Consultar, Alterar ou Excluir no movimento desejado.</p>
+</details>
+<details>
+<summary>7. Filtro por período</summary>
+<p>Informe uma ou ambas as datas. A data inicial inclui registros a partir dela e a final inclui registros até ela. Use Limpar período para retornar à visão Geral.</p>
+</details>
+<details>
+<summary>8. Relatórios e gráficos</summary>
+<p>Essas telas usam automaticamente o veículo escolhido na tela inicial. Os totais, médias, distância, consumo, custo por km e gráficos são recalculados conforme o período selecionado.</p>
+</details>
+<details>
+<summary>9. Exportação XLSX</summary>
+<p>Em Relatórios, toque em Exportar XLSX para baixar o banco completo no formato oficial MyCarPlus.xlsx.</p>
+</details>
+<details>
+<summary>10. Sincronização e segurança</summary>
+<p>Aguarde a conclusão da sincronização antes de fechar o aplicativo. Antes de alterações importantes, mantenha uma exportação XLSX de segurança.</p>
+</details>
+<details>
+<summary>11. Instalação no celular</summary>
+<p>Abra o menu superior e toque em Instalar aplicativo quando a opção estiver disponível. Também é possível usar o menu do Chrome e escolher Instalar aplicativo ou Adicionar à tela inicial.</p>
+<button type="button" id="helpInstallBtn" class="secondary install-app-action">⬇ Instalar MyCar+</button>
+<p id="installHelpText" class="field-help">Toque no botão para instalar ou ver a orientação adequada ao seu navegador.</p>
+</details>
+</div>
+</section>
+<section id="sobre" class="page">
+<div class="page-title">
+<div>
+<small>Informações</small>
+<h2>Sobre o MyCar+</h2>
+</div>
+</div>
+<div class="about-card">
+<img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
+<h3>MyCar+</h3>
+<p>
+<strong>Versão:</strong> 5.25</p>
+<p>
+<strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
+<p>
+<strong>Criação:</strong> julho de 2026</p>
+<p>
+<strong>Contato:</strong> <a href="mailto:marcelo.auditortl@gmail.com">marcelo.auditortl@gmail.com</a>
+</p>
+<p>Aplicativo para controle de consumo de combustível, manutenção e despesas administrativas de veículos.</p>
+</div>
+</section>
+<section id="seguranca" class="page">
+<div class="page-title">
+<div>
+<small>Sistema</small>
+<h2>Gestão de dados</h2>
+</div>
+</div>
+<div class="security-grid">
+<article class="security-card">
+<span>↓</span>
+<div>
+<h3>Criar backup</h3>
+<p>Selecione individualmente as tabelas que deseja salvar.</p>
+</div>
+<button type="button" id="openBackup">Criar backup</button>
+</article>
+<article class="security-card">
+<span>↥</span>
+<div>
+<h3>Restaurar backup</h3>
+<p>Substitui integralmente somente as tabelas marcadas.</p>
+</div>
+<button type="button" id="openRestore">Restaurar</button>
+</article>
+<article class="security-card danger">
+<span>!</span>
+<div>
+<h3>Excluir bases de dados</h3>
+<p>Exclusão seletiva, protegida por dependências e dupla confirmação.</p>
+</div>
+<button type="button" id="openDeleteData">Excluir bases</button>
+</article>
+</div>
+</section>
+</main>
+<nav>
+<button class="active" data-page="inicio">
+<span>⌂</span>Início</button>
+<button data-page="movimentos">
+<span>＋</span>Lançamentos</button>
+<button data-page="relatorios">
+<span>▥</span>Relatórios</button>
+<button data-page="graficos">
+<span>⌁</span>Gráficos</button>
+<button data-page="ajuda">
+<span>?</span>Ajuda</button>
+</nav>
+<dialog id="entryGroupDialog" class="compact-dialog entry-group-dialog">
+<div class="sectioned-form">
+<div class="dialog-head">
+<div>
+<small>Lançamentos</small>
+<h2>Novo lançamento</h2>
+</div>
+<button type="button" id="closeEntryGroups" aria-label="Fechar">×</button>
+</div>
+<div class="entry-group-body">
+<p>Escolha o grupo do lançamento</p>
+<div class="entry-group-list">
+<button type="button" data-entry-group="COMBUSTÍVEL">
+<span class="entry-group-icon fuel">⛽</span>
+<span>
+<b>Abastecimento</b>
+<small>Combustível, preço por litro e litros</small>
+</span>
+<i>›</i>
+</button>
+<button type="button" data-entry-group="MANUTENÇÃO">
+<span class="entry-group-icon maintenance">⚙</span>
+<span>
+<b>Manutenção</b>
+<small>Peças, serviços e oficina</small>
+</span>
+<i>›</i>
+</button>
+<button type="button" data-entry-group="ADMINISTRATIVO">
+<span class="entry-group-icon admin">▤</span>
+<span>
+<b>Administrativo</b>
+<small>IPVA, seguro, taxas e documentos</small>
+</span>
+<i>›</i>
+</button>
+<button type="button" data-entry-group="RECEITA">
+<span class="entry-group-icon income">$</span>
+<span>
+<b>Receita</b>
+<small>Reembolsos e outros recebimentos</small>
+</span>
+<i>›</i>
+</button>
+</div>
+</div>
+</div>
+</dialog>
+<dialog id="entryDialog" class="compact-dialog">
+<form method="dialog" id="entryForm" class="sectioned-form">
+<input type="hidden" name="movementId">
+<input type="hidden" name="latitude">
+<input type="hidden" name="longitude">
+<input type="hidden" name="precisaoGps">
+<div class="dialog-head">
+<div>
+<small id="entryGroupEyebrow">Lançamentos</small>
+<h2 id="entryTitle">Novo movimento</h2>
+</div>
+<button value="cancel" aria-label="Fechar">×</button>
+</div>
+<div class="form-scroll">
+<section class="form-section always-open">
+<h3>
+<span>1</span> Dados do movimento</h3>
+<div class="section-body">
+<div class="entry-group-context">
+<small>Grupo selecionado</small>
+<strong id="entryGroupName">—</strong>
+<button type="button" id="changeEntryGroup">Trocar</button>
+</div>
+<div class="vehicle-auto">
+<small>Veículo do movimento</small>
+<strong id="entryVehicleName">Definido automaticamente pelo cadastro padrão</strong>
+</div>
+<select name="grupo" required hidden>
+</select>
+<div class="compact-grid">
+<label>Data *<input name="data" type="date" required>
+</label>
+<label>Hodômetro atual *<input name="km" type="text" inputmode="numeric" required>
+</label>
+</div>
+<div class="km-reference">
+<small>Último hodômetro</small>
+<strong id="lastKm">—</strong>
+</div>
+<small id="groupLockHelp" class="field-help">Todos os itens devem pertencer ao Grupo escolhido.</small>
+<small id="kmRule" class="field-help">
+</small>
+</div>
+</section>
+<section class="form-section always-open">
+<h3>
+<span>2</span> Itens do movimento</h3>
+<div class="section-body">
+<div id="movementItems" class="movement-items">
+</div>
+<button type="button" id="addMovementItem" class="add-movement-item">
+<span>＋</span> Adicionar item</button>
+<div class="movement-total">
+<span>Total do movimento</span>
+<strong id="movementTotal">R$ 0,00</strong>
+</div>
+<div id="fuelFields" hidden>
+<small class="field-help">Em abastecimentos, informe também o preço por litro.</small>
+</div>
+</div>
+</section>
+<details class="form-section optional-section">
+<summary>
+<span class="section-number">3</span>
+<span>
+<b>Detalhes opcionais</b>
+<small id="entryOptionalSummary">Motorista, local, pagamento e observação</small>
+</span>
+</summary>
+<div class="section-body">
+<label>Motorista<select name="motorista">
+</select>
+</label>
+<label>
+<span id="entrySupplierLabel">Fornecedor / local</span>
+<select name="fornecedor">
+</select>
+</label>
+<div class="gps-actions">
+<button type="button" id="useCurrentLocation" class="secondary">⌖ Usar localização atual</button>
+<small id="entryGpsStatus" class="field-help">Localização opcional. O GPS é acionado somente ao tocar no botão.</small>
+<a id="openEntryMap" class="map-link" target="_blank" rel="noopener" hidden>Abrir no mapa</a>
+</div>
+<label>Forma de pagamento<select name="formaPagamento">
+</select>
+</label>
+<label id="tankCompleteField" class="check-field">
+<input name="tanqueCompleto" type="checkbox" checked> Tanque completo</label>
+<label class="check-field">
+<input name="incluirIndicadores" type="checkbox" checked> Incluir nos indicadores</label>
+<label>Observação<textarea name="observacao">
+</textarea>
+</label>
+</div>
+</details>
+<p id="formError" class="form-error">
+</p>
+</div>
+<div class="form-footer">
+<button class="form-cancel" value="cancel">Cancelar</button>
+<button class="primary" value="default">Salvar movimento</button>
+</div>
+</form>
+</dialog>
+<dialog id="alertDialog" class="compact-dialog">
+<form method="dialog" id="alertForm" class="sectioned-form">
+<input type="hidden" name="id"><div class="dialog-head"><div><small>Central de Alertas</small><h2 id="alertFormTitle">Novo alerta</h2></div><button type="button" class="alert-cancel" aria-label="Fechar">×</button></div>
+<div class="form-scroll">
+<section class="form-section always-open"><h3><span>1</span> Identificação</h3><div class="section-body">
+<label>Veículo *<select name="vehicleId" required></select></label>
+<label>Grupo *<select name="group" required></select></label>
+<label>Item *<select name="itemId" required></select></label>
+<label>Descrição *<input name="description" required placeholder="Ex.: Trocar óleo do motor"></label>
+</div></section>
+<section class="form-section always-open"><h3><span>2</span> Vencimento e recorrência</h3><div class="section-body">
+<label>Critério<select name="criterion"><option value="DATE">Data</option><option value="KM">Quilometragem</option><option value="BOTH">Data e quilometragem — primeiro que ocorrer</option></select></label>
+<div class="compact-grid"><label>Data prevista<input name="dueDate" type="date"></label><label>Avisar antes (dias)<input name="leadDays" type="number" min="0" value="7"></label></div>
+<div class="compact-grid"><label>Quilometragem prevista<input name="dueKm" type="number" min="0"></label><label>Avisar antes (km)<input name="leadKm" type="number" min="0" value="500"></label></div>
+<label>Recorrência<select name="recurrence"><option value="NONE">Sem recorrência</option><option value="MONTHS">Por meses</option><option value="KM">Por quilômetros</option><option value="BOTH">Por meses e quilômetros</option></select></label>
+<div class="compact-grid"><label>Repetir a cada (meses)<input name="recurrenceMonths" type="number" min="1"></label><label>Repetir a cada (km)<input name="recurrenceKm" type="number" min="1"></label></div>
+<label class="check-field"><input name="active" type="checkbox" checked> Alerta ativo</label>
+</div></section><p id="alertFormError" class="form-error"></p></div>
+<div class="form-footer"><button type="button" class="form-cancel alert-cancel">Cancelar</button><button class="primary" value="default">Salvar alerta</button></div>
+</form></dialog>
+<dialog id="registerDialog" class="compact-dialog">
+<form method="dialog" id="registerForm" class="sectioned-form">
+<div class="dialog-head">
+<div>
+<small>Central de Cadastros</small>
+<h2 id="registerTitle">Incluir cadastro</h2>
+</div>
+<button value="cancel" aria-label="Fechar">×</button>
+</div>
+<input type="hidden" name="id">
+<input type="hidden" name="grupoCadastro">
+<div class="form-scroll">
+<div id="subcatFields">
+<section class="form-section always-open">
+<h3>
+<span>1</span> Identificação</h3>
+<div class="section-body">
+<label>Grupo *<select name="grupo">
+</select>
+</label>
+<label>Item de lançamento *<input name="item">
+</label>
+</div>
+</section>
+<details class="form-section optional-section">
+<summary>
+<span class="section-number">2</span>
+<span>
+<b>Configurações</b>
+<small>Preferências deste cadastro</small>
+</span>
+</summary>
+<div class="section-body">
+<label class="check-field">
+<input name="padrao" type="checkbox"> Padrão</label>
+</div>
+</details>
+</div>
+<div id="simpleFields">
+<section class="form-section always-open">
+<h3>
+<span>1</span> Identificação</h3>
+<div class="section-body">
+<label id="simpleLabel">Nome *<input name="nome">
+</label>
+</div>
+</section>
+<div id="vehicleExtraFields">
+<details class="form-section optional-section">
+<summary>
+<span class="section-number">2</span>
+<span>
+<b>Dados técnicos</b>
+<small>Placa, ano, hodômetro e tanque</small>
+</span>
+</summary>
+<div class="section-body">
+<label>Placa<input name="placa">
+</label>
+<div class="compact-grid">
+<label>Ano de fabricação<input name="anoFabricacao" type="number">
+</label>
+<label>Ano do modelo<input name="anoModelo" type="number">
+</label>
+</div>
+<div class="compact-grid">
+<label>Hodômetro inicial (km) *<input name="kmInicial" type="text" inputmode="numeric" required>
+</label>
+<label>Capacidade do tanque (L) *<input name="capacidadeTanque" type="number" min="1" step="0.1">
+</label>
+</div>
+<label>Motorização *<select name="motorizacao">
+<option value="FLEX">Flex</option>
+<option value="GASOLINA">Gasolina</option>
+<option value="ETANOL">Etanol</option>
+<option value="DIESEL">Diesel</option>
+</select>
+</label>
+</div>
+</details>
+<details class="form-section optional-section">
+<summary>
+<span class="section-number">3</span>
+<span>
+<b>Consumo de referência</b>
+<small>Valores do fabricante ou Inmetro</small>
+</span>
+</summary>
+<div class="section-body">
+<div class="reference-consumption" data-fuel-reference="ETANOL">
+<h3>Etanol</h3>
+<div class="reference-consumption-grid">
+<label>Cidade (km/L)<input name="consumoEtanolCidade" type="number" min="0" step="0.01">
+</label>
+<label>Estrada (km/L)<input name="consumoEtanolEstrada" type="number" min="0" step="0.01">
+</label>
+</div>
+</div>
+<div class="reference-consumption" data-fuel-reference="GASOLINA">
+<h3>Gasolina</h3>
+<div class="reference-consumption-grid">
+<label>Cidade (km/L)<input name="consumoGasolinaCidade" type="number" min="0" step="0.01">
+</label>
+<label>Estrada (km/L)<input name="consumoGasolinaEstrada" type="number" min="0" step="0.01">
+</label>
+</div>
+</div>
+<div class="reference-consumption" data-fuel-reference="DIESEL">
+<h3>Diesel</h3>
+<div class="reference-consumption-grid">
+<label>Cidade (km/L)<input name="consumoDieselCidade" type="number" min="0" step="0.01">
+</label>
+<label>Estrada (km/L)<input name="consumoDieselEstrada" type="number" min="0" step="0.01">
+</label>
+</div>
+</div>
+<small class="field-help">Valores de referência do fabricante/Inmetro. O consumo real continua sendo calculado pelos abastecimentos.</small>
+</div>
+</details>
+</div>
+<div id="driverExtraFields">
+<details class="form-section optional-section">
+<summary>
+<span class="section-number">2</span>
+<span>
+<b>Habilitação</b>
+<small>CNH e observações</small>
+</span>
+</summary>
+<div class="section-body">
+<div class="compact-grid">
+<label>Número da CNH<input name="numeroCnh">
+</label>
+<label>Grupo da CNH<input name="grupoCnh">
+</label>
+</div>
+<label>Validade da CNH<input name="validadeCnh" type="date">
+</label>
+<label>Observação do motorista<textarea name="obsMotorista">
+</textarea>
+</label>
+</div>
+</details>
+</div>
+<div id="supplierExtraFields">
+<section class="form-section always-open">
+<h3>
+<span>2</span> Localização</h3>
+<div class="section-body">
+<label>Endereço / local identificado<input name="localFornecedor">
+</label>
+<div class="compact-grid">
+<label>Latitude<input name="latitudeFornecedor" inputmode="decimal" readonly>
+</label>
+<label>Longitude<input name="longitudeFornecedor" inputmode="decimal" readonly>
+</label>
+</div>
+<div class="gps-actions">
+<button type="button" id="useSupplierLocation" class="secondary">⌖ Usar localização atual</button>
+<small id="supplierGpsStatus" class="field-help">Use o GPS para preencher coordenadas, endereço e, quando disponível, o nome do fornecedor.</small>
+<a id="openSupplierMap" class="map-link" target="_blank" rel="noopener" hidden>Abrir no mapa</a>
+</div>
+</div>
+</section>
+</div>
+<details class="form-section optional-section">
+<summary>
+<span class="section-number">4</span>
+<span>
+<b>Configurações</b>
+<small>Padrão e situação do cadastro</small>
+</span>
+</summary>
+<div class="section-body">
+<label class="check-field">
+<input name="simplePadrao" type="checkbox"> Padrão</label>
+<label id="activeVehicleField" class="check-field">
+<input name="ativo" type="checkbox" checked> Ativo</label>
+</div>
+</details>
+</div>
+</div>
+<div class="form-footer">
+<button class="form-cancel" value="cancel">Cancelar</button>
+<button class="primary" value="default">Salvar</button>
+</div>
+</form>
+</dialog>
+<script src="jszip.min.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js">
+</script>
+<script src="firebase-config.js">
+</script>
+<script type="module" src="ai-logic.js">
+</script>
+<script src="mycarplus-db.js">
+</script>
+<script src="app.js">
+</script>
+<script src="cloud.js">
+</script>
+</body>
+</html>

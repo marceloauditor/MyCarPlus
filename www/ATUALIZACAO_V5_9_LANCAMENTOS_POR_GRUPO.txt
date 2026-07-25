@@ -1,0 +1,10 @@
+MYCAR+ PWA V5.9 — LANÇAMENTOS POR GRUPO
+
+- A entrada de um novo lançamento começa pela escolha do Grupo.
+- Ordem vertical: Abastecimento, Manutenção, Administrativo e Receita.
+- Ícones próprios para bomba de combustível, engrenagem, documento e receita.
+- Cada Grupo abre um formulário contextualizado.
+- Preço por litro e litros calculados aparecem somente em Abastecimento.
+- Manutenção, Administrativo e Receita não exibem campos de combustível.
+- A inclusão de vários itens do mesmo Grupo e todas as validações da V5.8 foram preservadas.
+- A alteração abre diretamente o formulário do Grupo gravado.

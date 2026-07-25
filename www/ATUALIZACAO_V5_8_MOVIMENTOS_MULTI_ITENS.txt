@@ -1,0 +1,15 @@
+MYCAR+ PWA V5.8 — MOVIMENTOS COM VÁRIOS ITENS
+
+1. Um movimento aceita um ou vários itens.
+2. Todos os itens do movimento devem pertencer ao mesmo Grupo.
+3. O botão verde “+ Adicionar item” inclui uma nova linha.
+4. O botão “×” remove somente a linha escolhida.
+5. O Grupo fica bloqueado quando o movimento possui mais de um item.
+6. A validação Grupo × Item ocorre na interface, no salvamento, na migração e na sincronização.
+7. Alterações posteriores obedecem à mesma regra.
+8. O histórico apresenta um cartão por movimento, com quantidade de itens e valor total.
+9. Relatórios e gráficos permanecem analíticos por item.
+10. O Excel recebeu as colunas movimento_id e ordem_item.
+11. Lançamentos anteriores são migrados como movimentos de um item.
+12. Itens, veículos, motoristas, fornecedores e formas de pagamento são exibidos em ordem alfabética.
+13. Firebase atualizado para schemaVersion 4.

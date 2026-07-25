@@ -1,0 +1,469 @@
+ROTEIRO DE ATUALIZAÇÃO DO APP MEU VEÍCULO
+GITHUB + FIREBASE
+Versão do roteiro: 1.0
+Data: 20/07/2026
+Responsável: Marcelo Ribeiro
+
+============================================================
+1. OBJETIVO DESTE ROTEIRO
+============================================================
+
+Este documento deve acompanhar o código-fonte do app Meu Veículo e ser consultado antes de qualquer alteração futura.
+
+Objetivos principais:
+
+1. Atualizar telas, cálculos, gráficos e funções pelo GitHub sem perder dados.
+2. Manter o Firebase/Firestore como base oficial dos lançamentos do usuário.
+3. Impedir que o dataset incluído no código-fonte sobrescreva a base existente no Firebase.
+4. Permitir retorno à versão anterior do aplicativo em caso de erro.
+
+REGRA PRINCIPAL:
+
+O CÓDIGO DO APP PODE SER ATUALIZADO.
+OS DADOS EXISTENTES NO FIREBASE NÃO DEVEM SER APAGADOS, RECRIADOS OU SUBSTITUÍDOS DURANTE UMA ATUALIZAÇÃO NORMAL.
+
+============================================================
+2. COMO O PROJETO ATUAL FUNCIONA
+============================================================
+
+Hospedagem do aplicativo:
+- Código publicado no GitHub.
+- App disponibilizado pelo GitHub Pages.
+
+Armazenamento dos dados:
+- O navegador mantém uma cópia local no localStorage.
+- Após o login com Google, o Firebase/Firestore armazena e sincroniza o estado do usuário.
+
+Documento principal atualmente utilizado no Firestore:
+
+users/{uid}/app/state
+
+Comportamento esperado:
+
+1. Se já existir um documento online no Firebase, o app deve carregar esse documento.
+2. Se não existir uma base online para aquele usuário, o app pode enviar a base local/dataset inicial.
+3. Uma nova versão do código não deve executar importação forçada sobre um documento já existente.
+4. Alterações estruturais devem ser feitas por migração controlada, preservando os registros atuais.
+
+ATENÇÃO SOBRE A VERSÃO ATUAL:
+
+O arquivo app.js lê o arquivo data/dataset_veicular_app.csv e acrescenta somente registros que ainda não existam na base local, utilizando uma chave de comparação.
+
+O arquivo cloud.js verifica se users/{uid}/app/state já existe:
+- se existir, carrega o estado do Firebase;
+- se não existir, envia o estado local inicial.
+
+Esse comportamento protege a base online existente, desde que a lógica não seja alterada de forma inadequada em versões futuras.
+
+============================================================
+3. ARQUIVOS QUE NÃO DEVEM SER ALTERADOS SEM NECESSIDADE
+============================================================
+
+1. firebase-config.js
+   - Manter a configuração do mesmo projeto Firebase.
+   - Não substituir por dados de outro projeto.
+
+2. cloud.js
+   - Não trocar a lógica "se existe, carregar; se não existe, criar" por uma gravação automática incondicional.
+   - Não executar stateRef.set(...) antes de verificar snapshot.exists.
+
+3. firestore.rules
+   - Alterar apenas quando houver necessidade real de segurança ou nova estrutura.
+   - Nunca publicar regras abertas para qualquer usuário.
+
+4. Chaves do localStorage existentes no app.js
+   - mv_movements_v32
+   - mv_registers_v32
+   - mv_drivers_v32
+   - mv_vehicles_v32
+
+Não renomear ou eliminar essas chaves sem criar uma migração. Uma troca direta de nome pode fazer o app interpretar que não existem dados locais.
+
+5. Caminho do documento no Firestore
+   - users/{uid}/app/state
+
+Não mudar esse caminho sem migração, pois o aplicativo poderia criar uma base vazia em outro local e deixar de localizar os dados anteriores.
+
+============================================================
+4. PREPARAÇÃO ANTES DE QUALQUER ATUALIZAÇÃO
+============================================================
+
+PASSO 1 — EXPORTAR OS DADOS PELO APP
+
+Antes de alterar ou publicar uma nova versão:
+
+1. Abrir a versão que está funcionando.
+2. Entrar com a conta Google correta.
+3. Confirmar que aparece a mensagem de dados online carregados ou sincronizados.
+4. Exportar o histórico nos formatos disponíveis, preferencialmente CSV e XLSX.
+5. Guardar os arquivos com data e versão.
+
+Exemplo de nome:
+
+BACKUP_MEU_VEICULO_2026-07-20_ANTES_V4_5.xlsx
+BACKUP_MEU_VEICULO_2026-07-20_ANTES_V4_5.csv
+
+PASSO 2 — GUARDAR A VERSÃO ATUAL DO CÓDIGO
+
+Antes de substituir arquivos no GitHub:
+
+1. Baixar o ZIP da versão que está funcionando; ou
+2. Criar uma tag no Git; ou
+3. Confirmar que a versão atual possui um commit identificado.
+
+Exemplo de tag:
+
+git tag -a v4.4 -m "Versão estável 4.4"
+git push origin v4.4
+
+PASSO 3 — ANOTAR OS NÚMEROS DE CONTROLE
+
+Registrar antes da atualização:
+
+- total de lançamentos;
+- último hodômetro;
+- data do último lançamento;
+- total de gastos;
+- total de combustível;
+- quantidade de cadastros;
+- veículo padrão;
+- usuário Google conectado.
+
+Esses números serão usados para conferir a nova versão.
+
+============================================================
+5. PROCEDIMENTO RECOMENDADO PARA ALTERAR O CÓDIGO
+============================================================
+
+Nunca trabalhar diretamente na única cópia da versão estável.
+
+Fluxo recomendado no Git:
+
+1. Atualizar a cópia local:
+
+git checkout main
+git pull origin main
+
+2. Criar uma nova branch:
+
+git checkout -b atualizacao-v4.5
+
+3. Fazer as alterações necessárias.
+
+4. Não copiar a pasta .git de outro ZIP sobre o repositório.
+
+5. Conferir os arquivos modificados:
+
+git status
+git diff
+
+6. Testar localmente antes da publicação.
+
+7. Registrar as alterações:
+
+git add .
+git commit -m "Atualiza Meu Veículo para v4.5"
+
+8. Enviar a branch:
+
+git push -u origin atualizacao-v4.5
+
+9. Conferir a alteração e só depois incorporar na branch main.
+
+Quando não for utilizado Pull Request:
+
+git checkout main
+git merge atualizacao-v4.5
+git push origin main
+
+============================================================
+6. ATUALIZAÇÃO DO NÚMERO DA VERSÃO
+============================================================
+
+Em toda publicação, atualizar de forma coerente:
+
+1. Número exibido na tela do aplicativo, quando houver.
+2. README.md.
+3. Comentários de versão, quando existentes.
+4. Versão do cache no sw.js.
+5. Parâmetro de versão do dataset no app.js, somente quando o arquivo CSV for alterado.
+
+Exemplo:
+
+Antes:
+data/dataset_veicular_app.csv?v=42
+
+Depois de modificar o CSV:
+data/dataset_veicular_app.csv?v=43
+
+Isso força o navegador a buscar a nova cópia do arquivo em vez de reutilizar uma cópia antiga.
+
+Também alterar o identificador do cache no sw.js para evitar que o PWA continue usando arquivos da versão anterior.
+
+Exemplo conceitual:
+
+meu-veiculo-cache-v44
+
+para:
+
+meu-veiculo-cache-v45
+
+============================================================
+7. REGRA PARA O DATASET INCLUÍDO NO CÓDIGO-FONTE
+============================================================
+
+Os arquivos abaixo devem ser tratados como dataset inicial, demonstração, referência ou recuperação:
+
+- data/dataset_veicular_app.csv
+- data/exportacao_veicular_app.xlsx
+- data/cadastros_veicular_app.csv
+
+Eles não devem ser considerados automaticamente a cópia mais atual do Firebase.
+
+REGRA:
+
+A atualização normal do aplicativo não exige substituir esses arquivos pela base atual do Firebase.
+
+Atualizar o dataset do código-fonte apenas quando ocorrer uma destas situações:
+
+1. Correção do histórico inicial distribuído com o app.
+2. Inclusão de novos campos obrigatórios no dataset inicial.
+3. Criação de uma nova instalação com uma base inicial mais recente.
+4. Teste ou reprodução de erro que dependa dos dados atuais.
+5. Migração planejada da estrutura dos registros.
+
+NUNCA implementar uma rotina semelhante a:
+
+- apagar o documento do Firestore;
+- importar o CSV em toda abertura do aplicativo;
+- gravar o dataset inicial sobre o Firestore sem conferir se já existem dados;
+- substituir toda a coleção depois de uma atualização do GitHub.
+
+============================================================
+8. TESTE OBRIGATÓRIO CONTRA SOBRESCRITA
+============================================================
+
+Antes de publicar uma nova versão, realizar este teste em ambiente de teste ou com uma cópia segura dos dados.
+
+CENÁRIO A — FIREBASE JÁ POSSUI DADOS
+
+1. Entrar no app com uma conta que tenha dados online.
+2. Anotar um lançamento exclusivo existente apenas no Firebase.
+3. Publicar ou abrir a nova versão.
+4. Fazer login com a mesma conta.
+5. Confirmar que o lançamento exclusivo continua existindo.
+6. Confirmar que a quantidade total de registros não diminuiu.
+7. Atualizar a página e repetir a conferência.
+8. Abrir em outro navegador ou aparelho e conferir novamente.
+
+RESULTADO OBRIGATÓRIO:
+
+A nova versão deve carregar os dados existentes no Firebase e não substituí-los pelo dataset do pacote.
+
+CENÁRIO B — CONTA SEM BASE NO FIREBASE
+
+1. Utilizar uma conta de teste que ainda não tenha users/{uid}/app/state.
+2. Abrir o app.
+3. Fazer login.
+4. Confirmar que a base inicial é criada apenas uma vez.
+5. Inserir um novo lançamento.
+6. Fechar e abrir novamente.
+7. Confirmar que os dados não foram duplicados.
+
+CENÁRIO C — USO SEM LOGIN
+
+1. Abrir o app sem login.
+2. Inserir um lançamento local de teste.
+3. Atualizar a página.
+4. Confirmar que ele permanece no localStorage.
+5. Depois fazer login em uma conta com Firebase existente.
+6. Confirmar qual base deve prevalecer antes de aceitar qualquer futura lógica de mesclagem.
+
+Na arquitetura atual, quando o documento online já existe, a base online é carregada.
+
+============================================================
+9. PUBLICAÇÃO NO GITHUB PAGES
+============================================================
+
+Após os testes:
+
+1. Enviar o commit aprovado para a branch usada pelo GitHub Pages, normalmente main.
+2. Abrir o repositório no GitHub.
+3. Conferir o commit mais recente.
+4. Abrir Settings > Pages e verificar se a origem de publicação continua correta.
+5. Abrir o endereço público do app.
+6. Atualizar a página forçadamente.
+
+No Windows/Chrome:
+
+Ctrl + F5
+
+7. Em um PWA instalado, fechar completamente o app e abrir novamente.
+8. Confirmar a versão exibida.
+9. Confirmar que os novos arquivos foram carregados.
+
+IMPORTANTE:
+
+Não excluir o repositório e não criar outro GitHub Pages sem necessidade. A mudança de domínio pode exigir atualização dos domínios autorizados no Firebase Authentication.
+
+============================================================
+10. ATUALIZAÇÃO DO FIREBASE
+============================================================
+
+Em uma atualização comum de telas e funções, normalmente não é necessário alterar os dados no Firebase.
+
+Verificar apenas:
+
+1. O projeto Firebase continua sendo o mesmo.
+2. firebase-config.js continua apontando para esse projeto.
+3. O domínio do GitHub Pages permanece autorizado no Firebase Authentication.
+4. O Cloud Firestore permanece ativo.
+5. As regras continuam publicadas.
+6. users/{uid}/app/state continua existindo para o usuário principal.
+
+ALTERAÇÃO DAS REGRAS DO FIRESTORE
+
+Somente quando firestore.rules tiver sido alterado:
+
+1. Conferir as regras em ambiente seguro.
+2. Garantir que cada usuário só possa acessar seus próprios dados.
+3. Publicar as regras pelo console do Firebase ou pelo processo de implantação configurado no projeto.
+4. Testar login, leitura e gravação.
+
+Não modificar manualmente o documento users/{uid}/app/state durante uma atualização normal.
+
+============================================================
+11. ALTERAÇÃO DA ESTRUTURA DOS DADOS
+============================================================
+
+Quando for adicionado, removido ou renomeado um campo, criar uma migração.
+
+Exemplos:
+
+- inclusão de fornecedor;
+- inclusão de placa;
+- novo campo de observação;
+- mudança de categoria/subcategoria;
+- nova estrutura de veículos;
+- alteração do formato do hodômetro;
+- nova forma de cálculo dos abastecimentos.
+
+Procedimento:
+
+1. Aumentar schemaVersion.
+2. Ler a versão antiga.
+3. Converter cada registro para o novo formato.
+4. Manter todos os campos antigos necessários.
+5. Validar os totais antes e depois.
+6. Gravar somente após a migração ser concluída.
+7. Impedir que a migração seja executada repetidamente.
+
+Exemplo conceitual:
+
+schemaVersion atual: 1
+schemaVersion novo: 2
+
+A migração deve ser idempotente: executá-la novamente não pode duplicar, apagar ou alterar indevidamente os dados.
+
+============================================================
+12. CONFERÊNCIA DEPOIS DA PUBLICAÇÃO
+============================================================
+
+Após publicar, conferir na versão oficial:
+
+[ ] O app abre sem erro.
+[ ] A versão nova aparece.
+[ ] O login Google funciona.
+[ ] A mensagem de dados online carregados/sincronizados aparece.
+[ ] O total de lançamentos é igual ou maior que antes.
+[ ] O último hodômetro está correto.
+[ ] O último lançamento permanece.
+[ ] Os cadastros permanecem.
+[ ] O veículo padrão permanece.
+[ ] Os gráficos carregam.
+[ ] As médias e custos permanecem coerentes.
+[ ] É possível incluir um lançamento novo.
+[ ] O lançamento novo aparece após atualizar a página.
+[ ] O lançamento novo aparece em outro navegador/aparelho.
+[ ] A exportação CSV/XLSX funciona.
+[ ] Não existem registros duplicados criados pelo dataset inicial.
+
+============================================================
+13. PROCEDIMENTO DE RETORNO EM CASO DE ERRO
+============================================================
+
+Se a nova versão apresentar erro:
+
+1. Não apagar o Firebase.
+2. Não importar imediatamente um dataset antigo.
+3. Identificar o commit da atualização problemática.
+4. Reverter apenas o código.
+
+Exemplo:
+
+git checkout main
+git pull origin main
+git revert ID_DO_COMMIT
+git push origin main
+
+Outra opção é restaurar uma tag estável em uma branch de correção.
+
+Depois:
+
+1. Aguardar a nova publicação do GitHub Pages.
+2. Alterar novamente a versão do cache no sw.js, se necessário.
+3. Atualizar o navegador com Ctrl + F5.
+4. Conferir os dados no Firebase.
+
+A reversão do código não deve alterar nem apagar o histórico armazenado no Firestore.
+
+============================================================
+14. INSTRUÇÃO PARA FUTURAS ALTERAÇÕES FEITAS POR IA OU DESENVOLVEDOR
+============================================================
+
+Sempre fornecer esta orientação junto com o código-fonte:
+
+"Altere apenas o código necessário e preserve integralmente os dados existentes no Firebase. Antes de concluir, verifique cloud.js, app.js, as chaves do localStorage e o caminho users/{uid}/app/state. A atualização não pode apagar, reinicializar, substituir ou duplicar a base online. O dataset incluído no pacote é apenas uma base inicial. Se houver mudança estrutural, crie migração versionada e idempotente. Atualize a versão do app e do cache do service worker."
+
+Também solicitar ao responsável pela alteração:
+
+1. Informar todos os arquivos modificados.
+2. Informar se houve alteração na estrutura dos dados.
+3. Informar se schemaVersion foi alterado.
+4. Informar se firestore.rules foi alterado.
+5. Confirmar expressamente que o Firebase existente não será sobrescrito.
+6. Entregar uma lista de testes realizados.
+7. Entregar a nova versão em ZIP sem substituir a cópia estável anterior.
+
+============================================================
+15. RESUMO OPERACIONAL
+============================================================
+
+ANTES:
+- sincronizar;
+- exportar CSV/XLSX;
+- guardar ZIP/commit/tag;
+- anotar totais e último hodômetro.
+
+DURANTE:
+- criar branch;
+- preservar firebase-config.js, cloud.js, localStorage e caminho do Firestore;
+- alterar versão do app e cache;
+- criar migração quando a estrutura mudar;
+- testar Firebase existente e conta vazia.
+
+DEPOIS:
+- publicar no GitHub Pages;
+- não reinicializar o Firebase;
+- conferir dados, login, gráficos e novo lançamento;
+- testar em outro navegador/aparelho;
+- manter o backup e registrar a versão.
+
+============================================================
+16. REGRA FINAL
+============================================================
+
+O GitHub controla a versão do aplicativo.
+O Firebase controla os dados online do usuário.
+
+Atualizar o GitHub deve atualizar o funcionamento do app, mas nunca apagar ou substituir automaticamente o conteúdo já existente no Firebase.

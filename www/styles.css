@@ -1,0 +1,476 @@
+:root{--navy:#12395b;--blue:#246b9e;--sky:#eaf4fb;--green:#1f8a70;--ink:#17324d;--muted:#6c7d8d;--line:#dbe5ec;--bg:#f4f7f9}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}header{height:74px;background:var(--navy);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:4}header h1{font-size:21px;margin:0}header small{opacity:.7}header button{background:#ffffff18;color:#fff;border:0;border-radius:50%;font-size:20px;width:42px;height:42px}main{max-width:800px;margin:auto;padding:18px 16px 96px}.page{display:none}.page.active{display:block}.vehicle{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;justify-content:space-between;gap:12px}.vehicle div{display:flex;flex-direction:column}.vehicle span{background:var(--sky);align-self:center;padding:8px;border-radius:9px;font-weight:700}.hero{margin-top:14px;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:18px;padding:22px}.hero b{font-size:31px;display:block;margin:4px 0}.hero span{opacity:.75}.metrics,.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.metrics article,.report-grid article,.chart-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px}.metrics b,.report-grid b{display:block;font-size:19px;margin-top:5px}.primary{width:100%;background:var(--green);color:#fff;border:0;border-radius:13px;padding:15px;font-weight:750;font-size:16px}.section-title,.page-title{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px}.section-title h2,.page-title h2{margin:0}.section-title button{border:0;background:none;color:var(--blue);font-weight:700}.list{display:flex;flex-direction:column;gap:9px}.item,.register-row{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px;display:flex;justify-content:space-between;gap:10px;align-items:center}.item small,.muted,.register-row small{color:var(--muted);display:block}.amount{text-align:right}.income .amount{color:var(--green)}nav{position:fixed;bottom:0;left:0;right:0;height:74px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center;z-index:5;padding-bottom:env(safe-area-inset-bottom)}nav button{width:min(25%,200px);background:none;border:0;color:var(--muted);font-weight:650;font-size:12px}nav button span{display:block;font-size:22px;margin-bottom:2px}nav button.active{color:var(--blue)}.round{border:0;background:var(--green);color:#fff;width:44px;height:44px;border-radius:50%;font-size:22px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.filters.one{grid-template-columns:1fr}.filters select,.full-input,label input,label select,label textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px;font:inherit}.full-input{margin-bottom:8px}.bars{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:20px}.bar{margin:10px 0}.bar div:first-child{display:flex;justify-content:space-between;margin-bottom:5px}.track{height:9px;background:#e8eef2;border-radius:6px;overflow:hidden}.fill{height:100%;background:var(--blue);border-radius:6px}.export{background:var(--navy);color:#fff;border-radius:16px;padding:18px}.export button{background:#fff;color:var(--navy);border:0;border-radius:9px;padding:11px;font-weight:700}.register-row button{border:0;border-radius:8px;padding:8px 10px;margin-left:5px;background:var(--sky);color:var(--blue);font-weight:700}.register-row button.danger{background:#fdeaea;color:#a32929}dialog{border:0;border-radius:18px;width:min(92vw,520px);padding:0}dialog::backdrop{background:#0c223780}dialog form{padding:18px}.dialog-head{display:flex;justify-content:space-between}.dialog-head button{border:0;background:none;font-size:25px}label{display:block;margin:12px 0;font-weight:650}label input,label select,label textarea{margin-top:5px}label textarea{min-height:70px}.odo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.odo-grid input[readonly]{background:#eef3f6}.field-help{color:var(--muted)}.form-error{color:#a32929;font-weight:700}.chart-card{margin:12px 0}.chart-card canvas{width:100%;height:260px;display:block}@media(max-width:560px){.filters,.odo-grid{grid-template-columns:1fr}.hero b{font-size:27px}.chart-card canvas{height:230px}}
+
+.vehicle-auto{background:#eef5fa;border:1px solid #c9dce9;border-radius:12px;padding:12px;margin-bottom:12px}.vehicle-auto small{display:block;color:#5b7083;margin-bottom:4px}.vehicle-auto strong{color:#12395b}
+.vehicle-cards{display:grid;gap:10px}.vehicle-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:1fr auto;gap:4px 12px}.vehicle-card.default{border-left:5px solid var(--green)}.vehicle-card div{display:flex;flex-direction:column}.vehicle-card strong{align-self:center}.vehicle-card span{grid-column:1/-1;color:var(--muted);font-size:13px}
+
+.app-version{display:inline-block;margin-top:3px;font-size:.75rem;opacity:.8}.about-card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 8px 24px rgba(18,57,91,.08)}.about-card h3{margin-top:0}.about-card a{color:#12395b;word-break:break-word}.status-active{color:#1f8a70;font-weight:700}.status-inactive{color:#a64b2a;font-weight:700}.vehicle-card.inactive{opacity:.7;border-style:dashed}nav button{min-width:0}
+
+.edit-movement{margin-top:6px;padding:5px 10px;border:1px solid #b8c7d4;border-radius:8px;background:#fff;color:#12395b;font-size:.78rem;font-weight:700;cursor:pointer}.edit-movement:hover{background:#eef5fa}
+
+.movement-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:7px}.movement-actions button{border:0;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer}.edit-movement{background:var(--sky);color:var(--blue)}.delete-movement{background:#fdeaea;color:#a32929}@media(max-width:420px){.movement-actions{flex-direction:column}}
+
+.developer-photo{display:block;width:min(100%,420px);height:auto;margin:0 auto 20px;border-radius:16px;box-shadow:0 8px 24px rgba(18,57,91,.14)}
+
+/* Relatório de custos por grupo — v3.14 */
+.category-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #dbe5ee;border-radius:14px;background:#fff}
+.category-cost-table{width:100%;min-width:620px;border-collapse:collapse;font-size:.88rem}
+.category-cost-table th,.category-cost-table td{padding:12px 10px;border-bottom:1px solid #e7eef4;text-align:right;white-space:nowrap}
+.category-cost-table thead th{background:#f3f7fa;color:#44627a;font-size:.76rem;text-transform:uppercase;letter-spacing:.03em}
+.category-cost-table th:first-child,.category-cost-table td:first-child{text-align:left}
+.category-cost-table tbody th{color:#17324d}
+.category-cost-table .total-expenses th,.category-cost-table .total-expenses td{background:#e8f2f9;color:#155b88;font-weight:800;border-top:2px solid #6ea5c8}
+.category-cost-table .income-row th,.category-cost-table .income-row td{color:#1f7a5b;font-weight:700}
+.category-cost-table .net-cost-row th,.category-cost-table .net-cost-row td{background:#eaf7f1;color:#176b50;font-weight:900;border-top:2px solid #70b89d;border-bottom:0}
+@media(max-width:520px){.category-cost-table{font-size:.8rem}.category-cost-table th,.category-cost-table td{padding:10px 8px}.category-table-wrap{margin-bottom:4px}}
+
+/* Gráficos legíveis — v3.14 */
+.chart-card{overflow:hidden}.chart-card canvas{min-height:280px}.metrics{align-items:stretch}@media(max-width:560px){.chart-card canvas{min-height:300px}}
+
+/* Interface profissional escura — v4.5 */
+:root{--navy:#061b2d;--blue:#1687e8;--sky:#0d2a42;--green:#17a673;--ink:#eef6ff;--muted:#9bb0c3;--line:#1b405e;--bg:#041421;--card:#08243a;--card-2:#0b2b45;--danger:#e53935}
+html{background:var(--bg)}
+body{background:radial-gradient(circle at top,#0b2a43 0,#041421 42%,#03101b 100%);color:var(--ink);min-height:100vh}
+header{height:78px;background:linear-gradient(180deg,#06213a,#071b2c);border-bottom:1px solid #174462;box-shadow:0 8px 24px #0005}
+header h1{font-weight:800;letter-spacing:-.02em}header small{color:#b7cad9}.app-version{font-size:11px;color:#75bfff}
+main{max-width:860px}
+.vehicle,.metrics article,.report-grid article,.chart-card,.item,.register-row,.bars,.about-card,.vehicle-card{background:linear-gradient(145deg,var(--card-2),var(--card));border:1px solid var(--line);box-shadow:0 10px 28px #0003}
+.vehicle span{background:#0b3553;color:#d8ecff}.hero{background:linear-gradient(135deg,#0b4f7e,#087cc9);box-shadow:0 14px 32px #0005;border:1px solid #2f91d0}.hero b{letter-spacing:-.03em}
+.metrics,.report-grid{gap:12px}.metrics article,.report-grid article{min-height:92px;padding:16px}.metrics small,.report-grid small{color:#a9bfd1}.metrics b,.report-grid b{font-size:20px}
+.primary{background:linear-gradient(180deg,#1687e8,#0866c3);box-shadow:0 8px 20px #006bc755;border:1px solid #41a5ff}.primary:active{transform:translateY(1px)}
+.section-title h2,.page-title h2{font-size:22px}.section-title button{color:#59adf3}
+.filters select,.full-input,label input,label select,label textarea{background:#0a2940;border-color:#28506c;color:#f3f8fc;outline:none}.filters select:focus,.full-input:focus,label input:focus,label select:focus,label textarea:focus{border-color:#2c9bf0;box-shadow:0 0 0 3px #1687e82c}
+.item small,.muted,.register-row small,.field-help{color:var(--muted)}
+nav{background:#061b2df2;border-top:1px solid #204966;backdrop-filter:blur(14px);box-shadow:0 -8px 24px #0005}nav button{color:#8299ac}nav button.active{color:#38a6ff}nav button span{font-size:21px}
+.round{background:#1488e5;box-shadow:0 8px 18px #1687e84d}
+.export{background:linear-gradient(135deg,#092b47,#0d4168);border:1px solid #23618c}.export button{background:#edf7ff;color:#073154}
+.register-row button{background:#123d5d;color:#69b9f8}.register-row button.danger{background:#4a2026;color:#ff9fa6}
+dialog{background:#071f33;color:var(--ink);border:1px solid #28506c;box-shadow:0 24px 80px #000a}dialog::backdrop{background:#010b13cc}.odo-grid input[readonly]{background:#10283a;color:#aac0d0}.dialog-head button{color:#fff}
+.chart-card{padding:18px 16px 12px}.chart-card h3{margin:0 0 8px;font-size:18px}.chart-card canvas{background:linear-gradient(180deg,#0a294000,#061b2d80);border-radius:10px}
+.about-card{text-align:center;padding:24px}.developer-photo{width:96px!important;height:96px!important;max-width:96px!important;object-fit:cover;border-radius:50%;border:3px solid #2e98e8;box-shadow:0 8px 22px #0007;margin:0 auto 12px;display:block}.about-card a{color:#55b2ff}
+@media(max-width:560px){main{padding:14px 12px 94px}.metrics,.report-grid{grid-template-columns:1fr 1fr;gap:9px}.metrics article,.report-grid article{min-height:86px;padding:13px}.metrics b,.report-grid b{font-size:17px}.hero{padding:19px}.chart-card{padding:15px 10px}.developer-photo{width:82px!important;height:82px!important;max-width:82px!important}}
+.chart-note{margin:-2px 0 8px;color:var(--muted);font-size:12px}.chart-legend{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;margin-top:10px}.chart-legend span{display:flex;align-items:center;gap:6px;color:#d8e9f6;font-size:12px}.chart-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+/* Correções de contraste e enquadramento — v4.6 */
+.category-table-wrap{background:#071f33;border-color:#28506c;box-shadow:0 10px 28px #0003}
+.category-cost-table{background:#071f33;color:#eef6ff}
+.category-cost-table th,.category-cost-table td{color:#eef6ff;border-bottom-color:#24445d}
+.category-cost-table thead th{background:#0d304b;color:#c4d9e9}
+.category-cost-table tbody th{color:#f4f9ff}
+.category-cost-table tbody tr:not(.total-expenses):not(.income-row):not(.net-cost-row){background:#08243a}
+.category-cost-table tbody tr:not(.total-expenses):not(.income-row):not(.net-cost-row):nth-child(even){background:#0a2940}
+.category-cost-table .total-expenses th,.category-cost-table .total-expenses td{background:#0d3b5d;color:#ffffff;border-top-color:#2f95d5}
+.category-cost-table .income-row th,.category-cost-table .income-row td{background:#082d2a;color:#57db9c}
+.category-cost-table .net-cost-row th,.category-cost-table .net-cost-row td{background:#0a3a32;color:#7be3ad;border-top-color:#36a875}
+.about-card{overflow:hidden}
+.developer-photo{box-sizing:border-box;aspect-ratio:1/1;overflow:hidden;object-position:center center;flex:0 0 auto}
+
+/* Filtros, menu e ajuda — v4.7 */
+.header-menu-wrap{position:relative}.header-menu{position:absolute;right:0;top:50px;width:245px;padding:8px;background:#08243a;border:1px solid #28506c;border-radius:13px;box-shadow:0 18px 38px #0009;max-height:calc(100dvh - 92px);overflow:auto}.header-menu[hidden]{display:none}.header-menu button{display:block;width:100%;height:auto;padding:10px 12px;border-radius:9px;text-align:left;font-size:14px;background:transparent;color:#eef6ff}.header-menu button:hover{background:#103a59}.menu-group-title{display:block;padding:10px 12px 4px;color:#86a9c0;font-size:.64rem;font-weight:850;letter-spacing:.12em}.menu-group-title:first-child{padding-top:5px}
+.period-filter{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin:0 0 8px;padding:12px;background:linear-gradient(145deg,#0b2b45,#08243a);border:1px solid #1b405e;border-radius:13px}.period-filter small{display:block;margin:0 0 5px;color:#9bb0c3;font-weight:700}.period-filter input{width:100%;min-height:43px;padding:10px;border:1px solid #28506c;border-radius:9px;background:#0a2940;color:#f3f8fc;font:inherit;color-scheme:dark}.period-filter button{min-height:43px;padding:10px 13px;border:1px solid #39759f;border-radius:9px;background:#103b5b;color:#dcefff;font-weight:750}.period-error{min-height:18px;margin:2px 0 7px;color:#ff9fa6;font-weight:700}.period-label{margin:3px 0 12px;color:#b7cad9;font-weight:700}.empty-state{padding:24px;margin:12px 0;text-align:center;color:#b7cad9;background:#08243a;border:1px dashed #39759f;border-radius:14px}
+.help-card{background:linear-gradient(145deg,#0b2b45,#08243a);border:1px solid #1b405e;border-radius:16px;padding:18px;box-shadow:0 10px 28px #0003}.help-card h3{margin-top:0}.help-card details{border-top:1px solid #24445d;padding:11px 2px}.help-card summary{cursor:pointer;color:#eef6ff;font-weight:800}.help-card p{margin:9px 0 2px;color:#b7cad9;line-height:1.55}
+@media(max-width:600px){.period-filter{grid-template-columns:1fr 1fr}.period-filter button{grid-column:1/-1}.header-menu{right:-4px}}
+
+
+/* Instalação PWA — v4.11 */
+.secondary{width:100%;background:#103b5b;color:#eaf6ff;border:1px solid #39759f;border-radius:11px;padding:12px;font-weight:800}.secondary:active{transform:translateY(1px)}.install-app-action[hidden]{display:none!important}
+
+
+/* MyCar+ 1.1 — Material 3, temas e animações */
+:root{--md-primary:#0788e8;--md-surface:#ffffff;--md-on-surface:#17324d;--md-outline:#dbe5ec}
+html[data-theme="light"] body{background:#f4f7f9;color:#17324d}
+html[data-theme="dark"]{--md-surface:#0b2539;--md-on-surface:#eef6ff;--md-outline:#24445d}
+html[data-theme="dark"] body{background:#061827;color:#eef6ff}
+html[data-theme="dark"] .vehicle,html[data-theme="dark"] .metrics article,html[data-theme="dark"] .report-grid article,html[data-theme="dark"] .chart-card,html[data-theme="dark"] .item,html[data-theme="dark"] .register-row,html[data-theme="dark"] .bars,html[data-theme="dark"] nav,html[data-theme="dark"] .help-card,html[data-theme="dark"] .about-card{background:#0b2539;color:#eef6ff;border-color:#24445d}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#102f46;color:#fff;border-color:#31556e}
+.page.active{animation:pageIn .24s ease-out}.metrics article,.report-grid article,.chart-card,.item,.vehicle-card{transition:transform .18s ease,box-shadow .18s ease}.metrics article:active,.item:active,.vehicle-card:active{transform:scale(.985)}
+@keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.splash-screen{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#061827,#0b2d47);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;transition:opacity .35s ease,visibility .35s ease}.splash-screen.hidden{opacity:0;visibility:hidden}.splash-screen img{width:124px;height:124px;border-radius:28px;box-shadow:0 18px 46px #0008}.splash-screen h1{margin:20px 0 4px;font-size:30px}.splash-screen p{margin:0;opacity:.72}.splash-screen span{width:46px;height:4px;background:#ffffff2e;border-radius:4px;margin-top:28px;overflow:hidden}.splash-screen span:after{content:"";display:block;width:55%;height:100%;background:#0788e8;animation:load 1s infinite ease-in-out}@keyframes load{from{transform:translateX(-110%)}to{transform:translateX(190%)}}
+.smart-insights{margin:12px 0}.smart-insights article{background:linear-gradient(135deg,#102f46,#0b2539);color:#fff;border:1px solid #31556e;border-radius:16px;padding:15px}.smart-insights strong,.smart-insights span{display:block}.smart-insights span{margin-top:7px;color:#d8e9f6;font-size:.9rem}
+header{border-bottom-color:#0788e8}nav button.active{color:#0788e8}.primary,.round{background:#0788e8}.export button{margin:4px 5px 4px 0}.app-version{background:#0788e8!important}
+@media(max-width:560px){nav button{font-size:10px;padding:0 2px}nav button span{font-size:20px}.chart-card canvas{height:270px}}
+
+/* MyCar+ 1.1 RC1 — revisão oficial de contraste e identidade */
+:root{
+  --navy:#071827;
+  --navy-2:#0a2237;
+  --card:#0b2941;
+  --card-2:#0d314d;
+  --red:#e31b23;
+  --red-dark:#b9131a;
+  --white:#ffffff;
+  --text:#f7fbff;
+  --muted:#c0d0dc;
+  --line:#28506c;
+  --green:#36c88a;
+  --yellow:#f6c945;
+  --blue:#3ba8ff;
+}
+body{color:var(--text)}
+header{background:linear-gradient(180deg,#091d2e,#071827);border-bottom:3px solid var(--red)}
+header h1,header small{color:#fff}
+.hero{background:linear-gradient(135deg,#17324a,#0c446a);border:1px solid #416b89;box-shadow:inset 5px 0 0 var(--red),0 14px 32px #0005}
+.primary,.round{background:linear-gradient(180deg,var(--red),var(--red-dark));border-color:#ff5b61;box-shadow:0 8px 20px #e31b234f}
+nav button.active{color:#ff4a51}
+nav button.active span{filter:drop-shadow(0 0 7px #e31b2388)}
+.section-title button,.header-menu button:hover{color:#fff}
+
+/* Cartões e textos: nenhum valor deve ficar invisível */
+.vehicle,.metrics article,.report-grid article,.chart-card,.item,.register-row,.bars,.about-card,.vehicle-card,.help-card,.smart-insights article{
+  background:linear-gradient(145deg,var(--card-2),var(--card));
+  border-color:var(--line);
+  color:var(--text);
+}
+.vehicle *,
+.vehicle-card *,
+.item *,
+.register-row *,
+.report-grid *,
+.metrics *,
+.category-cost-table *{text-shadow:none}
+.vehicle strong,.vehicle b,.vehicle-card b,.vehicle-card strong,.vehicle-card span,
+.item b,.item .amount b,.register-row b,.report-grid b,.metrics b,
+#recentList .item b,#recentList .amount b,#movementList .item b,#movementList .amount b{
+  color:#fff!important;
+  opacity:1!important;
+}
+.vehicle small,.vehicle-card small,.item small,.register-row small,
+#recentList .item small,#movementList .item small,.metrics small,.report-grid small{
+  color:var(--muted)!important;
+  opacity:1!important;
+}
+.vehicle-card span{color:#d6e4ee!important}
+.vehicle-card.default{border-left:5px solid var(--red);box-shadow:inset 4px 0 0 #ff6268,0 10px 28px #0003}
+.vehicle span{background:#143d5b;color:#fff}
+
+/* Últimos movimentos */
+#recentList .item,#movementList .item{border-left:4px solid #37637f}
+#recentList .item.income,#movementList .item.income{border-left-color:var(--green)}
+#recentList .amount,#movementList .amount{color:#fff!important}
+#recentList .income .amount b,#movementList .income .amount b{color:#63e2a9!important}
+
+/* Relatórios */
+.report-grid article{min-height:100px;display:flex;flex-direction:column;justify-content:center}
+.report-grid b{font-size:21px;font-weight:900;letter-spacing:.01em}
+#incomeTotal{color:#63e2a9!important}
+#grossTotal,#reportNet,#reportDistance{color:#fff!important}
+.bar div:first-child,.bar div:first-child span,.bar div:first-child b{color:#fff!important}
+.track{background:#173b56}.fill{background:linear-gradient(90deg,var(--red),#ff646a)}
+
+/* Tabelas de relatório */
+.category-cost-table,.category-cost-table tbody th,.category-cost-table td{color:#fff!important}
+.category-cost-table thead th{color:#d7e5ef!important}
+.category-cost-table .income-row th,.category-cost-table .income-row td{color:#63e2a9!important}
+.category-cost-table .total-expenses th,.category-cost-table .total-expenses td,
+.category-cost-table .net-cost-row th,.category-cost-table .net-cost-row td{color:#fff!important}
+
+/* Tema claro também legível */
+html[data-theme="light"] body{background:#eef3f7;color:#152c3f}
+html[data-theme="light"] .vehicle,
+html[data-theme="light"] .metrics article,
+html[data-theme="light"] .report-grid article,
+html[data-theme="light"] .chart-card,
+html[data-theme="light"] .item,
+html[data-theme="light"] .register-row,
+html[data-theme="light"] .bars,
+html[data-theme="light"] .about-card,
+html[data-theme="light"] .vehicle-card,
+html[data-theme="light"] .help-card{background:#fff;color:#152c3f;border-color:#cbd8e1}
+html[data-theme="light"] .vehicle strong,html[data-theme="light"] .vehicle b,
+html[data-theme="light"] .vehicle-card b,html[data-theme="light"] .vehicle-card strong,
+html[data-theme="light"] .item b,html[data-theme="light"] .item .amount b,
+html[data-theme="light"] .register-row b,html[data-theme="light"] .report-grid b,
+html[data-theme="light"] .metrics b{color:#152c3f!important}
+html[data-theme="light"] .vehicle-card span,html[data-theme="light"] .vehicle-card small,
+html[data-theme="light"] .item small,html[data-theme="light"] .register-row small,
+html[data-theme="light"] .metrics small,html[data-theme="light"] .report-grid small{color:#5c7080!important}
+html[data-theme="light"] #incomeTotal,html[data-theme="light"] .income .amount b{color:#137b50!important}
+html[data-theme="light"] .category-cost-table,html[data-theme="light"] .category-cost-table tbody th,
+html[data-theme="light"] .category-cost-table td{color:#17324d!important}
+
+/* foco e acessibilidade */
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #ff7479;outline-offset:2px}
+@media(max-width:420px){.report-grid b{font-size:18px}.vehicle-card{grid-template-columns:1fr}.vehicle-card strong{justify-self:start}.vehicle-card span{grid-column:1}}
+
+/* MyCar+ V5.0 — Painel Inteligente */
+.smart-insights{margin:14px 0 18px}
+.smart-insights .smart-dashboard{background:#102f46;color:#fff;border:1px solid #31556e;border-radius:20px;padding:16px;overflow:hidden}
+.smart-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.smart-dashboard-head small,.smart-dashboard-head strong{display:block}.smart-dashboard-head small{color:#a9c6da;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}.smart-dashboard-head strong{font-size:1.08rem;margin-top:3px}
+.insight-badge{border-radius:999px;padding:6px 10px;font-size:.75rem;font-weight:800;white-space:nowrap;background:#31556e}.insight-badge.good{background:#166b4b}.insight-badge.warn{background:#93433f}.insight-badge.neutral{background:#31556e}
+.insight-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}.insight-metrics>div{background:#173d57;border:1px solid #31556e;border-radius:13px;padding:10px}.insight-metrics small{display:block;color:#bcd2e1;font-size:.72rem;line-height:1.25}.insight-metrics b{display:block;color:#fff;font-size:.98rem;margin-top:5px}
+.insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.insight-grid section{background:#0b2539;border:1px solid #31556e;border-radius:14px;padding:12px}.insight-grid h3{color:#fff;font-size:.88rem;margin:0 0 9px}
+.insight-status{display:grid!important;grid-template-columns:24px 1fr auto;align-items:center;gap:6px;margin:7px 0!important;color:#d8e9f6!important;font-size:.78rem!important}.insight-status span{display:grid!important;place-items:center;width:22px;height:22px;border-radius:50%;margin:0!important;background:#31556e;color:#fff}.insight-status b{font-weight:700}.insight-status em{font-style:normal;text-align:right;color:#d8e9f6}.insight-status.good span{background:#166b4b}.insight-status.warn span{background:#93433f}
+.insight-bar-row{margin:8px 0}.insight-bar-row>div:first-child{display:flex;justify-content:space-between;gap:8px;font-size:.75rem;color:#d8e9f6}.insight-track{height:8px;background:#244a63;border-radius:999px;overflow:hidden;margin-top:4px}.insight-track i{display:block;height:100%;border-radius:999px;background:#2ca9ff}.insight-empty{font-size:.78rem;color:#bcd2e1}
+.insight-list{margin:0}.insight-list>div{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #244a63}.insight-list>div:last-child{border-bottom:0}.insight-list dt{font-size:.74rem;color:#bcd2e1}.insight-list dd{margin:0;text-align:right;font-size:.76rem;font-weight:700;color:#fff;max-width:58%}
+.score-box{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:12px;padding:12px 14px;border-radius:14px;background:#173d57;border:1px solid #31556e}.score-box small,.score-box strong,.score-box p{display:block}.score-box small{color:#bcd2e1}.score-box strong{font-size:1.35rem;margin-top:2px}.score-box strong span{font-size:.75rem;color:#bcd2e1}.score-box p{font-size:.72rem;color:#bcd2e1;margin:4px 0 0;max-width:430px}.score-ring{--score:0;width:60px;height:60px;flex:0 0 60px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#2ca9ff calc(var(--score)*1%),#244a63 0);position:relative}.score-ring:before{content:"";position:absolute;inset:7px;border-radius:50%;background:#102f46}.score-ring span{position:relative;font-weight:900;color:#fff}
+@media(max-width:640px){.insight-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.insight-grid{grid-template-columns:1fr}.smart-dashboard-head{align-items:flex-start}.score-box p{max-width:240px}}
+@media(max-width:390px){.smart-insights .smart-dashboard{padding:12px}.insight-metrics{grid-template-columns:1fr 1fr}.insight-metrics b{font-size:.88rem}.score-box{align-items:flex-start}.score-ring{width:52px;height:52px;flex-basis:52px}}
+
+.chart-section-title{margin:28px 0 12px;padding:10px 12px;border-left:4px solid #2f83bd;background:rgba(47,131,189,.12);border-radius:8px;color:#eaf6ff;font-size:1rem;letter-spacing:.02em}
+
+/* MyCar+ V5.2 — Central de Cadastros */
+.register-page-head{display:flex;align-items:center;gap:12px;margin:4px 0 16px}.register-page-head h2{margin:2px 0 0}.register-page-head small{color:var(--muted)}.register-menu-btn{display:none;width:44px;height:44px;border:1px solid #31556e;border-radius:12px;background:#102f46;color:#fff;font-size:21px}.register-workspace{display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px;align-items:start}.register-drawer{position:sticky;top:94px;background:#0b2539;border:1px solid #31556e;border-radius:18px;padding:12px;min-height:500px}.register-drawer-head{display:flex;justify-content:space-between;align-items:center;padding:5px 8px 10px;color:#fff}.register-drawer-head button{display:none;border:0;background:none;color:#fff;font-size:25px}.register-nav-section{display:block;margin:15px 8px 6px;color:#8faabd;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em}.register-drawer>button[data-register-group]{width:100%;display:grid;grid-template-columns:25px 1fr auto;align-items:center;gap:7px;border:0;border-radius:11px;padding:11px 9px;background:transparent;color:#cfe0ec;text-align:left}.register-drawer>button b{font-size:.82rem}.register-drawer>button em{font-style:normal;min-width:24px;padding:3px 6px;border-radius:999px;background:#173d57;color:#cfe0ec;text-align:center;font-size:.68rem}.register-drawer>button.active{background:#e31b23;color:#fff}.register-content{min-width:0;background:#0b2539;border:1px solid #31556e;border-radius:18px;padding:16px}.register-content-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.register-content-head h3{margin:2px 0 3px;font-size:1.28rem;color:#fff}.register-content-head small,.register-content-head p{color:#9eb8ca}.register-content-head p{margin:0;font-size:.78rem}.register-add{border:0;border-radius:12px;padding:11px 13px;background:#e31b23;color:#fff;font-weight:800;white-space:nowrap}.register-toolbar{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:8px;margin:16px 0 12px}.register-search{display:flex;align-items:center;gap:7px;margin:0;border:1px solid #31556e;background:#102f46;border-radius:11px;padding:0 11px}.register-search input{margin:0;border:0;background:transparent;color:#fff;padding:11px 0}.register-toolbar select{border:1px solid #31556e;background:#102f46;color:#fff;border-radius:11px;padding:11px}.register-drawer-backdrop{display:none}
+html[data-theme="light"] .register-drawer,html[data-theme="light"] .register-content{background:#fff;border-color:#cbd8e1}html[data-theme="light"] .register-content-head h3{color:#152c3f}html[data-theme="light"] .register-search,html[data-theme="light"] .register-toolbar select{background:#f3f7fa;color:#152c3f;border-color:#cbd8e1}html[data-theme="light"] .register-search input{color:#152c3f}
+@media(max-width:720px){.register-menu-btn{display:block}.register-workspace{display:block}.register-content{padding:13px}.register-drawer{position:fixed;z-index:20;left:0;top:0;bottom:0;width:min(82vw,310px);border-radius:0 20px 20px 0;transform:translateX(-105%);transition:transform .22s ease;overflow:auto}.register-drawer.open{transform:translateX(0)}.register-drawer-head button{display:block}.register-drawer-backdrop{position:fixed;z-index:19;inset:0;background:#020a10aa}.register-drawer-backdrop.open{display:block}.register-toolbar{grid-template-columns:1fr}.register-add span{display:none}.register-content-head h3{font-size:1.12rem}}
+
+/* MyCar+ V5.3 — Central de Cadastros em tela inteira */
+.register-hub{width:100%;min-height:calc(100dvh - 180px)}.register-hub-head{margin-bottom:18px}.register-hub-head h2{margin:3px 0 5px}.register-hub-head small,.register-hub-head p{color:var(--muted)}.register-hub-head p{margin:0}.register-hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.register-module{position:relative;display:grid;grid-template-columns:58px minmax(0,1fr) auto 18px;align-items:center;gap:12px;width:100%;min-height:94px;padding:16px;border:1px solid #31556e;border-radius:18px;background:#0b2539;color:#fff;text-align:left;box-shadow:0 10px 24px #020a1029}.register-module-icon{display:grid;place-items:center;width:58px;height:58px;border-radius:17px;background:#e31b23}.register-module-icon svg{width:31px;height:31px;fill:#fff}.register-module-copy{display:flex;flex-direction:column;gap:5px;min-width:0}.register-module-copy b{font-size:1rem}.register-module-copy small{color:#a8c0d0;font-size:.76rem}.register-module em{display:grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border-radius:999px;background:#173d57;color:#dbeaf3;font-style:normal;font-size:.76rem;font-weight:800}.register-module-arrow{font-size:28px;color:#8faabd}.register-module:active{transform:scale(.99)}.driver-module .register-module-icon{background:#1678b8}.subcategory-module .register-module-icon{background:#5965c9}.supplier-module .register-module-icon{background:#178665}.payment-module .register-module-icon{background:#c27712}.register-detail{width:100%;min-height:calc(100dvh - 180px)}.register-detail-nav{margin-bottom:12px}.register-back{border:1px solid #31556e;border-radius:12px;background:#102f46;color:#fff;padding:9px 13px;font-weight:800}.register-content{width:100%}html[data-theme="light"] .register-module{background:#fff;color:#152c3f;border-color:#cbd8e1}html[data-theme="light"] .register-module-copy small{color:#5e7280}html[data-theme="light"] .register-module em{background:#e8f0f5;color:#29465a}html[data-theme="light"] .register-back{background:#fff;color:#152c3f;border-color:#cbd8e1}
+@media(max-width:720px){#cadastros.page.active{padding-left:0;padding-right:0}.register-hub,.register-detail{padding:0 14px}.register-hub-grid{grid-template-columns:1fr;gap:10px}.register-module{grid-template-columns:54px minmax(0,1fr) auto 14px;min-height:86px;padding:13px;border-radius:16px}.register-module-icon{width:54px;height:54px;border-radius:15px}.register-module-icon svg{width:29px;height:29px}.register-module-copy b{font-size:.94rem}.register-module-copy small{font-size:.72rem}.register-detail .register-content{padding:13px}.register-detail-nav{position:sticky;top:78px;z-index:5;padding:6px 0;background:var(--bg)}}
+
+/* MyCar+ V5.4 — cartões profissionais nas consultas de cadastros */
+.register-list{display:grid;gap:12px}.register-card{overflow:hidden;border:1px solid #31556e;border-radius:17px;background:#102f46;box-shadow:0 7px 18px #020a1024}.register-card-main{padding:15px}.register-card-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.register-card-title>div:first-child{min-width:0}.register-card-title b{display:block;color:#fff;font-size:1rem;line-height:1.25;overflow-wrap:anywhere}.register-card-title small{display:block;margin-top:4px;color:#a8c0d0;line-height:1.4}.register-badges{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:5px}.register-badge{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:999px;font-size:.65rem;font-weight:900;letter-spacing:.035em}.register-badge.active{background:#176747;color:#ddfff2}.register-badge.inactive{background:#6b3940;color:#ffe3e6}.register-badge.standard{background:#8a6419;color:#fff4ca}.register-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.register-metrics>div{min-width:0;padding:10px;border:1px solid #31556e;border-radius:11px;background:#0b2539}.register-metrics small{display:block;color:#8faabd;font-size:.69rem;line-height:1.25}.register-metrics strong{display:block;margin-top:4px;color:#fff;font-size:.9rem;overflow-wrap:anywhere}.register-card-actions{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #31556e}.register-card-actions button{display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:46px;border:0;border-radius:0;background:#173d57;color:#e7f3fa;font-weight:800}.register-card-actions button+button{border-left:1px solid #31556e}.register-card-actions .register-delete-action{background:#4e2630;color:#ffdfe2}.register-card-actions button span{font-size:1rem}
+html[data-theme="light"] .register-card{background:#fff;border-color:#cbd8e1;box-shadow:0 7px 18px #14324712}html[data-theme="light"] .register-card-title b,html[data-theme="light"] .register-metrics strong{color:#152c3f!important}html[data-theme="light"] .register-card-title small{color:#5e7280!important}html[data-theme="light"] .register-metrics>div{background:#f3f7fa;border-color:#d5e0e7}html[data-theme="light"] .register-metrics small{color:#657987!important}html[data-theme="light"] .register-card-actions{border-color:#cbd8e1}html[data-theme="light"] .register-card-actions button{background:#edf3f7;color:#24475e}html[data-theme="light"] .register-card-actions button+button{border-color:#cbd8e1}html[data-theme="light"] .register-card-actions .register-delete-action{background:#fff0f1;color:#a8252d}
+@media(max-width:420px){.register-card-main{padding:13px}.register-card-title{display:block}.register-badges{justify-content:flex-start;margin-top:9px}.register-metrics{grid-template-columns:1fr 1fr}.register-metrics>div{padding:9px}.register-card-actions button{min-height:48px;font-size:.82rem}}
+.reference-consumption{margin:14px 0;padding:14px;border:1px solid var(--line,#dbe4ee);border-radius:14px;background:var(--surface-soft,#f6f9fc)}
+.reference-consumption h3{margin:0 0 10px;font-size:14px;color:var(--text,#17324d)}
+.reference-consumption-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.reference-consumption-grid{grid-template-columns:1fr}}
+
+/* MyCar+ V5.7 — grupos e itens */
+/* MyCar+ V5.8 — movimentos com vários itens */
+.movement-items{display:flex;flex-direction:column;gap:10px;margin:9px 0}.movement-item-row{position:relative;border:1px solid #31556e;border-radius:13px;padding:10px;background:#102c42}.movement-item-row .item-row-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(110px,.7fr) 38px;gap:8px;align-items:end}.movement-item-row label{margin:0}.movement-item-row .fuel-price{margin-top:8px}.remove-movement-item{width:38px;height:40px;border:0;border-radius:10px;background:#b3261e;color:#fff;font-size:21px;font-weight:900;cursor:pointer}.remove-movement-item:disabled{opacity:.35;cursor:not-allowed}.add-movement-item{width:100%;border:1px dashed #41b883;border-radius:12px;background:#123b38;color:#bff5dc;padding:11px;font-weight:800;cursor:pointer}.add-movement-item span{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#1f9d68;color:#fff;margin-right:6px}.movement-total{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:12px;border-radius:12px;background:#071f33;color:#fff}.movement-total strong{font-size:1.18rem}.group-locked{opacity:.72}.movement-item-names{display:block;margin-top:3px}.movement-item-count{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:var(--sky);color:var(--blue);font-size:.72rem}
+html[data-theme="light"] .movement-item-row{background:#f6fafc;border-color:#cbd8e1}html[data-theme="light"] .add-movement-item{background:#edf9f3;color:#176b4b}html[data-theme="light"] .movement-total{background:#eaf4fb;color:#17324d}
+@media(max-width:390px){.movement-item-row .item-row-grid{grid-template-columns:1fr 38px}.movement-item-row .item-row-grid label:first-child{grid-column:1/-1}.movement-item-row .item-value{grid-column:1}.remove-movement-item{grid-column:2}}
+/* MyCar+ V5.9 — seleção de grupo e formulários específicos */
+.entry-group-dialog{width:min(94vw,560px)}.entry-group-body{padding:18px;background:#061827;overflow:auto}.entry-group-body>p{margin:0 0 13px;color:#bcd2e1;font-weight:750}.entry-group-list{display:grid;gap:10px}.entry-group-list>button{display:grid;grid-template-columns:54px minmax(0,1fr) 18px;align-items:center;gap:12px;width:100%;min-height:78px;padding:12px;border:1px solid #31556e;border-radius:16px;background:#0b2539;color:#fff;text-align:left}.entry-group-list>button span:nth-child(2){min-width:0}.entry-group-list b,.entry-group-list small{display:block}.entry-group-list b{font-size:1rem}.entry-group-list small{margin-top:4px;color:#a8c0d0;font-size:.72rem}.entry-group-list i{color:#8faabd;font-size:26px;font-style:normal}.entry-group-icon{display:grid!important;place-items:center;width:54px;height:54px;border-radius:15px;color:#fff;font-size:26px;font-weight:900}.entry-group-icon.fuel{background:#0788e8}.entry-group-icon.maintenance{background:#e31b23}.entry-group-icon.admin{background:#5965c9}.entry-group-icon.income{background:#178665}.entry-group-context{display:grid;grid-template-columns:1fr auto;align-items:center;margin:9px 0 2px;padding:10px 11px;border:1px solid #31556e;border-radius:12px;background:#102f46}.entry-group-context small{grid-column:1;color:#8faabd}.entry-group-context strong{grid-column:1;color:#fff;margin-top:2px}.entry-group-context button{grid-column:2;grid-row:1/3;border:1px solid #39759f;border-radius:9px;background:#173d57;color:#dcefff;padding:8px 10px;font-weight:800}.km-reference{display:flex;align-items:center;justify-content:space-between;margin-top:9px;padding:9px 11px;border-radius:10px;background:#102f46;border:1px solid #31556e}.km-reference small{color:#9eb8ca}.km-reference strong{color:#fff}
+html[data-theme="light"] .entry-group-body{background:#eef3f6}html[data-theme="light"] .entry-group-list>button{background:#fff;color:#152c3f;border-color:#cbd8e1}html[data-theme="light"] .entry-group-list small{color:#5e7280}html[data-theme="light"] .entry-group-context,html[data-theme="light"] .km-reference{background:#f3f7fa;border-color:#cbd8e1}html[data-theme="light"] .entry-group-context strong,html[data-theme="light"] .km-reference strong{color:#152c3f}
+@media(max-width:480px){.entry-group-dialog{width:100vw;height:100dvh;max-height:100dvh;border-radius:0}.entry-group-list>button{min-height:74px}.entry-group-body{padding:14px}}
+/* MyCar+ V5.10 — Central de Lançamentos e tela exclusiva de Movimentos */
+.launch-hub-head{margin:5px 0 16px}.launch-hub-head small{color:#8faabd;font-weight:800;text-transform:uppercase;letter-spacing:.07em}.launch-hub-head h2{margin:4px 0}.launch-hub-head p{margin:5px 0 0;color:#bcd2e1}.launch-group-list{display:grid;gap:10px}.launch-group-list>button,.launch-manage>button{display:grid;grid-template-columns:54px minmax(0,1fr) 18px;align-items:center;gap:12px;width:100%;min-height:78px;padding:12px;border:1px solid #31556e;border-radius:16px;background:#0b2539;color:#fff;text-align:left}.launch-group-list b,.launch-group-list small,.launch-manage b,.launch-manage small{display:block}.launch-group-list small,.launch-manage button small{margin-top:4px;color:#a8c0d0;font-size:.72rem}.launch-group-list i,.launch-manage i{color:#8faabd;font-size:26px;font-style:normal}.launch-manage{margin-top:24px;padding-top:17px;border-top:1px solid #31556e}.launch-manage>small{margin:0 0 9px;color:#8faabd;font-size:.68rem;font-weight:900;letter-spacing:.08em}.entry-group-icon.movements-icon{background:#7a4fc2}.launch-group-list>button:active,.launch-manage>button:active{transform:scale(.99)}html[data-theme="light"] .launch-hub-head p{color:#5e7280}html[data-theme="light"] .launch-group-list>button,html[data-theme="light"] .launch-manage>button{background:#fff;color:#152c3f;border-color:#cbd8e1}html[data-theme="light"] .launch-group-list small,html[data-theme="light"] .launch-manage button small{color:#5e7280}.movement-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:5px;margin-top:7px}.movement-actions button{border:1px solid #39759f;border-radius:8px;background:#173d57;color:#e7f3fa;padding:7px 8px;font-size:.7rem;font-weight:800}.movement-actions .view-movement{background:#214d69}.movement-actions .delete-movement{border-color:#7e3b43;background:#4e2630;color:#ffdfe2}html[data-theme="light"] .movement-actions button{background:#edf3f7;color:#24475e;border-color:#cbd8e1}html[data-theme="light"] .movement-actions .delete-movement{background:#fff0f1;color:#a8252d}
+.compact-dialog{width:min(96vw,620px);max-height:min(94dvh,820px);overflow:hidden;border-radius:22px}
+.sectioned-form{display:flex;flex-direction:column;max-height:min(94dvh,820px);padding:0!important}
+.sectioned-form .dialog-head{flex:0 0 auto;align-items:center;padding:16px 18px 13px;border-bottom:1px solid #31556e;background:#071f33}
+.sectioned-form .dialog-head small{display:block;color:#8faabd;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.sectioned-form .dialog-head h2{margin:2px 0 0;font-size:1.25rem}
+.form-scroll{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:12px 14px 18px;background:#061827}
+.form-section{margin:0 0 10px;border:1px solid #31556e;border-radius:15px;background:#0b2539;overflow:hidden}
+.form-section.always-open>h3{display:flex;align-items:center;gap:9px;margin:0;padding:12px 13px;border-bottom:1px solid #31556e;color:#fff;font-size:.9rem}
+.form-section.always-open>h3 span,.section-number{display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:50%;background:#0788e8;color:#fff;font-size:.72rem;font-weight:900}
+.form-section .section-body{padding:3px 13px 11px}
+.optional-section summary{display:flex;align-items:center;gap:9px;padding:12px 13px;cursor:pointer;list-style:none}
+.optional-section summary::-webkit-details-marker{display:none}
+.optional-section summary:after{content:"›";margin-left:auto;color:#8faabd;font-size:1.5rem;line-height:1;transform:rotate(90deg);transition:transform .18s ease}
+.optional-section[open] summary{border-bottom:1px solid #31556e}
+.optional-section[open] summary:after{transform:rotate(-90deg)}
+.optional-section summary b,.optional-section summary small{display:block}
+.optional-section summary b{color:#fff;font-size:.9rem}
+.optional-section summary small{margin-top:2px;color:#8faabd;font-size:.7rem;font-weight:600}
+.compact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sectioned-form label{margin:10px 0;color:#dceaf4;font-size:.78rem}
+.sectioned-form label input,.sectioned-form label select,.sectioned-form label textarea{min-height:44px;margin-top:5px;background:#102f46!important;border-color:#31556e!important;color:#fff!important}
+.sectioned-form .reference-consumption{margin:10px 0;padding:11px;background:#102f46;border-color:#31556e}
+.sectioned-form .reference-consumption h3{color:#fff}
+.form-footer{flex:0 0 auto;display:grid;grid-template-columns:minmax(110px,.72fr) minmax(0,1.28fr);gap:9px;padding:11px 14px calc(11px + env(safe-area-inset-bottom));border-top:1px solid #31556e;background:#071f33;box-shadow:0 -10px 24px #0005}
+.form-footer .primary,.form-cancel{min-height:47px;border-radius:12px;font-weight:850}
+.form-footer .primary{padding:11px}
+.form-cancel{border:1px solid #39759f;background:#102f46;color:#dcefff}
+html[data-theme="light"] .form-scroll{background:#eef3f6}
+html[data-theme="light"] .sectioned-form .dialog-head,html[data-theme="light"] .form-footer{background:#fff;border-color:#cbd8e1}
+html[data-theme="light"] .form-section{background:#fff;border-color:#cbd8e1}
+html[data-theme="light"] .form-section.always-open>h3,html[data-theme="light"] .optional-section[open] summary{border-color:#cbd8e1;color:#152c3f}
+html[data-theme="light"] .optional-section summary b{color:#152c3f}
+html[data-theme="light"] .sectioned-form label{color:#29465a}
+html[data-theme="light"] .sectioned-form label input,html[data-theme="light"] .sectioned-form label select,html[data-theme="light"] .sectioned-form label textarea,html[data-theme="light"] .sectioned-form .reference-consumption{background:#f3f7fa!important;border-color:#cbd8e1!important;color:#152c3f!important}
+html[data-theme="light"] .sectioned-form .reference-consumption h3{color:#152c3f}
+
+/* MyCar+ V5.11 — contraste integral dos temas Claro e Automático
+   O modo automático aplica data-theme="light" quando o sistema está claro,
+   portanto recebe exatamente as mesmas garantias de legibilidade. */
+html[data-theme="light"]{
+  --text:#102a43;
+  --ink:#102a43;
+  --muted:#526b7a;
+  --line:#c5d3dd;
+  --bg:#eef3f7;
+  color-scheme:light;
+}
+html[data-theme="light"] body,
+html[data-theme="light"] main,
+html[data-theme="light"] .page{color:#102a43}
+html[data-theme="light"] .page-title,
+html[data-theme="light"] .page-title h2,
+html[data-theme="light"] .section-title,
+html[data-theme="light"] .section-title h2,
+html[data-theme="light"] .period-label,
+html[data-theme="light"] .launch-hub-head h2,
+html[data-theme="light"] .register-hub-head h2,
+html[data-theme="light"] .register-page-head h2,
+html[data-theme="light"] .chart-section-title{color:#102a43!important}
+html[data-theme="light"] .period-label{color:#29465a!important}
+html[data-theme="light"] .chart-section-title{
+  background:#dfeef8;
+  border-left-color:#176b9b;
+}
+
+/* Cartões, números e listas */
+html[data-theme="light"] .vehicle,
+html[data-theme="light"] .metrics article,
+html[data-theme="light"] .report-grid article,
+html[data-theme="light"] .chart-card,
+html[data-theme="light"] .item,
+html[data-theme="light"] .register-row,
+html[data-theme="light"] .bars,
+html[data-theme="light"] .about-card,
+html[data-theme="light"] .vehicle-card,
+html[data-theme="light"] .help-card{
+  background:#fff!important;
+  color:#102a43!important;
+  border-color:#c5d3dd!important;
+}
+html[data-theme="light"] .vehicle strong,
+html[data-theme="light"] .vehicle b,
+html[data-theme="light"] .vehicle-card b,
+html[data-theme="light"] .vehicle-card strong,
+html[data-theme="light"] .item b,
+html[data-theme="light"] .item .amount,
+html[data-theme="light"] .item .amount b,
+html[data-theme="light"] .register-row b,
+html[data-theme="light"] .report-grid b,
+html[data-theme="light"] .metrics b,
+html[data-theme="light"] #recentList .item b,
+html[data-theme="light"] #recentList .amount,
+html[data-theme="light"] #recentList .amount b,
+html[data-theme="light"] #movementList .item b,
+html[data-theme="light"] #movementList .amount,
+html[data-theme="light"] #movementList .amount b,
+html[data-theme="light"] #grossTotal,
+html[data-theme="light"] #reportNet,
+html[data-theme="light"] #reportDistance{color:#102a43!important}
+html[data-theme="light"] #incomeTotal,
+html[data-theme="light"] #recentList .income .amount b,
+html[data-theme="light"] #movementList .income .amount b{color:#087443!important}
+html[data-theme="light"] .vehicle small,
+html[data-theme="light"] .vehicle-card small,
+html[data-theme="light"] .vehicle-card span,
+html[data-theme="light"] .item small,
+html[data-theme="light"] .register-row small,
+html[data-theme="light"] .metrics small,
+html[data-theme="light"] .report-grid small,
+html[data-theme="light"] .muted,
+html[data-theme="light"] .field-help,
+html[data-theme="light"] .chart-note{color:#526b7a!important}
+
+/* Relatórios, barras e tabelas */
+html[data-theme="light"] .bar div:first-child,
+html[data-theme="light"] .bar div:first-child span,
+html[data-theme="light"] .bar div:first-child b{color:#102a43!important}
+html[data-theme="light"] .track{background:#dce6ed}
+html[data-theme="light"] .category-table-wrap,
+html[data-theme="light"] .category-cost-table{background:#fff!important}
+html[data-theme="light"] .category-cost-table,
+html[data-theme="light"] .category-cost-table tbody th,
+html[data-theme="light"] .category-cost-table td{color:#102a43!important;border-bottom-color:#d8e2e9}
+html[data-theme="light"] .category-cost-table thead th{background:#e8f0f5;color:#29465a!important}
+html[data-theme="light"] .category-cost-table .total-expenses th,
+html[data-theme="light"] .category-cost-table .total-expenses td{background:#dfeef8;color:#124f73!important}
+html[data-theme="light"] .category-cost-table .income-row th,
+html[data-theme="light"] .category-cost-table .income-row td{background:#e6f5ed;color:#087443!important}
+html[data-theme="light"] .category-cost-table .net-cost-row th,
+html[data-theme="light"] .category-cost-table .net-cost-row td{background:#d9f0e5;color:#075f38!important}
+
+/* Filtros, campos e blocos auxiliares */
+html[data-theme="light"] .period-filter,
+html[data-theme="light"] .empty-state{
+  background:#fff;
+  border-color:#c5d3dd;
+  color:#102a43;
+}
+html[data-theme="light"] .period-filter small,
+html[data-theme="light"] .empty-state{color:#526b7a}
+html[data-theme="light"] .period-filter input,
+html[data-theme="light"] .filters select,
+html[data-theme="light"] .full-input,
+html[data-theme="light"] label input,
+html[data-theme="light"] label select,
+html[data-theme="light"] label textarea{
+  background:#fff;
+  color:#102a43;
+  border-color:#b8c9d5;
+  color-scheme:light;
+}
+html[data-theme="light"] .period-filter button,
+html[data-theme="light"] .secondary,
+html[data-theme="light"] .form-cancel{
+  background:#e5eff6;
+  color:#153f5a;
+  border-color:#aac0cf;
+}
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder{color:#657b89;opacity:1}
+
+/* Ajuda, gráficos e navegação */
+html[data-theme="light"] .help-card summary{color:#102a43}
+html[data-theme="light"] .help-card p{color:#526b7a}
+html[data-theme="light"] .chart-legend span{color:#29465a}
+html[data-theme="light"] nav{background:#fff;border-top-color:#c5d3dd}
+html[data-theme="light"] nav button{color:#526b7a}
+html[data-theme="light"] nav button.active{color:#c91820}
+@media(max-width:480px){.compact-dialog{width:100vw;max-width:none;height:100dvh;max-height:100dvh;border-radius:0}.sectioned-form{height:100dvh;max-height:100dvh}.form-scroll{padding:10px}.compact-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sectioned-form .dialog-head{padding-top:calc(13px + env(safe-area-inset-top))}.form-section .section-body{padding-left:11px;padding-right:11px}.sectioned-form label{font-size:.73rem}.sectioned-form label input,.sectioned-form label select{padding:10px 8px}}
+@media(max-width:350px){.compact-grid{grid-template-columns:1fr}.form-footer{grid-template-columns:1fr 1.35fr}}
+/* V5.12 — seleção centralizada do veículo */
+.home-vehicle-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:2px 0 12px}
+.home-vehicle-head h2{margin:3px 0 0;font-size:22px}
+.home-vehicle-head small{color:var(--muted);font-weight:800;letter-spacing:.08em}
+.home-vehicle-head>span{color:var(--muted);font-size:12px}
+.home-vehicle-selector{display:flex;grid-template-columns:none;gap:10px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;padding:2px 2px 12px;margin-bottom:14px;scrollbar-width:thin;scrollbar-color:var(--red) transparent}
+.home-vehicle-selector::-webkit-scrollbar{height:7px}.home-vehicle-selector::-webkit-scrollbar-thumb{background:var(--red);border-radius:999px}
+.home-vehicle-selector .vehicle-card{position:relative;flex:0 0 min(82vw,310px);min-height:112px;font:inherit;color:inherit;text-align:left;cursor:pointer;scroll-snap-align:start}
+.home-vehicle-selector .vehicle-card.selected{border:2px solid var(--red);box-shadow:0 0 0 3px rgba(214,45,52,.14),0 10px 28px #0003}
+.home-vehicle-selector .vehicle-card em,.home-vehicle-selector .vehicle-card i{position:absolute;right:10px;font-size:10px;font-style:normal;font-weight:850;letter-spacing:.04em;border-radius:999px;padding:4px 7px}
+.home-vehicle-selector .vehicle-card em{top:8px;background:#e9f7ef;color:#176b50}
+.home-vehicle-selector .vehicle-card i{bottom:8px;background:var(--red);color:#fff}
+.selected-vehicle-context{display:flex;flex-direction:column;gap:3px;background:linear-gradient(145deg,var(--card-2),var(--card));border:1px solid var(--line);border-left:5px solid var(--red);border-radius:13px;padding:12px 14px;margin-bottom:12px}
+.selected-vehicle-context small{color:var(--muted)}
+.selected-vehicle-context strong{font-size:17px}
+html[data-theme="light"] .selected-vehicle-context{background:#fff;color:#12395b}
+html[data-theme="light"] .home-vehicle-selector .vehicle-card{background:#fff;color:#12395b}
+html[data-theme="dark"] .home-vehicle-selector .vehicle-card,html[data-theme="dark"] .selected-vehicle-context{background:#0b2539;color:#eef6ff;border-color:#24445d}
+@media(max-width:480px){.home-vehicle-head{align-items:flex-start;flex-direction:column}.home-vehicle-head>span{margin-top:-6px}.home-vehicle-selector .vehicle-card{padding-right:88px;flex-basis:88vw}}
+/* V5.16 — configurações técnicas */
+.settings-grid{display:grid;gap:12px}.settings-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}.settings-card h3{margin:0 0 5px}.settings-card p{margin:0;color:var(--muted)}.settings-card label{margin:0;min-width:190px}.settings-options{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.settings-options button,.settings-card>.secondary{border:1px solid #31556e;border-radius:10px;padding:10px 12px;background:#102f46;color:#dceaf4;font-weight:800}.settings-options button.active{background:var(--red);border-color:var(--red);color:#fff}.settings-card select{color:inherit;background:var(--card-2)}html[data-theme="light"] .settings-card{background:#fff;color:#102a43}html[data-theme="light"] .settings-options button,html[data-theme="light"] .settings-card>.secondary{background:#eef4f8;color:#183e59;border-color:#c5d3dd}html[data-theme="light"] .settings-options button.active{background:var(--red);color:#fff;border-color:var(--red)}@media(max-width:620px){.settings-card{grid-template-columns:1fr}.settings-options{justify-content:flex-start}.settings-card label{min-width:0}}
+/* V5.13 — segurança, backup e restauração */
+.security-grid{display:grid;gap:14px;max-width:760px}
+.security-card{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.security-card>span{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#dcedfa;color:#12587f;font-size:23px;font-weight:900}
+.security-card h3{margin:0 0 4px}.security-card p{margin:0;color:var(--muted)}
+.security-card button{border:0;border-radius:10px;padding:11px 14px;background:#176e9d;color:#fff;font-weight:800}
+.security-card.danger{border-color:#8d3434}.security-card.danger>span{background:#fae3e3;color:#9e2525}.security-card.danger button{background:#a72e2e}
+.data-table-choices{display:grid;gap:9px;margin:12px 0 18px}
+.data-table-choices label{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card)}
+.data-table-choices input{width:20px;height:20px}.data-table-choices span{display:flex;flex-direction:column;gap:2px}.data-table-choices small{color:var(--muted)}
+.security-module .register-module-icon{background:#e8f1f7;color:#185a7d;font-size:22px;font-weight:900}
+html[data-theme="light"] .security-card,html[data-theme="light"] .data-table-choices label{background:#fff;color:#102a43}
+@media(max-width:560px){.security-card{grid-template-columns:46px 1fr}.security-card button{grid-column:1/-1}.security-grid{gap:10px}}
+.gps-actions {
+  display: grid;
+  gap: .45rem;
+  margin: .25rem 0 .75rem;
+  padding: .85rem;
+  border: 1px solid color-mix(in srgb, var(--primary, #0788e8) 35%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary, #0788e8) 8%, transparent);
+}
+.gps-actions button {
+  width: 100%;
+}
+.map-link {
+  color: var(--primary, #0788e8);
+  font-weight: 700;
+  text-decoration: none;
+}
+.map-link:hover {
+  text-decoration: underline;
+}
+/* V5.18 — controle técnico e qualidade */
+.alert-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.alert-summary article{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.alert-summary b{display:block;font-size:24px;margin-top:4px}.alert-summary small{color:var(--muted)}
+.alert-card{border-left:5px solid #2879ad}.alert-card[data-status="ATENÇÃO"]{border-left-color:#d69b00}.alert-card[data-status="VENCIDO"]{border-left-color:#c52d34}.alert-card[data-status="CONCLUÍDO"]{border-left-color:#23855b}.alert-card[data-status="INATIVO"]{border-left-color:#77838d}
+.alert-card .alert-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;color:var(--muted);font-size:12px}
+.alert-card .movement-actions{margin-top:9px}.technical-report-actions{margin-top:16px}
+.technical-report-actions button{border:0;border-radius:11px;background:#176e9d;color:#fff;font-weight:800;padding:12px 15px}
+html[data-theme="light"] .alert-summary article{background:#fff;color:#102a43}
+@media(max-width:620px){.alert-summary{grid-template-columns:repeat(2,1fr)}}
+
+/* MyCar+ v5.20 - Intelligence */
+.intelligence-callout{margin-top:18px;padding:18px;border:1px solid #b9ddf6;border-radius:18px;background:linear-gradient(135deg,#eff8ff,#f8fcff);display:flex;align-items:center;justify-content:space-between;gap:18px}.intelligence-callout small,.ai-result-head small{color:#0878c9;font-weight:800;letter-spacing:.08em}.intelligence-callout strong{display:block;margin:4px 0;font-size:1.05rem}.intelligence-callout p{margin:4px 0;color:#526779}.ai-online-notice{display:flex;gap:12px;padding:16px;border-radius:16px;background:#eaf6ff;border:1px solid #afd9f4;margin-bottom:16px}.ai-online-notice>span{color:#0878c9;font-size:1.3rem}.ai-online-notice p{margin:4px 0 0;color:#456071}.ai-analysis-form{background:var(--surface,#fff);padding:18px;border-radius:18px;box-shadow:0 8px 24px rgba(18,57,91,.08)}.ai-analysis-form label{display:block;margin-bottom:13px;font-weight:700}.ai-analysis-form input,.ai-analysis-form select{width:100%;margin-top:6px}.ai-progress{padding:25px;text-align:center}.ai-progress span{display:inline-block;width:30px;height:30px;border:4px solid #cce8fb;border-top-color:#0788e8;border-radius:50%;animation:aiSpin .8s linear infinite}@keyframes aiSpin{to{transform:rotate(360deg)}}.ai-result{margin-top:18px;padding:18px;border:1px solid #d5e3ec;border-radius:18px;background:#fff}.ai-result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid #e3ebf0;padding-bottom:12px}.ai-result-head h3{margin:4px 0}.ai-report-section{margin:18px 0}.ai-report-section h4{color:#12395b;margin:0 0 8px}.ai-report-section p,.ai-report-section li{line-height:1.55}.ai-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.ai-kpis div{padding:12px;border-radius:12px;background:#f3f8fb}.ai-kpis small{display:block;color:#607080}.ai-kpis strong{font-size:1.05rem;color:#12395b}.ai-meta{color:#607080;font-size:.88rem}.ai-result .export{margin-top:16px}@media(max-width:680px){.intelligence-callout{align-items:stretch;flex-direction:column}.ai-kpis{grid-template-columns:1fr 1fr}}

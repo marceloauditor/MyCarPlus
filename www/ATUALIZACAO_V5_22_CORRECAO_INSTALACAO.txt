@@ -1,0 +1,8 @@
+MYCAR+ V5.22 — CORREÇÃO DA INSTALAÇÃO DO APLICATIVO
+
+1. O item "Instalação do aplicativo" permanece visível no menu enquanto o app não estiver instalado.
+2. Quando o navegador oferece a instalação nativa, o botão abre diretamente a confirmação.
+3. Quando o navegador não oferece o prompt, o botão apresenta a orientação adequada para Android, iOS ou computador.
+4. Depois da instalação, os controles de instalação são ocultados automaticamente.
+5. O identificador do manifesto passou a acompanhar o endereço real de publicação.
+6. O cache do PWA foi atualizado para V5.22.

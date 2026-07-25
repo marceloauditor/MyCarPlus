@@ -1,0 +1,26 @@
+MYCAR+ V5.21 — FIREBASE E AI LOGIC
+
+Base
+- Atualização realizada exclusivamente sobre a versão consolidada V5.20.
+- Todos os recursos, cadastros, movimentos, alertas e relatórios foram preservados.
+
+Firebase
+- Projeto conectado: mycarplus-3180a.
+- Login Google mantido.
+- Sincronização no Firestore mantida em users/{uid}/app/state.
+- Persistência local e funcionamento offline preservados.
+
+App Check
+- SDK integrado com reCAPTCHA v3 e renovação automática de token.
+- Somente a chave pública do site está no PWA.
+- A chave secreta não está no código nem no pacote.
+
+Intelligence
+- Integração anterior por Cloud Function/OpenAI substituída pelo Firebase AI Logic.
+- Provedor: Gemini Developer API.
+- Modelo configurável em firebase-config.js.
+- Indicadores continuam calculados localmente e a IA não altera a base.
+- Resposta validada antes da montagem do relatório e exportação em PDF.
+
+Versão: 5.21
+Data: julho de 2026

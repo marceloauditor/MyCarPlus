@@ -1,0 +1,21 @@
+MYCAR+ V5.24 — LOGIN GOOGLE NO ANDROID
+
+Base: V5.23 Capacitor Android.
+
+Atualizações:
+- Implementado login Google nativo no aplicativo Android.
+- Mantido o login Google por janela no navegador e no PWA.
+- Integrada a credencial nativa ao Firebase Web usado pelo Firestore.
+- Implementado encerramento de sessão nas camadas nativa e Web.
+- Adicionadas mensagens objetivas para cancelamento, rede, domínio não autorizado
+  e configuração incompleta do SHA-1/google-services.json.
+- Atualizado o cache do service worker para V5.24.
+
+Configuração obrigatória:
+1. Cadastrar no Firebase o app Android br.com.marceloauditor.mycarplus.
+2. Informar no Firebase o SHA-1 da chave usada na compilação.
+3. Baixar o google-services.json atualizado.
+4. Colocar o arquivo em android/app/google-services.json.
+5. Executar npm.cmd install e npx.cmd cap sync android antes de compilar.
+
+O dataset e as regras funcionais do aplicativo não foram alterados.

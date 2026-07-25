@@ -1,0 +1,9 @@
+MYCAR+ PWA V5.5 — CONSUMO DE REFERÊNCIA POR MOTORIZAÇÃO
+
+1. O cadastro de veículos passa a registrar a motorização: Flex, Gasolina, Etanol ou Diesel.
+2. Veículos flex exibem consumo de referência de Etanol e Gasolina, ambos para cidade e estrada.
+3. Veículos de combustível exclusivo exibem somente os campos correspondentes.
+4. Os valores antigos de cidade e estrada são preservados e migrados inicialmente para Gasolina.
+5. O consumo real continua sendo calculado exclusivamente pelos abastecimentos.
+6. A exportação MyCarPlus.xlsx passa a utilizar o novo esquema de veículos.
+7. A sincronização Firebase passa ao schemaVersion 2, mantendo compatibilidade com dados anteriores.

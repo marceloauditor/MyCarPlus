@@ -1,0 +1,10 @@
+MYCAR+ PWA V5.11 — CONTRASTE DOS TEMAS CLARO E AUTOMÁTICO
+
+1. Textos e números dos cartões claros padronizados em azul-marinho.
+2. Valores de Custo bruto, Custo líquido e Distância corrigidos no tema claro.
+3. Rótulos e valores das barras corrigidos para fundo claro.
+4. Tabelas de relatórios ajustadas com texto escuro e destaques acessíveis.
+5. Títulos, subtítulos, filtros, campos, ajuda, gráficos e navegação revisados.
+6. Modo Automático usa as mesmas regras do tema Claro quando o sistema está claro.
+7. Tema Escuro preservado.
+8. Cache do PWA atualizado para distribuir imediatamente as novas cores.

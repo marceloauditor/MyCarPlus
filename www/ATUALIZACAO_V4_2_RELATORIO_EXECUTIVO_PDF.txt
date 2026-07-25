@@ -1,0 +1,13 @@
+MYCAR+ V4.2 — RELATÓRIO EXECUTIVO PDF
+
+Implementado relatório executivo dinâmico, objetivo e formatado em duas páginas A4.
+
+Principais melhorias:
+- geração pelo botão "Gerar PDF" da tela Relatórios;
+- uso do veículo e período selecionados;
+- página 1 com KPIs, consumo anual, custo total por grupo, tabela de combustíveis e leitura executiva;
+- página 2 com evolução mensal de gastos, principais manutenções, maiores despesas, estatísticas de abastecimento, composição financeira e conclusão;
+- gráficos SVG incorporados diretamente no relatório;
+- cálculo automático de custo bruto, receitas, custo líquido, custo/km, custo/dia, consumo e participações;
+- impressão otimizada para A4, limitada a duas páginas;
+- versão e cache do PWA atualizados.
