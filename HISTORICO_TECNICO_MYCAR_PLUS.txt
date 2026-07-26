@@ -38,6 +38,28 @@ V5.27 — Cadastros contextuais e navegação de lançamentos
 - Histórico técnico anterior consolidado neste único arquivo.
 
 ORIENTAÇÃO DE MANUTENÇÃO
-- A fonte oficial da interface está em www.
-- As cópias em android/app/src/main/assets/public são geradas por npx cap sync android.
+- A fonte oficial da interface está na raiz do repositório.
+- A pasta www é gerada por npm run sync:web e os ativos Android são gerados por npm run sync:android.
 - Não editar manualmente os ativos Android gerados.
+
+============================================================
+VERSÃO 5.29 — NAVEGAÇÃO SEGURA, LIMPEZA E OTIMIZAÇÃO
+Data: 26/07/2026
+============================================================
+
+1. Relatório inteligente com botão Fechar relatório.
+2. Relatório aberto em nova janela com botões Fechar relatório e Imprimir/Salvar em PDF.
+3. Tecla Esc fecha diálogos ou retorna à tela anterior.
+4. Botão/gesto Voltar do Android fecha primeiro o diálogo ativo e depois retorna à página anterior.
+5. Botão Voltar incluído na tela de análise inteligente.
+6. Navegação interna com histórico de páginas e retorno seguro à tela inicial.
+7. Imagem desenvolvedor.png reduzida de aproximadamente 3,45 MB para cerca de 160 KB, em 512 × 512 px.
+8. validation.css consolidado em styles.css.
+9. Imagem não utilizada mycar-plus-identidade.png removida.
+10. Documentação Firebase movida de www para docs/ e firebase/.
+11. Raiz definida como fonte oficial; scripts/sync-web-root.js agora sincroniza raiz → www.
+12. webContentsDebuggingEnabled desativado para produção.
+13. Scripts Gradle ajustados para gradlew.bat no Windows.
+14. Versões atualizadas: app 5.29, pacote 5.29.0, Android versionCode 529 e versionName 5.29.0.
+15. Cache do service worker atualizado para V5.29.
+16. Manual de ajuda atualizado com regras de fechamento e retorno.

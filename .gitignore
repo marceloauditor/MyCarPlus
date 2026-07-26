@@ -6,5 +6,3 @@ android/build/
 *.jks
 *.keystore
 google-services.json
-
-android/.idea/

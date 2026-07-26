@@ -1,14 +1,23 @@
 {
   "name": "mycar-plus",
-  "version": "5.27.0",
+  "version": "5.30.0",
   "private": true,
   "description": "MyCar+ para Web/PWA e Android com Capacitor",
+  "author": "Marcelo Batista Ribeiro",
+  "license": "UNLICENSED",
   "scripts": {
     "sync": "npx cap sync android",
     "copy": "npx cap copy android",
     "open:android": "npx cap open android",
-    "build:debug": "cd android && ./gradlew assembleDebug",
-    "build:release": "cd android && ./gradlew bundleRelease"
+    "sync:web": "node scripts/sync-web-root.js",
+    "sync:android": "npm run sync:web && npx cap sync android",
+    "clean": "if exist android\\app\\build rmdir /s /q android\\app\\build & if exist android\\.gradle rmdir /s /q android\\.gradle",
+    "rebuild": "npm install && npm run sync:android",
+    "build:debug": "cd android && gradlew.bat assembleDebug",
+    "build:release": "cd android && gradlew.bat bundleRelease",
+    "apk": "npm run sync:android && cd android && gradlew.bat assembleDebug",
+    "aab": "npm run sync:android && cd android && gradlew.bat bundleRelease",
+    "android": "npm run sync:android && npx cap open android"
   },
   "dependencies": {
     "@capacitor-firebase/authentication": "^7.5.0",
