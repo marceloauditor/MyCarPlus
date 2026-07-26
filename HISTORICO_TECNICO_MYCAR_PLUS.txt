@@ -1,0 +1,43 @@
+MYCAR+ — HISTÓRICO TÉCNICO CONSOLIDADO
+Atualizado em 26/07/2026
+
+V4 — Estrutura de dados e relatórios
+- Tratamento do dataset veicular, relatório executivo em PDF e gráficos dinâmicos.
+
+V5.0 a V5.10 — Painel, cadastros e movimentos
+- Painel inteligente, gráficos gerenciais, Central de Cadastros e formulários responsivos.
+- Grupos de lançamento: Combustível, Manutenção, Administrativo e Receita.
+- Movimentos com vários itens do mesmo grupo e consultas organizadas.
+
+V5.11 a V5.18 — Experiência e controle técnico
+- Contraste dos temas, seleção central do veículo, GPS para fornecedores e menu técnico.
+- Melhorias responsivas e controles de qualidade.
+
+V5.20 a V5.24 — Inteligência, alertas e Android
+- Alertas técnicos, MyCar+ Intelligence, Firebase AI Logic, PWA e Capacitor.
+- Correções de instalação e autenticação Google no Android.
+
+V5.25 — GPS e fornecedor automático
+- Captura opcional de localização no lançamento.
+- Sugestão de fornecedor por proximidade e consulta reversa do endereço.
+
+V5.26 — Cadastros, inteligência e alertas
+- Correções de inclusão, alteração, salvar, cancelar e fechar nos cadastros.
+- Datas padrão da análise inteligente vinculadas ao movimento ativo.
+- Alertas restritos a veículos ativos e revisão de contraste em tema claro.
+
+V5.27 — Cadastros contextuais e navegação de lançamentos
+- Listagens contextuais para Item, Motorista e Fornecedor durante o movimento.
+- Pesquisa e botão verde “＋ Novo” em cada listagem.
+- Itens filtrados automaticamente pelo grupo do lançamento.
+- Cadastro rápido com retorno ao lançamento e seleção automática do novo registro.
+- Preservação integral do formulário durante consulta, cadastro, cancelamento e retorno.
+- Tratamento uniforme de Cancelar, X e botão Voltar do Android nos diálogos contextuais.
+- Correção do contraste do selo de versão na faixa azul da tela inicial.
+- Manual da Central de Ajuda atualizado.
+- Histórico técnico anterior consolidado neste único arquivo.
+
+ORIENTAÇÃO DE MANUTENÇÃO
+- A fonte oficial da interface está em www.
+- As cópias em android/app/src/main/assets/public são geradas por npx cap sync android.
+- Não editar manualmente os ativos Android gerados.

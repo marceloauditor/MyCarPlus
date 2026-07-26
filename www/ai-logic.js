@@ -71,6 +71,10 @@ window.mycarAiAnalyze = async (indicators) => {
   const prompt = `Você é um analista veicular. Responda em português do Brasil e use somente os indicadores fornecidos.
 Não invente números, diagnósticos mecânicos ou causalidade. Informe quando a amostra for insuficiente.
 Abastecimentos incompletos entram nos custos, mas não no consumo em km/L.
+O fornecedor é opcional. Se estiver ausente ou a qualidade dessa informação for baixa,
+registre isso somente na análise de fornecedores e nas limitações, sem invalidar os demais indicadores.
+Quando houver consumo de referência cidade/estrada no veículo, compare o consumo apurado com essa faixa,
+sem afirmar qual foi o tipo de percurso.
 Retorne exclusivamente JSON válido, sem markdown, com estas chaves:
 executive_summary (string), fuel_analysis (string), cost_analysis (string),
 anomalies (array de strings), maintenance_analysis (string),

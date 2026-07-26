@@ -1,8 +1,0 @@
-MYCAR+ V5.15 — SEGURANÇA E DADOS NO MENU
-
-- Retirado o cartão Segurança e dados da Central de Cadastros.
-- Incluído o item Segurança e dados no menu superior.
-- Posicionado imediatamente antes de Sobre.
-- Preservadas as funções de backup, restauração e exclusão protegida.
-- Preservados o GPS, o fornecedor local e o dataset XLSX da V5.14.
-- Cache do PWA atualizado para V5.15.

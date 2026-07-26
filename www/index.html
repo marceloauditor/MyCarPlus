@@ -28,7 +28,7 @@
 <div>
 <small>Controle automotivo</small>
 <h1>MyCar+</h1>
-<span class="app-version" id="homeVersion">v5.25</span>
+<span class="app-version" id="homeVersion">v5.27</span>
 </div>
 <div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -529,42 +529,46 @@
 </details>
 <details>
 <summary>2. Cadastros</summary>
-<p>No menu superior, abra Cadastros para incluir, alterar ou excluir itens de lançamento, motoristas e veículos. O item marcado como Padrão aparece primeiro nos lançamentos.</p>
+<p>No menu superior, abra Cadastros para incluir, alterar ou excluir itens, motoristas, veículos, fornecedores e formas de pagamento. Durante um lançamento, use a seta ao lado de Item, Motorista ou Fornecedor para abrir a listagem contextual.</p>
 </details>
 <details>
 <summary>3. Abastecimento</summary>
-<p>Em Lançamentos, escolha Abastecimento e informe data, hodômetro, preço por litro e valor total. Os litros, a distância e o consumo são calculados automaticamente.</p>
+<p>Em Lançamentos, escolha Abastecimento e informe data, hodômetro, preço por litro e valor total. Os litros, a distância e o consumo são calculados automaticamente. A listagem de itens mostra somente cadastros do grupo Combustível.</p>
 </details>
 <details>
 <summary>4. Manutenção, administrativo e receitas</summary>
-<p>Escolha o Grupo correspondente, informe os itens e valores e salve. Esses Grupos não exibem preço por litro nem litros.</p>
+<p>Escolha o Grupo correspondente, informe os itens e valores e salve. Esses Grupos não exibem preço por litro nem litros. O filtro contextual impede a escolha de item pertencente a outro grupo.</p>
 </details>
 <details>
-<summary>5. Regra do hodômetro</summary>
+<summary>5. Cadastro rápido durante o lançamento</summary>
+<p>Na listagem de Item, Motorista ou Fornecedor, toque no botão verde “＋ Novo”. Ao salvar, o aplicativo retorna ao lançamento, atualiza a lista e seleciona o novo cadastro. Cancelar, fechar no X ou usar o botão Voltar do celular retorna sem apagar os dados já preenchidos.</p>
+</details>
+<details>
+<summary>6. Regra do hodômetro</summary>
 <p>O hodômetro atual deve ser inteiro e não pode ser inferior ao último hodômetro existente na data do lançamento.</p>
 </details>
 <details>
-<summary>6. Movimentos e edição</summary>
+<summary>7. Movimentos e edição</summary>
 <p>Em Lançamentos, abra Movimentos para pesquisar por data, descrição, item, Grupo ou local. Use Consultar, Alterar ou Excluir no movimento desejado.</p>
 </details>
 <details>
-<summary>7. Filtro por período</summary>
+<summary>8. Filtro por período</summary>
 <p>Informe uma ou ambas as datas. A data inicial inclui registros a partir dela e a final inclui registros até ela. Use Limpar período para retornar à visão Geral.</p>
 </details>
 <details>
-<summary>8. Relatórios e gráficos</summary>
+<summary>9. Relatórios e gráficos</summary>
 <p>Essas telas usam automaticamente o veículo escolhido na tela inicial. Os totais, médias, distância, consumo, custo por km e gráficos são recalculados conforme o período selecionado.</p>
 </details>
 <details>
-<summary>9. Exportação XLSX</summary>
+<summary>10. Exportação XLSX</summary>
 <p>Em Relatórios, toque em Exportar XLSX para baixar o banco completo no formato oficial MyCarPlus.xlsx.</p>
 </details>
 <details>
-<summary>10. Sincronização e segurança</summary>
+<summary>11. Sincronização e segurança</summary>
 <p>Aguarde a conclusão da sincronização antes de fechar o aplicativo. Antes de alterações importantes, mantenha uma exportação XLSX de segurança.</p>
 </details>
 <details>
-<summary>11. Instalação no celular</summary>
+<summary>12. Instalação no celular</summary>
 <p>Abra o menu superior e toque em Instalar aplicativo quando a opção estiver disponível. Também é possível usar o menu do Chrome e escolher Instalar aplicativo ou Adicionar à tela inicial.</p>
 <button type="button" id="helpInstallBtn" class="secondary install-app-action">⬇ Instalar MyCar+</button>
 <p id="installHelpText" class="field-help">Toque no botão para instalar ou ver a orientação adequada ao seu navegador.</p>
@@ -582,7 +586,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.25</p>
+<strong>Versão:</strong> 5.27</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>
@@ -758,13 +762,10 @@
 </span>
 </summary>
 <div class="section-body">
-<label>Motorista<select name="motorista">
-</select>
-</label>
+<label>Motorista<div class="context-field"><select name="motorista"></select><button type="button" class="context-open" data-context-type="MOTORISTA" aria-label="Consultar motoristas">›</button></div></label>
 <label>
 <span id="entrySupplierLabel">Fornecedor / local</span>
-<select name="fornecedor">
-</select>
+<div class="context-field"><select name="fornecedor"></select><button type="button" class="context-open" data-context-type="FORNECEDOR" aria-label="Consultar fornecedores">›</button></div>
 </label>
 <div class="gps-actions">
 <button type="button" id="useCurrentLocation" class="secondary">⌖ Usar localização atual</button>
@@ -792,6 +793,21 @@
 </div>
 </form>
 </dialog>
+<dialog id="contextSelectorDialog" class="compact-dialog context-selector-dialog">
+<div class="context-selector">
+<div class="dialog-head">
+<div><small>Cadastro durante o lançamento</small><h2 id="contextSelectorTitle">Selecionar cadastro</h2></div>
+<button type="button" id="closeContextSelector" aria-label="Voltar ao lançamento">×</button>
+</div>
+<div class="context-selector-toolbar">
+<label class="register-search"><span>⌕</span><input id="contextSelectorSearch" type="search" placeholder="Pesquisar..."></label>
+<button type="button" id="newContextRegister" class="context-new">＋ Novo</button>
+</div>
+<p id="contextSelectorHint" class="field-help"></p>
+<div id="contextSelectorList" class="context-selector-list"></div>
+<div class="form-footer"><button type="button" id="cancelContextSelector" class="form-cancel">Voltar ao lançamento</button></div>
+</div>
+</dialog>
 <dialog id="alertDialog" class="compact-dialog">
 <form method="dialog" id="alertForm" class="sectioned-form">
 <input type="hidden" name="id"><div class="dialog-head"><div><small>Central de Alertas</small><h2 id="alertFormTitle">Novo alerta</h2></div><button type="button" class="alert-cancel" aria-label="Fechar">×</button></div>
@@ -804,7 +820,7 @@
 </div></section>
 <section class="form-section always-open"><h3><span>2</span> Vencimento e recorrência</h3><div class="section-body">
 <label>Critério<select name="criterion"><option value="DATE">Data</option><option value="KM">Quilometragem</option><option value="BOTH">Data e quilometragem — primeiro que ocorrer</option></select></label>
-<div class="compact-grid"><label>Data prevista<input name="dueDate" type="date"></label><label>Avisar antes (dias)<input name="leadDays" type="number" min="0" value="7"></label></div>
+<div class="compact-grid"><label>Data prevista<input name="dueDate" type="date"></label><label>Avisar antes (dias)<input name="leadDays" type="number" min="0" value="30"></label></div>
 <div class="compact-grid"><label>Quilometragem prevista<input name="dueKm" type="number" min="0"></label><label>Avisar antes (km)<input name="leadKm" type="number" min="0" value="500"></label></div>
 <label>Recorrência<select name="recurrence"><option value="NONE">Sem recorrência</option><option value="MONTHS">Por meses</option><option value="KM">Por quilômetros</option><option value="BOTH">Por meses e quilômetros</option></select></label>
 <div class="compact-grid"><label>Repetir a cada (meses)<input name="recurrenceMonths" type="number" min="1"></label><label>Repetir a cada (km)<input name="recurrenceKm" type="number" min="1"></label></div>
@@ -819,7 +835,7 @@
 <small>Central de Cadastros</small>
 <h2 id="registerTitle">Incluir cadastro</h2>
 </div>
-<button value="cancel" aria-label="Fechar">×</button>
+<button type="button" class="register-cancel" aria-label="Fechar">×</button>
 </div>
 <input type="hidden" name="id">
 <input type="hidden" name="grupoCadastro">
@@ -995,8 +1011,8 @@
 </div>
 </div>
 <div class="form-footer">
-<button class="form-cancel" value="cancel">Cancelar</button>
-<button class="primary" value="default">Salvar</button>
+<button type="button" class="form-cancel register-cancel">Cancelar</button>
+<button type="submit" class="primary" value="default">Salvar</button>
 </div>
 </form>
 </dialog>

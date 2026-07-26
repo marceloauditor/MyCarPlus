@@ -129,7 +129,7 @@ window.MyCarPlusDB = (() => {
     }));
     const vehicleById = Object.fromEntries(vehicles.map(v => [v.id, v]));
     const drivers = sheets.Motoristas.map(r => ({
-      id:r.id, nome:r.nome, numeroCnh:r.numero_cnh || "", categoriaCnh:r.categoria_cnh || "",
+      id:r.id, nome:r.nome, numeroCnh:r.numero_cnh || "", grupoCnh:r.grupo_cnh || r.categoria_cnh || "",
       validadeCnh:r.validade_cnh ? excelDate(r.validade_cnh).slice(0,10) : "",
       ativo:bool(r.ativo), padrao:bool(r.padrao), observacao:r.observacao || "",
       criadoEm:r.criado_em ? excelDate(r.criado_em) : "",
@@ -220,7 +220,7 @@ window.MyCarPlusDB = (() => {
       Number(v.capacidadeTanque || 0)
     ]);
     const driverRows = drivers.map(d => [
-      d.id, d.nome, d.numeroCnh || "", d.categoriaCnh || "",
+      d.id, d.nome, d.numeroCnh || "", d.grupoCnh || d.categoriaCnh || "",
       serialDate(d.validadeCnh), yes(d.ativo !== false), yes(!!d.padrao),
       serialDate(d.criadoEm), serialDate(d.atualizadoEm), d.observacao || ""
     ]);

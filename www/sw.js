@@ -1,4 +1,4 @@
-const CACHE = "mycar-plus-v5-25-gps-fornecedor-automatico";
+const CACHE = "mycar-plus-v5-27-cadastros-contextuais";
 const APP_SHELL = [
   "./",
   "index.html",

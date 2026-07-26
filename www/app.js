@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.25 GPS e fornecedor automático",
+  APP_VERSION = "5.27",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -33,10 +33,11 @@ let movements = [],
   alerts = [],
   alertHistory = [],
   technicalParameters = [];
+let entryContext = null;
 const NI = "NI — Não informado";
 const TECHNICAL_ITEMS = {
-  OIL: { key: "OIL", label: "Troca de Óleo", km: 5000, months: 4 },
-  BATTERY: { key: "BATTERY", label: "Bateria", km: 0, months: 24 },
+  OIL: { key: "OIL", label: "Troca de Óleo", km: 9000, months: 6 },
+  BATTERY: { key: "BATTERY", label: "Bateria", km: 0, months: 36 },
 };
 const defaults = [
   ["COMBUSTÍVEL", "Etanol", 1],
@@ -881,6 +882,9 @@ function compactValue(v, format = "money") {
   if (a >= 1000) return "R$ " + num(v / 1000, 1) + " mil";
   return money(v);
 }
+function chartTextColor() {
+  return document.documentElement.dataset.theme === "light" ? "#172b3a" : "#d8e9f6";
+}
 function drawChart(canvas, labels, values, format = "money") {
   const dpr = devicePixelRatio || 1,
     w = canvas.clientWidth || 600,
@@ -896,6 +900,7 @@ function drawChart(canvas, labels, values, format = "money") {
     right = 18,
     bw = (w - left - right) / Math.max(labels.length, 1);
   c.font = "11px system-ui";
+  c.fillStyle = chartTextColor();
   labels.forEach((l, i) => {
     const x = left + i * bw + bw * 0.18,
       y = h - bottom - (Math.abs(values[i]) / max) * (h - bottom - 58),
@@ -912,6 +917,7 @@ function drawChart(canvas, labels, values, format = "money") {
     c.translate(x + Math.max(8, bw * 0.64) / 2, h - bottom + 15);
     if (labels.length > 5 || bw < 72) c.rotate(-Math.PI / 5);
     c.textAlign = labels.length > 5 || bw < 72 ? "right" : "center";
+    c.fillStyle = chartTextColor();
     c.fillText(String(l), 0, 0);
     c.restore();
   });
@@ -952,7 +958,7 @@ function drawGroupedChart(canvas, labels, series, format = "money") {
         c.font = "10px system-ui";
       }
     });
-    c.fillStyle = "#d8e9f6";
+    c.fillStyle = chartTextColor();
     c.save();
     c.translate(left + i * gw + gw / 2, h - bottom + 16);
     if (gw < 85) c.rotate(-Math.PI / 5);
@@ -971,7 +977,7 @@ function drawGroupedChart(canvas, labels, series, format = "money") {
     }
     c.fillStyle = ser.active ? "#246b9e" : "#d9822b";
     c.fillRect(lx, ly - 9, 10, 10);
-    c.fillStyle = "#d8e9f6";
+    c.fillStyle = chartTextColor();
     c.textAlign = "left";
     c.fillText(label, lx + 14, ly);
     lx += need;
@@ -1021,7 +1027,7 @@ function drawLineChart(canvas, labels, values, format = "money", color = "#246b9
   const { c, w, h } = canvasBase(canvas), left = 58, right = 22, top = 28, bottom = 58,
     plotW = w - left - right, plotH = h - top - bottom,
     max = Math.max(...values.map(Number), 1), min = Math.min(0, ...values.map(Number)), span = Math.max(max - min, 1);
-  c.strokeStyle = "#6f8ba166"; c.fillStyle = "#d8e9f6"; c.lineWidth = 1; c.font = "11px system-ui";
+  c.strokeStyle = "#6f8ba166"; c.fillStyle = chartTextColor(); c.lineWidth = 1; c.font = "11px system-ui";
   for (let i = 0; i <= 4; i++) {
     const y = top + plotH * i / 4, value = max - span * i / 4;
     c.beginPath(); c.moveTo(left, y); c.lineTo(w - right, y); c.stroke();
@@ -1039,7 +1045,7 @@ function drawLineChart(canvas, labels, values, format = "money", color = "#246b9
       c.fillStyle = "#ffffff"; c.font = "800 11px system-ui"; c.textAlign = "center";
       c.fillText(axisLabel(values[i], format), p.x, Math.max(14, p.y - 10));
     }
-    c.fillStyle = "#d8e9f6"; c.font = "11px system-ui";
+    c.fillStyle = chartTextColor(); c.font = "11px system-ui";
     c.save(); c.translate(p.x, h - bottom + 18);
     if (labels.length > 6) c.rotate(-Math.PI / 5);
     c.textAlign = labels.length > 6 ? "right" : "center"; c.fillText(labels[i], 0, 0); c.restore();
@@ -1052,13 +1058,13 @@ function drawMonthlyChart(canvas, labels, values) {
   for (let i = 0; i <= 4; i++) {
     const y = top + plotH * i / 4, value = max * (1 - i / 4);
     c.strokeStyle = "#6f8ba166"; c.beginPath(); c.moveTo(left, y); c.lineTo(w - right, y); c.stroke();
-    c.fillStyle = "#d8e9f6"; c.textAlign = "right"; c.fillText(axisLabel(value, "thousands"), left - 7, y + 4);
+    c.fillStyle = chartTextColor(); c.textAlign = "right"; c.fillText(axisLabel(value, "thousands"), left - 7, y + 4);
   }
   values.forEach((value, i) => {
     const barW = Math.max(5, step * .62), x = left + i * step + (step - barW) / 2,
       bh = value / max * plotH, y = top + plotH - bh;
     c.fillStyle = "#246b9e"; c.fillRect(x, y, barW, bh);
-    c.fillStyle = "#d8e9f6"; c.save(); c.translate(x + barW / 2, h - bottom + 17);
+    c.fillStyle = chartTextColor(); c.save(); c.translate(x + barW / 2, h - bottom + 17);
     if (labels.length > 6) c.rotate(-Math.PI / 5);
     c.textAlign = labels.length > 6 ? "right" : "center"; c.fillText(labels[i], 0, 0); c.restore();
   });
@@ -1090,7 +1096,7 @@ function drawMultiLineChart(canvas, labels, series, format = "money") {
   for (let i = 0; i <= 4; i++) {
     const y = top + plotH * i / 4, value = max - span * i / 4;
     c.strokeStyle = "#6f8ba166"; c.beginPath(); c.moveTo(left, y); c.lineTo(w - right, y); c.stroke();
-    c.fillStyle = "#d8e9f6"; c.textAlign = "right"; c.fillText(axisLabel(value, format), left - 7, y + 4);
+    c.fillStyle = chartTextColor(); c.textAlign = "right"; c.fillText(axisLabel(value, format), left - 7, y + 4);
   }
   series.forEach((ser, si) => {
     const points = ser.values.map((value, i) => ({
@@ -1101,11 +1107,11 @@ function drawMultiLineChart(canvas, labels, series, format = "money") {
     points.forEach((p, i) => i ? c.lineTo(p.x, p.y) : c.moveTo(p.x, p.y)); c.stroke();
     points.forEach(p => { c.fillStyle = ser.color; c.beginPath(); c.arc(p.x, p.y, 4, 0, Math.PI * 2); c.fill(); });
     const lx = left + si * Math.max(120, plotW / Math.max(series.length, 1));
-    c.fillStyle = ser.color; c.fillRect(lx, 13, 12, 12); c.fillStyle = "#d8e9f6"; c.textAlign = "left"; c.fillText(ser.name, lx + 17, 23);
+    c.fillStyle = ser.color; c.fillRect(lx, 13, 12, 12); c.fillStyle = chartTextColor(); c.textAlign = "left"; c.fillText(ser.name, lx + 17, 23);
   });
   labels.forEach((label, i) => {
     const x = labels.length === 1 ? left + plotW / 2 : left + plotW * i / Math.max(labels.length - 1, 1);
-    c.fillStyle = "#d8e9f6"; c.textAlign = "center"; c.fillText(label, x, h - bottom + 20);
+    c.fillStyle = chartTextColor(); c.textAlign = "center"; c.fillText(label, x, h - bottom + 20);
   });
 }
 function annualFinancialData(ms) {
@@ -1333,11 +1339,12 @@ function movementItemRow(data = {}) {
   const fuel = $("#entryForm").grupo.value === "COMBUSTÍVEL";
   row.className = "movement-item-row";
   row.dataset.itemId = data.id || "";
-  row.innerHTML = `<div class="item-row-grid"><label>Item de lançamento *<select class="movement-item-select" required></select></label><label class="item-value">Valor (R$) *<input class="movement-item-value" type="text" inputmode="numeric" required></label><button type="button" class="remove-movement-item" aria-label="Remover item">×</button></div>${fuel ? '<label class="fuel-price">Preço por litro (R$) *<input class="movement-item-price" type="text" inputmode="numeric" required></label><small class="movement-item-liters field-help"></small>' : ""}`;
+  row.innerHTML = `<div class="item-row-grid"><label>Item de lançamento *<div class="context-field"><select class="movement-item-select" required></select><button type="button" class="context-open context-item-open" aria-label="Consultar itens">›</button></div></label><label class="item-value">Valor (R$) *<input class="movement-item-value" type="text" inputmode="numeric" required></label><button type="button" class="remove-movement-item" aria-label="Remover item">×</button></div>${fuel ? '<label class="fuel-price">Preço por litro (R$) *<input class="movement-item-price" type="text" inputmode="numeric" required></label><small class="movement-item-liters field-help"></small>' : ""}`;
   const select = row.querySelector(".movement-item-select"),
     value = row.querySelector(".movement-item-value"),
     price = row.querySelector(".movement-item-price");
   fillMovementItemSelect(select, data.item);
+  row.querySelector(".context-item-open").onclick = () => openContextSelector("ITEM", select);
   if (data.valor) value.value = num(data.valor, 2);
   if (price && data.preco_unitario) price.value = num(data.preco_unitario, 2);
   [value, price].filter(Boolean).forEach((input) => input.addEventListener("input", () => {
@@ -1580,6 +1587,74 @@ entryDialogElement.addEventListener("cancel", (event) => {
   event.preventDefault();
   cancelEntry();
 });
+const contextSelectorDialog = $("#contextSelectorDialog");
+function contextRecords() {
+  if (!entryContext) return [];
+  if (entryContext.type === "ITEM") return groupRegisters($("#entryForm").grupo.value)
+    .map((row) => ({ value: row.item, label: row.item, meta: row.padrao ? "Padrão" : "" }));
+  const source = entryContext.type === "MOTORISTA"
+    ? drivers
+    : suppliers.filter((row) => row.ativo !== false);
+  return alpha(source).map((row) => ({
+    value: row.nome,
+    label: row.nome,
+    meta: [row.padrao ? "Padrão" : "", row.local || ""].filter(Boolean).join(" · "),
+  }));
+}
+function renderContextSelector() {
+  if (!entryContext) return;
+  const term = $("#contextSelectorSearch").value.trim().toLocaleLowerCase("pt-BR");
+  const rows = contextRecords().filter((row) =>
+    `${row.label} ${row.meta}`.toLocaleLowerCase("pt-BR").includes(term));
+  $("#contextSelectorList").innerHTML = rows.length
+    ? rows.map((row) => `<button type="button" class="context-choice" data-value="${esc(row.value)}"><span><b>${esc(row.label)}</b><small>${esc(row.meta || "Disponível")}</small></span><i>›</i></button>`).join("")
+    : '<div class="empty-state">Nenhum cadastro encontrado. Use o botão verde “＋ Novo”.</div>';
+  $$("#contextSelectorList .context-choice").forEach((button) => button.onclick = () => {
+    entryContext.target.value = button.dataset.value;
+    contextSelectorDialog.close();
+    entryContext = null;
+  });
+}
+function openContextSelector(type, target) {
+  entryContext = { type, target };
+  $("#contextSelectorTitle").textContent =
+    type === "ITEM" ? "Selecionar item" :
+    type === "MOTORISTA" ? "Selecionar motorista" : "Selecionar fornecedor";
+  $("#contextSelectorHint").textContent = type === "ITEM"
+    ? `Somente itens do grupo ${$("#entryForm").grupo.value} são apresentados.`
+    : "Selecione um cadastro existente ou inclua um novo sem perder o lançamento.";
+  $("#contextSelectorSearch").value = "";
+  renderContextSelector();
+  contextSelectorDialog.showModal();
+}
+function closeContextSelector() {
+  if (contextSelectorDialog.open) contextSelectorDialog.close();
+  entryContext = null;
+}
+$("#contextSelectorSearch").oninput = renderContextSelector;
+$("#closeContextSelector").onclick = closeContextSelector;
+$("#cancelContextSelector").onclick = closeContextSelector;
+contextSelectorDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeContextSelector();
+});
+$$(".context-open[data-context-type]").forEach((button) => button.onclick = () => {
+  const type = button.dataset.contextType;
+  const name = type === "MOTORISTA" ? "motorista" : "fornecedor";
+  openContextSelector(type, $(`#entryForm [name=${name}]`));
+});
+$("#newContextRegister").onclick = () => {
+  if (!entryContext) return;
+  const type = entryContext.type;
+  contextSelectorDialog.close();
+  $("#registerGroup").value = type;
+  openRegister();
+  if (type === "ITEM") {
+    const groupField = $("#registerForm [name=grupo]");
+    groupField.value = $("#entryForm").grupo.value;
+    groupField.disabled = true;
+  }
+};
 $("#entryForm").onsubmit = (e) => {
   if (e.submitter?.value === "cancel") return;
   e.preventDefault();
@@ -1744,6 +1819,11 @@ function openRegister(id = "") {
   $("#vehicleExtraFields").style.display = group === "VEICULO" ? "block" : "none";
   $("#driverExtraFields").style.display = group === "MOTORISTA" ? "block" : "none";
   $("#supplierExtraFields").style.display = group === "FORNECEDOR" ? "block" : "none";
+  [...f.elements].forEach((field) => {
+    if (!field.name || ["id", "grupoCadastro"].includes(field.name)) return;
+    const section = field.closest("#subcatFields,#simpleFields,#vehicleExtraFields,#driverExtraFields,#supplierExtraFields");
+    field.disabled = Boolean(section && getComputedStyle(section).display === "none");
+  });
 
   $("#activeVehicleField").style.display =
     group === "VEICULO" ? "flex" : "none";
@@ -1781,7 +1861,7 @@ function openRegister(id = "") {
       }
       if (group === "MOTORISTA") {
         f.numeroCnh.value = obj.numeroCnh || "";
-        f.categoriaCnh.value = obj.categoriaCnh || "";
+        f.grupoCnh.value = obj.grupoCnh || obj.categoriaCnh || "";
         f.validadeCnh.value = String(obj.validadeCnh || "").slice(0,10);
         f.obsMotorista.value = obj.observacao || "";
       }
@@ -1804,6 +1884,15 @@ function openRegister(id = "") {
     : "Incluir cadastro";
   $("#registerDialog").showModal();
 }
+function closeRegister() {
+  $("#registerDialog").close();
+  if (entryContext && $("#entryDialog").open) entryContext = null;
+}
+$$(".register-cancel").forEach((button) => button.onclick = closeRegister);
+$("#registerDialog").addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeRegister();
+});
 function deleteRegister(id) {
   const g = $("#registerGroup").value;
   const target = g === "ITEM" ? registers.find((x) => x.id === id) : null;
@@ -1875,6 +1964,7 @@ $("#registerForm").onsubmit = (e) => {
   const f = e.target,
     g = f.grupoCadastro.value,
     id = f.id.value;
+  let savedContextValue = "";
   if (g === "ITEM") {
     const obj = {
       id: id || crypto.randomUUID(),
@@ -1882,7 +1972,8 @@ $("#registerForm").onsubmit = (e) => {
       item: f.item.value.trim(),
       padrao: f.padrao.checked,
     };
-    if (!obj.item) return;
+    if (!obj.item) return alert("Informe o item de lançamento.");
+    savedContextValue = obj.item;
     if (obj.padrao)
       registers.forEach((r) => {
         if (r.grupo === obj.grupo)
@@ -1901,8 +1992,10 @@ $("#registerForm").onsubmit = (e) => {
       isDefault = f.simplePadrao.checked && isActive,
       kmInitialText = String(f.kmInicial.value || "").replace(/\D/g, ""),
       kmInicial = +kmInitialText;
-    if (!name) return;
-    if (g === "VEICULO" && (!kmInitialText || !(+f.capacidadeTanque.value > 0))) return;
+    if (!name) return alert("Informe o nome do cadastro.");
+    savedContextValue = name;
+    if (g === "VEICULO" && (!kmInitialText || !(+f.capacidadeTanque.value > 0)))
+      return alert("Informe o hodômetro inicial e a capacidade do tanque.");
     if (isDefault) arr.forEach((x) => (x.padrao = false));
     if (id) {
       const item = arr.find((x) => x.id === id);
@@ -1924,7 +2017,7 @@ $("#registerForm").onsubmit = (e) => {
         if (!isActive) item.padrao = false;
       }
       if (g === "MOTORISTA") {
-        item.numeroCnh=f.numeroCnh.value.trim(); item.categoriaCnh=f.categoriaCnh.value.trim();
+        item.numeroCnh=f.numeroCnh.value.trim(); item.grupoCnh=f.grupoCnh.value.trim();
         item.validadeCnh=f.validadeCnh.value; item.observacao=f.obsMotorista.value.trim();
       }
       if (g === "FORNECEDOR") {
@@ -1951,7 +2044,7 @@ $("#registerForm").onsubmit = (e) => {
         consumoDieselCidade: g === "VEICULO" ? (+f.consumoDieselCidade.value || "") : undefined,
         consumoDieselEstrada: g === "VEICULO" ? (+f.consumoDieselEstrada.value || "") : undefined,
         numeroCnh: g === "MOTORISTA" ? f.numeroCnh.value.trim() : undefined,
-        categoriaCnh: g === "MOTORISTA" ? f.categoriaCnh.value.trim() : undefined,
+        grupoCnh: g === "MOTORISTA" ? f.grupoCnh.value.trim() : undefined,
         validadeCnh: g === "MOTORISTA" ? f.validadeCnh.value : undefined,
         observacao: g === "MOTORISTA" ? f.obsMotorista.value.trim() : undefined,
         local: g === "FORNECEDOR" ? f.localFornecedor.value.trim() : undefined,
@@ -1968,6 +2061,13 @@ $("#registerForm").onsubmit = (e) => {
   recalculateDistances();
   save();
   $("#registerDialog").close();
+  if (entryContext && ["ITEM", "MOTORISTA", "FORNECEDOR"].includes(g)) {
+    fillDrivers();
+    fillOperationalLists();
+    refreshMovementItemOptions();
+    entryContext.target.value = savedContextValue;
+    entryContext = null;
+  }
 };
 $("#movementVehicle").onchange = renderAll;
 $("#typeFilter").innerHTML =
@@ -2355,6 +2455,10 @@ function ensureTechnicalData() {
   });
   if (!registers.some((r) => r.item === NI))
     registers.push({ id: "technical-ni", grupo: "MANUTENÇÃO", item: NI, padrao: false, ativo: true });
+  alerts.forEach((item) => {
+    const vehicle = vehicles.find((v) => v.id === item.vehicleId);
+    if (vehicle?.ativo === false) item.active = false;
+  });
   vehicles.filter((v) => v.ativo !== false).forEach((vehicle) => {
     Object.values(TECHNICAL_ITEMS).forEach((spec) => {
       let parameter = technicalParameters.find((p) => p.vehicleId === vehicle.id && p.technicalKey === spec.key);
@@ -2368,11 +2472,13 @@ function ensureTechnicalData() {
         item = { id: crypto.randomUUID(), vehicleId: vehicle.id, group: "MANUTENÇÃO",
           itemId: registers.find((r) => r.technicalKey === spec.key)?.id || "",
           description: spec.label, technicalKey: spec.key, active: parameter.active,
-          recurrence: spec.key === "OIL" ? "BOTH" : "MONTHS", leadDays: 7, leadKm: spec.key === "OIL" ? 500 : 0 };
+          recurrence: spec.key === "OIL" ? "BOTH" : "MONTHS", leadDays: 30, leadKm: spec.key === "OIL" ? 500 : 0 };
         alerts.push(item);
       }
       Object.assign(item, {
         active: parameter.active,
+        leadDays: 30,
+        leadKm: spec.key === "OIL" ? 500 : 0,
         criterion: parameter.intervalKm > 0 && parameter.intervalMonths > 0 ? "BOTH" :
           parameter.intervalKm > 0 ? "KM" : "DATE",
         recurrenceKm: Number(parameter.intervalKm || 0),
@@ -2388,6 +2494,7 @@ function alertStatus(item) {
   if (!item.active) return "INATIVO";
   if (item.completed) return "CONCLUÍDO";
   const vehicle = vehicles.find((v) => v.id === item.vehicleId);
+  if (!vehicle || vehicle.ativo === false) return "INATIVO";
   const km = vehicle ? vehicleSummary(vehicle).last : 0;
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const dueDate = dateOnly(item.dueDate);
@@ -2486,6 +2593,8 @@ function completeAlert(id) {
 }
 function toggleAlert(id) {
   const item = alerts.find((a) => a.id === id);
+  const vehicle = vehicles.find((v) => v.id === item?.vehicleId);
+  if (!item || vehicle?.ativo === false) return alert("Alarmes só podem ser ativados para veículos ativos.");
   item.active = !item.active;
   if (item.technicalKey) {
     const p = technicalParameters.find((x) => x.vehicleId === item.vehicleId && x.technicalKey === item.technicalKey);
@@ -2630,7 +2739,14 @@ function buildAiIndicators(vehicleId, start, end, analysisType) {
   return {
     schema_version: 1,
     analysis_type: analysisType,
-    vehicle: { id: vehicleId, name: vehicle?.nome || "Veículo", plate: vehicle?.placa || "", active: vehicle?.ativo !== false },
+    vehicle: {
+      id: vehicleId, name: vehicle?.nome || "Veículo", plate: vehicle?.placa || "", active: vehicle?.ativo !== false,
+      consumption_reference: {
+        ethanol_city: +vehicle?.consumoEtanolCidade || 0, ethanol_road: +vehicle?.consumoEtanolEstrada || 0,
+        gasoline_city: +vehicle?.consumoGasolinaCidade || 0, gasoline_road: +vehicle?.consumoGasolinaEstrada || 0,
+        diesel_city: +vehicle?.consumoDieselCidade || 0, diesel_road: +vehicle?.consumoDieselEstrada || 0,
+      },
+    },
     period: { start, end, days },
     sample: { movements: uniqueMovements.length, item_rows: rows.length, complete_refuels: completeFuel.length, incomplete_refuels: incompleteFuel.length },
     financial: { gross_cost: gross, income, net_cost: gross - income, cost_per_km: distance ? (gross - income) / distance : 0, daily_cost: (gross - income) / days },
@@ -2672,15 +2788,28 @@ function initializeAiModule() {
   const form = $("#aiAnalysisForm");
   if (!form) return;
   const vehicleSelect = $("#aiVehicle");
+  const setDefaultAiPeriod = () => {
+    const vehicle = vehicles.find((v) => v.id === vehicleSelect.value);
+    if (!vehicle) return;
+    const dates = movements
+      .filter((m) => m.veiculo_id === vehicle.id || m.veiculo === vehicle.nome)
+      .map((m) => String(m.data_hora || "").slice(0, 10))
+      .filter(Boolean)
+      .sort();
+    $("#aiStart").value = dates[0] || "";
+    $("#aiEnd").value = dates.at(-1) || "";
+  };
   const refreshVehicles = () => {
     const selected = vehicleSelect.value;
     vehicleSelect.innerHTML = '<option value="">Selecione o veículo</option>' +
       alpha(vehicles).map((v) => `<option value="${escapeAiHtml(v.id)}">${escapeAiHtml(v.nome)}${v.placa ? " · " + escapeAiHtml(v.placa) : ""}</option>`).join("");
     if (vehicles.some((v) => v.id === selected)) vehicleSelect.value = selected;
     else if (vehicles.some((v) => v.padrao)) vehicleSelect.value = vehicles.find((v) => v.padrao).id;
+    setDefaultAiPeriod();
   };
   refreshVehicles();
   window.addEventListener("vehicle-app-ready", refreshVehicles);
+  vehicleSelect.onchange = setDefaultAiPeriod;
   form.onsubmit = async (event) => {
     event.preventDefault();
     const error = $("#aiFormError"), result = $("#aiResult"), progress = $("#aiProgress");
