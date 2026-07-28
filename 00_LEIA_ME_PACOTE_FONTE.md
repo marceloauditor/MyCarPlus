@@ -1,40 +1,17 @@
-# MyCar+ V5.23 — Pacote-fonte oficial
+# MyCar+ V5.35 — Pacote-fonte oficial
 
-Este ZIP reúne em uma única estrutura a fonte Web/PWA e o projeto Android Capacitor.
+Pacote consolidado para Web/PWA e Android.
 
-## Estrutura principal
+## Fonte de verdade
+- `www/`: aplicação Web utilizada pelo Capacitor.
+- raiz: cópia sincronizada para GitHub Pages.
+- `android/app/src/main/assets/public/`: cópia gerada pelo Capacitor.
 
-- `www/`: aplicação Web/PWA que também alimenta o Android.
-- `android/`: projeto Android completo para abrir no Android Studio.
-- `capacitor.config.json`: configuração do Capacitor.
-- `package.json` e `package-lock.json`: dependências e comandos do projeto.
-- `LEIA-ME_CAPACITOR.md`: instruções de preparação, sincronização e compilação.
-- `ROTEIRO_ATUALIZACAO_GITHUB_FIREBASE.txt`: procedimento de atualização e publicação.
+## Versão
+- Aplicação: 5.35.0
+- Android versionCode: 534
+- Android versionName: 5.35.0
+- Cache PWA: mycar-plus-v5-35
 
-## Fluxo recomendado para futuras alterações
-
-1. Altere menus, cores, textos e regras nos arquivos de `www/`.
-2. Teste a versão Web/PWA.
-3. Execute `npm install`.
-4. Execute `npx cap sync android`.
-5. Abra o projeto Android com `npx cap open android`.
-6. Gere um APK para testes ou um AAB assinado para a Google Play.
-
-## Arquivos que não fazem parte do pacote
-
-- `node_modules/`;
-- caches `.gradle/`;
-- pastas de compilação `build/`;
-- chaves de assinatura `.jks` ou `.keystore`;
-- `google-services.json`;
-- pasta antiga `functions/`.
-
-O arquivo `google-services.json` deve ser obtido no Firebase para o aplicativo Android
-`br.com.marceloauditor.mycarplus` e colocado localmente em `android/app/`. Não o publique
-em repositório público.
-
-## Observação sobre o GitHub
-
-O GitHub não extrai um ZIP automaticamente. Para enviar esta fonte, extraia o pacote no
-computador e publique o conteúdo da pasta extraída. Para preservar toda a árvore Android,
-prefira GitHub Desktop ou Git pela linha de comando.
+## Atualização
+Execute `npm.cmd install`, `npm.cmd run sync:web` e `npm.cmd run sync:android`. Preserve o Firebase e faça backup antes de restaurar ou excluir dados.

@@ -1,134 +1,66 @@
 (() => {
-  const config = window.FIREBASE_CONFIG || {};
-  const configured = config.apiKey &&
-    !/PREENCHER|INSERIR/i.test(String(config.apiKey)) &&
-    config.projectId &&
-    !/PREENCHER|INSERIR/i.test(String(config.projectId));
-  let user = null, stateRef = null, unsubscribe = null, timer = null, applyingRemote = false;
+  const cfg=window.FIREBASE_CONFIG||{};
+  const configured=cfg.apiKey&&!/PREENCHER|INSERIR/i.test(String(cfg.apiKey))&&cfg.projectId;
+  const QUEUE='mycar_cloud_pending_v1', META='mycar_cloud_meta_v1', INTERVAL=30000;
+  let user=null,ref=null,unsub=null,timer=null,monitor=null,applying=false,syncing=false,started=false;
+  const json=(k,d=null)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+  const put=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const pending=()=>json(QUEUE,null);
+  const setPending=v=>{v?put(QUEUE,v):localStorage.removeItem(QUEUE);draw()};
+  const metadata=()=>json(META,{});
+  const setMeta=p=>{put(META,{...metadata(),...p});draw()};
+  const iso=()=>new Date().toISOString();
+  const when=v=>v?new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'medium'}).format(new Date(v)):'Nunca';
+  const device=()=>{let id=localStorage.getItem('mycar_device_id');if(!id){id=crypto.randomUUID?.()||`device-${Date.now()}`;localStorage.setItem('mycar_device_id',id)}return id};
 
-  function addPanel() {
-    const about = document.querySelector('#sobre .about-card');
-    if (!about || document.querySelector('#cloudPanel')) return;
-    const panel = document.createElement('div');
-    panel.id = 'cloudPanel';
-    panel.className = 'cloud-panel';
-    panel.innerHTML = `<h3>Dados online</h3><p id="cloudStatus">${configured ? 'Aguardando login…' : 'Firebase ainda não configurado.'}</p><button id="cloudLogin" type="button" ${configured ? '' : 'disabled'}>Entrar com Google</button><button id="cloudLogout" type="button" hidden>Sair</button>`;
-    about.appendChild(panel);
-    if (configured) document.querySelector('#cloudLogin').onclick = login;
-    document.querySelector('#cloudLogout').onclick = logout;
+  function panel(){
+    const host=document.querySelector('#sobre .about-card'); if(!host||document.querySelector('#cloudPanel'))return;
+    host.insertAdjacentHTML('beforeend',`<div id="cloudPanel" class="cloud-panel"><h3>Conexão e sincronização</h3><div class="cloud-status-row"><span id="cloudDot" class="cloud-dot"></span><strong id="cloudHeadline">Inicializando…</strong></div><p id="cloudStatus">Verificando sessão e conexão…</p><dl class="cloud-diagnostics"><div><dt>Conta</dt><dd id="cloudAccount">Não conectada</dd></div><div><dt>Internet</dt><dd id="cloudNetwork">Verificando</dd></div><div><dt>Pendências</dt><dd id="cloudPending">0</dd></div><div><dt>Última sincronização</dt><dd id="cloudLastSync">Nunca</dd></div><div><dt>Último recebimento</dt><dd id="cloudLastPull">Nunca</dd></div></dl><div class="cloud-actions"><button id="cloudLogin" type="button" ${configured?'':'disabled'}>Entrar com Google</button><button id="cloudSyncNow" type="button" ${configured?'':'disabled'}>Sincronizar agora</button><button id="cloudLogout" type="button" hidden>Sair</button></div></div>`);
+    document.querySelector('#cloudLogin').onclick=login;
+    document.querySelector('#cloudSyncNow').onclick=()=>flush(true);
+    document.querySelector('#cloudLogout').onclick=logout; draw();
   }
-
-  function status(message, error = false) {
-    const el = document.querySelector('#cloudStatus');
-    if (el) { el.textContent = message; el.classList.toggle('cloud-error', error); }
+  function message(text,error=false){setMeta({message:text,error})}
+  function draw(){
+    const m=metadata(),q=!!pending(),on=navigator.onLine;
+    const status=document.querySelector('#cloudStatus');if(status){status.textContent=m.message||'Aguardando…';status.classList.toggle('cloud-error',!!m.error)}
+    let title='Desconectado',cls='offline';
+    if(!configured){title='Firebase não configurado';cls='error'}else if(!on){title=q?'Offline — alterações pendentes':'Offline'}else if(syncing){title='Sincronizando…';cls='syncing'}else if(!user){title='Online — login necessário';cls='warning'}else if(q){title='Online — envio pendente';cls='warning'}else{title='Online e sincronizado';cls='online'}
+    const h=document.querySelector('#cloudHeadline'),d=document.querySelector('#cloudDot');if(h)h.textContent=title;if(d)d.className=`cloud-dot ${cls}`;
+    const vals={cloudAccount:user?.email||'Não conectada',cloudNetwork:on?'Online':'Offline',cloudPending:q?'1 estado aguardando envio':'0',cloudLastSync:when(m.lastPush),cloudLastPull:when(m.lastPull)};
+    Object.entries(vals).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v});
+    const li=document.querySelector('#cloudLogin'),lo=document.querySelector('#cloudLogout');if(li)li.hidden=!!user;if(lo)lo.hidden=!user;
   }
-
-  function isNativeAndroid() {
-    return !!window.Capacitor?.isNativePlatform?.() &&
-      window.Capacitor?.getPlatform?.() === 'android';
+  const native=()=>!!window.Capacitor?.isNativePlatform?.()&&window.Capacitor?.getPlatform?.()==='android';
+  async function login(){
+    const b=document.querySelector('#cloudLogin');if(b)b.disabled=true;message('Abrindo sua Conta Google…');
+    try{if(native()){const a=window.Capacitor?.Plugins?.FirebaseAuthentication;if(!a?.signInWithGoogle)throw new Error('Componente de autenticação Android não instalado.');const r=await a.signInWithGoogle(),c=r?.credential||{};await firebase.auth().signInWithCredential(firebase.auth.GoogleAuthProvider.credential(c.idToken||null,c.accessToken||null))}else await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())}catch(e){console.error(e);message(/network/i.test(String(e?.code))?'Sem conexão com a internet.':`Não foi possível entrar${e?.message?`: ${e.message}`:'.'}`,true)}finally{if(b)b.disabled=false}
   }
-
-  function friendlyAuthError(error) {
-    const code = String(error?.code || '');
-    if (/cancel|canceled|cancelled/i.test(code)) return 'Login cancelado.';
-    if (/network/i.test(code)) return 'Sem conexão com a internet. Tente novamente.';
-    if (/10|developer_error/i.test(code)) {
-      return 'Configuração Google incompleta. Confira o SHA-1 e o google-services.json no Firebase.';
-    }
-    if (/unauthorized-domain/i.test(code)) {
-      return 'Este endereço ainda não foi autorizado no Firebase Authentication.';
-    }
-    return `Não foi possível entrar${error?.message ? `: ${error.message}` : '.'}`;
+  async function logout(){try{if(native())await window.Capacitor?.Plugins?.FirebaseAuthentication?.signOut?.();await firebase.auth().signOut()}catch(e){console.error(e);message('Não foi possível sair da conta.',true)}}
+  function queue(){
+    if(applying||!window.vehicleAppBridge)return;
+    setPending({state:window.vehicleAppBridge.getState(),queuedAt:iso(),deviceId:device()});
+    message(navigator.onLine?'Alteração salva. Aguardando sincronização…':'Alteração salva neste aparelho. Será enviada quando a internet voltar.');
+    clearTimeout(timer);timer=setTimeout(()=>flush(false),700);
   }
-
-  async function login() {
-    const button = document.querySelector('#cloudLogin');
-    if (button) button.disabled = true;
-    status('Abrindo sua Conta Google…');
-    try {
-      if (isNativeAndroid()) {
-        const nativeAuth = window.Capacitor?.Plugins?.FirebaseAuthentication;
-        if (!nativeAuth?.signInWithGoogle) {
-          throw new Error('Componente de autenticação Android não instalado. Sincronize o projeto e gere o APK novamente.');
-        }
-        const result = await nativeAuth.signInWithGoogle();
-        const credential = result?.credential || {};
-        if (!credential.idToken && !credential.accessToken) {
-          throw new Error('O Google não devolveu uma credencial válida.');
-        }
-        const googleCredential = firebase.auth.GoogleAuthProvider.credential(
-          credential.idToken || null,
-          credential.accessToken || null,
-        );
-        await firebase.auth().signInWithCredential(googleCredential);
-      } else {
-        await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
-      }
-    } catch (error) {
-      console.error(error);
-      status(friendlyAuthError(error), true);
-    } finally {
-      if (button) button.disabled = false;
-    }
+  async function flush(manual=false){
+    if(syncing)return;const job=pending();
+    if(!navigator.onLine){message('Sem internet. As alterações permanecem salvas neste aparelho.');return}
+    if(!user||!ref){message(manual?'Entre com Google para sincronizar.':'Alterações locais aguardando login.');return}
+    if(!job){message('Nenhuma alteração pendente. Dados sincronizados.');return}
+    syncing=true;draw();
+    try{await ref.set({...job.state,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),clientUpdatedAt:job.queuedAt,deviceId:job.deviceId,schemaVersion:7});setPending(null);setMeta({lastPush:iso(),message:'Dados sincronizados na nuvem.',error:false})}catch(e){console.error(e);setMeta({message:'Falha ao enviar. Os dados serão reenviados automaticamente.',error:true})}finally{syncing=false;draw()}
   }
-
-  async function logout() {
-    try {
-      if (isNativeAndroid()) {
-        await window.Capacitor?.Plugins?.FirebaseAuthentication?.signOut?.();
-      }
-      await firebase.auth().signOut();
-    } catch (error) {
-      console.error(error);
-      status('Não foi possível sair da conta. Tente novamente.', true);
-    }
+  window.cloudSync={queueSave:queue,syncNow:()=>flush(true),getStatus:()=>({online:navigator.onLine,authenticated:!!user,pending:!!pending(),syncing,...metadata()})};
+  async function connect(current){
+    user=current;if(unsub){unsub();unsub=null}draw();
+    if(!user){ref=null;message('Entre com Google para manter os dados sincronizados entre aparelhos.');return}
+    message(`Conectado como ${user.email}. Carregando dados…`);ref=firebase.firestore().collection('users').doc(user.uid).collection('app').doc('state');
+    try{const snap=await ref.get({source:navigator.onLine?'default':'cache'});if(snap.exists&&!pending()){applying=true;window.vehicleAppBridge.applyState(snap.data());applying=false;setMeta({lastPull:iso(),message:'Dados online carregados.',error:false})}else if(!snap.exists)queue();
+      unsub=ref.onSnapshot({includeMetadataChanges:true},s=>{if(!s.exists||s.metadata.hasPendingWrites||pending())return;applying=true;window.vehicleAppBridge.applyState(s.data());applying=false;setMeta({lastPull:iso(),message:s.metadata.fromCache?'Dados locais disponíveis. Aguardando conexão…':'Dados atualizados e sincronizados.',error:false})},e=>{console.error(e);message('Conexão com a nuvem interrompida. A reconexão será automática.',true)});await flush(false)
+    }catch(e){console.error(e);message('Não foi possível carregar a nuvem. Os dados locais continuam disponíveis.',true)}
   }
-
-  async function pushState() {
-    if (!user || !stateRef || applyingRemote || !window.vehicleAppBridge) return;
-    try {
-      status('Sincronizando…');
-      await stateRef.set({ ...window.vehicleAppBridge.getState(), updatedAt: firebase.firestore.FieldValue.serverTimestamp(), schemaVersion: 6 });
-      status('Dados sincronizados na nuvem.');
-    } catch (error) {
-      console.error(error); status('Falha ao sincronizar. Os dados continuam salvos neste aparelho.', true);
-    }
-  }
-
-  window.cloudSync = { queueSave() { if (!user || applyingRemote) return; clearTimeout(timer); timer = setTimeout(pushState, 700); } };
-
-  async function connectUser(currentUser) {
-    user = currentUser;
-    document.querySelector('#cloudLogin').hidden = !!user;
-    document.querySelector('#cloudLogout').hidden = !user;
-    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
-    if (!user) { stateRef = null; status('Entre com Google para acessar os mesmos dados em todos os aparelhos.'); return; }
-    status(`Conectado como ${user.email}. Carregando dados…`);
-    stateRef = firebase.firestore().collection('users').doc(user.uid).collection('app').doc('state');
-    try {
-      const snapshot = await stateRef.get();
-      if (snapshot.exists) {
-        applyingRemote = true; window.vehicleAppBridge.applyState(snapshot.data()); applyingRemote = false;
-        status('Dados online carregados.');
-      } else await pushState();
-      unsubscribe = stateRef.onSnapshot(snap => {
-        if (!snap.exists || snap.metadata.hasPendingWrites) return;
-        applyingRemote = true; window.vehicleAppBridge.applyState(snap.data()); applyingRemote = false;
-        status('Dados atualizados e sincronizados.');
-      }, error => { console.error(error); status('Conexão com a nuvem interrompida.', true); });
-    } catch (error) { console.error(error); status('Não foi possível carregar os dados online.', true); }
-  }
-
-  async function initialize() {
-    addPanel();
-    if (!configured) return;
-    try {
-      firebase.initializeApp(config);
-      firebase.firestore().enablePersistence({ synchronizeTabs: true }).catch(() => {});
-      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-      firebase.auth().onAuthStateChanged(connectUser);
-    } catch (error) { console.error(error); status('Configuração do Firebase inválida.', true); }
-  }
-
-  if (window.vehicleAppReady) initialize(); else window.addEventListener('vehicle-app-ready', initialize, { once: true });
+  function monitoring(){window.addEventListener('online',()=>{message('Internet restabelecida. Verificando sincronização…');flush(false)});window.addEventListener('offline',()=>message('Sem internet. O aplicativo continuará salvando localmente.'));document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')flush(false)});clearInterval(monitor);monitor=setInterval(()=>{draw();if(navigator.onLine)flush(false)},INTERVAL)}
+  async function init(){if(started)return;started=true;panel();monitoring();if(!configured)return;try{if(!firebase.apps?.length)firebase.initializeApp(cfg);try{await firebase.firestore().enablePersistence({synchronizeTabs:true})}catch(e){if(!/failed-precondition|unimplemented/i.test(String(e?.code||'')))console.warn(e)}await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);firebase.auth().onAuthStateChanged(connect)}catch(e){console.error(e);message('Configuração do Firebase inválida.',true)}}
+  if(window.vehicleAppReady)init();else window.addEventListener('vehicle-app-ready',init,{once:true});
 })();

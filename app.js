@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.30",
+  APP_VERSION = "5.35",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -325,6 +325,10 @@ function selectedVehicleName() {
   if (vehicles.some((v) => v.nome === saved)) return saved;
   return defaultVehicle()?.nome || activeVehicle()?.nome || vehicles[0]?.nome || "";
 }
+function selectedVehicleObject() {
+  const name = selectedVehicleName();
+  return vehicles.find((v) => v.nome === name) || null;
+}
 function selectVehicle(name) {
   if (!vehicles.some((v) => v.nome === name)) return;
   localStorage.setItem("mycar_selected_vehicle_v1", name);
@@ -339,16 +343,17 @@ function fillVehicleSelects() {
           `<option value="${v.nome}">${v.nome}${v.ativo === false ? " (Inativo)" : " (Ativo)"}</option>`,
       )
       .join(""),
-    allOpts = '<option value="">Todos os veículos</option>' + vehicleOpts,
     home = $("#homeVehicle");
   home.innerHTML = vehicleOpts || '<option value="">Nenhum veículo cadastrado</option>';
   home.value = selected;
   ["movementVehicle"].forEach((id) => {
     const e = $("#" + id),
       old = e.value;
-    e.innerHTML = allOpts;
-    const valid = vehicles.some((v) => v.nome === old);
-    e.value = valid ? old : active?.nome || "";
+    e.innerHTML = vehicleOpts;
+    const valid = vehicles.some((v) => v.nome === selected);
+    e.value = valid ? selected : active?.nome || vehicles[0]?.nome || "";
+    e.disabled = true;
+    e.setAttribute("aria-label", "Veículo selecionado na tela inicial");
   });
   ["reportVehicle", "chartVehicle"].forEach((id) => {
     const e = $("#" + id),
@@ -774,7 +779,7 @@ function viewMovement(id) {
   );
 }
 function renderMovements() {
-  const v = $("#movementVehicle").value,
+  const v = selectedVehicleName(),
     t = $("#typeFilter").value,
     q = $("#search").value.toLowerCase();
   const rows = filterByPeriod(filtered(v), "movement")
@@ -836,7 +841,7 @@ function categoryCostTable(ms) {
   return `<div class="category-table-wrap"><table class="category-cost-table"><thead><tr><th>Grupo</th><th>Participação</th><th>Valor</th><th>Custo/km</th><th>Custo/dia</th></tr></thead><tbody>${rows}<tr class="total-expenses"><th scope="row">Total de gastos</th><td>${totalExpenses ? num(100, 1) + "%" : "0,0%"}</td><td>${money(totalExpenses)}</td><td>${money(perKm(totalExpenses))}</td><td>${money(perDay(totalExpenses))}</td></tr><tr class="income-row"><th scope="row">Receitas</th><td>—</td><td>− ${money(income)}</td><td>− ${money(perKm(income))}</td><td>− ${money(perDay(income))}</td></tr><tr class="net-cost-row"><th scope="row">Custo líquido</th><td>—</td><td>${money(net)}</td><td>${money(perKm(net))}</td><td>${money(perDay(net))}</td></tr></tbody></table></div>`;
 }
 function renderReports() {
-  const ms = filterByPeriod(filtered($("#reportVehicle").value), "report"),
+  const ms = filterByPeriod(filtered(selectedVehicleName()), "report"),
     s = stats(ms);
   $("#reportPeriodLabel").textContent = `Período: ${periodText("report")}`;
   $("#grossTotal").textContent = money(s.cost);
@@ -1501,7 +1506,7 @@ function openEntry(id = "", presetGroup = "") {
     current = currentRows[0] || null,
     v = current
       ? vehicles.find((x) => x.nome === current.veiculo)
-      : defaultVehicle(),
+      : selectedVehicleObject(),
     err = $("#formError");
   f.reset();
   f.movementId.value = id;
@@ -1555,7 +1560,7 @@ function openEntry(id = "", presetGroup = "") {
   $("#entryDialog").showModal();
 }
 function openEntryGroupChooser() {
-  const v = defaultVehicle();
+  const v = selectedVehicleObject();
   if (!v || v.ativo === false) {
     openEntry();
     return;
@@ -2126,7 +2131,7 @@ $("#registerForm").onsubmit = (e) => {
     entryContext = null;
   }
 };
-$("#movementVehicle").onchange = renderAll;
+// O veículo dos movimentos é controlado exclusivamente pela seleção da tela inicial.
 $("#typeFilter").innerHTML =
   '<option value="">Todos os grupos</option>' +
   GROUPS
@@ -2262,8 +2267,8 @@ refreshInstallControls();
 
 
 function exportPdfReport() {
-  const selectedVehicle = $("#reportVehicle").value;
-  const vehicleLabel = selectedVehicle || "Todos os veículos";
+  const selectedVehicle = selectedVehicleName();
+  const vehicleLabel = selectedVehicle || "Nenhum veículo selecionado";
   const ms = filterByPeriod(filtered(selectedVehicle), "report");
   if (!periodIsValid("report")) return alert("Corrija o período antes de gerar o relatório.");
   if (!ms.length) return alert("Não existem movimentos no veículo e período selecionados.");
@@ -2577,32 +2582,16 @@ function evaluateAlerts(notify = false) {
 function renderAlerts() {
   if (!$("#alertList")) return;
   ensureTechnicalData();
-  const vehicleSelect = $("#alertVehicle"), previous = vehicleSelect.value;
-  vehicleSelect.innerHTML = '<option value="">Todos os veículos</option>' +
-    alpha(vehicles).map((v) => `<option value="${v.id}">${esc(v.nome)}</option>`).join("");
-  vehicleSelect.value = vehicles.some((v) => v.id === previous) ? previous : "";
-  const rows = alerts.filter((a) => (!vehicleSelect.value || a.vehicleId === vehicleSelect.value) &&
-    (!$("#alertStatus").value || alertStatus(a) === $("#alertStatus").value));
-  const counts = ["VENCIDO", "ATENÇÃO", "PROGRAMADO", "CONCLUÍDO"].map((s) => [s, alerts.filter((a) => alertStatus(a) === s).length]);
-  $("#alertSummary").innerHTML = counts.map(([s, n]) => `<article><small>${s}</small><b>${n}</b></article>`).join("");
-  $("#alertList").innerHTML = rows.map((a) => {
-    const status = alertStatus(a), vehicle = vehicles.find((v) => v.id === a.vehicleId);
-    return `<article class="item alert-card" data-status="${status}"><div><b>${a.technicalKey ? "⚙ " : "⚠ "}${esc(a.description)}</b>
-      <small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small>
-      <div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span>${a.technicalKey ? "<span>Alerta técnico</span>" : ""}</div></div>
-      <div class="movement-actions"><button type="button" data-alert-edit="${a.id}">Alterar</button>
-      ${!["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}
-      <button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>
-      ${a.technicalKey ? "" : `<button type="button" data-alert-delete="${a.id}">Excluir</button>`}</div></article>`;
-  }).join("") || '<p class="muted">Nenhum alerta encontrado.</p>';
-  $$("[data-alert-edit]").forEach((b) => b.onclick = () => openAlert(b.dataset.alertEdit));
-  $$("[data-alert-complete]").forEach((b) => b.onclick = () => completeAlert(b.dataset.alertComplete));
-  $$("[data-alert-toggle]").forEach((b) => b.onclick = () => toggleAlert(b.dataset.alertToggle));
-  $$("[data-alert-delete]").forEach((b) => b.onclick = () => {
-    if (confirm("Excluir este alerta? O histórico concluído será preservado.")) {
-      alerts = alerts.filter((a) => a.id !== b.dataset.alertDelete); save();
-    }
-  });
+  const selectedVehicle = selectedVehicleObject();
+  const vehicleSelect = $("#alertVehicle");
+  vehicleSelect.innerHTML = selectedVehicle ? `<option value="${selectedVehicle.id}">${esc(selectedVehicle.nome)}${selectedVehicle.ativo === false ? " (Inativo)" : ""}</option>` : '<option value="">Nenhum veículo selecionado</option>';
+  vehicleSelect.value = selectedVehicle?.id || ""; vehicleSelect.disabled = true;
+  const filteredAlerts = alerts.filter((a) => a.vehicleId === selectedVehicle?.id);
+  const rows = filteredAlerts.filter((a) => !$("#alertStatus").value || alertStatus(a) === $("#alertStatus").value);
+  const counts = ["VENCIDO", "ATENÇÃO", "PROGRAMADO", "CONCLUÍDO"].map((status) => [status, filteredAlerts.filter((a) => alertStatus(a) === status).length]);
+  $("#alertSummary").innerHTML = counts.map(([status,total]) => `<article><small>${status}</small><b>${total}</b></article>`).join("");
+  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>${a.technicalKey ? "⚙ " : "⚠ "}${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span>${a.technicalKey ? "<span>Alerta técnico</span>" : ""}</div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate && !a.technicalKey ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta encontrado para o veículo selecionado.</p>';
+  $$("[data-alert-edit]").forEach((b)=>b.onclick=()=>openAlert(b.dataset.alertEdit)); $$("[data-alert-complete]").forEach((b)=>b.onclick=()=>completeAlert(b.dataset.alertComplete)); $$("[data-alert-toggle]").forEach((b)=>b.onclick=()=>toggleAlert(b.dataset.alertToggle)); $$("[data-alert-delete]").forEach((b)=>b.onclick=()=>{if(confirm("Excluir este alerta? O histórico concluído será preservado.")){alerts=alerts.filter((a)=>a.id!==b.dataset.alertDelete);save();}});
 }
 function fillAlertItems() {
   const f = $("#alertForm");
@@ -2612,7 +2601,10 @@ function fillAlertItems() {
 function openAlert(id = "") {
   const f = $("#alertForm"), item = alerts.find((a) => a.id === id);
   f.reset(); f.id.value = id;
-  f.vehicleId.innerHTML = alpha(vehicles.filter((v) => v.ativo !== false)).map((v) => `<option value="${v.id}">${esc(v.nome)}</option>`).join("");
+  const selectedVehicle = selectedVehicleObject();
+  f.vehicleId.innerHTML = selectedVehicle ? `<option value="${selectedVehicle.id}">${esc(selectedVehicle.nome)}</option>` : "";
+  f.vehicleId.value = item?.vehicleId || selectedVehicle?.id || "";
+  f.vehicleId.disabled = true;
   f.group.innerHTML = GROUPS.map((g) => `<option>${g}</option>`).join("");
   f.group.value = item?.group || "MANUTENÇÃO"; fillAlertItems();
   if (item) Object.entries(item).forEach(([key, value]) => {
@@ -2680,10 +2672,10 @@ $("#alertForm").onsubmit = (event) => {
   $("#alertDialog").close(); save();
 };
 function exportTechnicalPdf() {
-  const vehicleId = $("#alertVehicle").value;
+  const vehicleId = selectedVehicleObject()?.id || "";
   const names = new Map(vehicles.map((v) => [v.id, v.nome]));
   const ms = movements.filter((m) => m.grupo === "MANUTENÇÃO" &&
-    (!vehicleId || m.veiculo_id === vehicleId || m.veiculo === names.get(vehicleId))).sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora));
+    (m.veiculo_id === vehicleId || m.veiculo === names.get(vehicleId))).sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora));
   const rows = ms.map((m) => {
     const related = alerts.find((a) => a.vehicleId === (m.veiculo_id || vehicles.find((v) => v.nome === m.veiculo)?.id) &&
       (a.itemId === m.item_id || a.description === m.item));
@@ -2691,7 +2683,7 @@ function exportTechnicalPdf() {
   }).join("");
   const win = window.open("", "_blank");
   if (!win) return alert("Permita janelas pop-up para gerar o PDF.");
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Histórico técnico</title><style>@page{size:A4 landscape;margin:12mm}body{font:12px Arial;color:#203040}h1{color:#0f3f66}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccd8e0;padding:6px;text-align:left}th{background:#eaf1f6}</style></head><body><h1>Histórico técnico de manutenção</h1><p>Veículo: ${esc(vehicleId ? names.get(vehicleId) : "Todos")} · Emissão: ${new Date().toLocaleDateString("pt-BR")}</p><table><thead><tr><th>Data</th><th>Hodômetro</th><th>Serviço/item</th><th>Fornecedor/oficina</th><th>Descrição</th><th>Valor</th><th>Alerta</th><th>Próxima previsão</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Sem manutenções.</td></tr>'}</tbody></table><script>onload=()=>setTimeout(()=>print(),300)<\/script></body></html>`);
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Histórico técnico</title><style>@page{size:A4 landscape;margin:12mm}body{font:12px Arial;color:#203040}h1{color:#0f3f66}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccd8e0;padding:6px;text-align:left}th{background:#eaf1f6}</style></head><body><h1>Histórico técnico de manutenção</h1><p>Veículo: ${esc(names.get(vehicleId) || "Nenhum veículo selecionado")} · Emissão: ${new Date().toLocaleDateString("pt-BR")}</p><table><thead><tr><th>Data</th><th>Hodômetro</th><th>Serviço/item</th><th>Fornecedor/oficina</th><th>Descrição</th><th>Valor</th><th>Alerta</th><th>Próxima previsão</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Sem manutenções.</td></tr>'}</tbody></table><script>onload=()=>setTimeout(()=>print(),300)<\/script></body></html>`);
   win.document.close();
 }
 $("#technicalPdf").onclick = exportTechnicalPdf;
@@ -2817,90 +2809,75 @@ function buildAiIndicators(vehicleId, start, end, analysisType) {
   };
 }
 
-function renderAiReport(report) {
-  const list = (items) => `<ul>${(items || []).map((x) => `<li>${escapeAiHtml(x)}</li>`).join("") || "<li>Nenhuma ocorrência relevante.</li>"}</ul>`;
-  const k = report.indicators;
-  return `<p class="ai-meta"><b>Veículo:</b> ${escapeAiHtml(k.vehicle.name)} · <b>Período:</b> ${escapeAiHtml(k.period.start)} a ${escapeAiHtml(k.period.end)} · <b>Movimentos:</b> ${k.sample.movements}</p>
-  <div class="ai-kpis"><div><small>Distância</small><strong>${intFmt(k.usage.distance_km)} km</strong></div><div><small>Custo líquido</small><strong>${money(k.financial.net_cost)}</strong></div><div><small>Custo por km</small><strong>${money(k.financial.cost_per_km)}</strong></div><div><small>Consumo médio</small><strong>${num(k.fuel.consumption_km_l,2)} km/L</strong></div><div><small>Custo diário</small><strong>${money(k.financial.daily_cost)}</strong></div><div><small>Confiança</small><strong>${escapeAiHtml(report.confidence)}</strong></div></div>
-  <section class="ai-report-section"><h4>1. Resumo executivo</h4><p>${escapeAiHtml(report.executive_summary)}</p></section>
-  <section class="ai-report-section"><h4>2. Combustível e consumo</h4><p>${escapeAiHtml(report.fuel_analysis)}</p><small>${k.sample.incomplete_refuels} abastecimento(s) incompleto(s) excluído(s) do consumo em km/L e mantido(s) nos custos.</small></section>
-  <section class="ai-report-section"><h4>3. Custos e movimentações</h4><p>${escapeAiHtml(report.cost_analysis)}</p></section>
-  <section class="ai-report-section"><h4>4. Anomalias identificadas</h4>${list(report.anomalies)}</section>
-  <section class="ai-report-section"><h4>5. Manutenção</h4><p>${escapeAiHtml(report.maintenance_analysis)}</p></section>
-  <section class="ai-report-section"><h4>6. Fornecedores</h4><p>${escapeAiHtml(report.supplier_analysis)}</p></section>
-  <section class="ai-report-section"><h4>7. Recomendações</h4>${list(report.recommendations)}</section>
-  <section class="ai-report-section"><h4>8. Critérios e limitações</h4><p>${escapeAiHtml(report.limitations)}</p><small>Esta análise não substitui avaliação mecânica profissional.</small></section>`;
+function aiHealthSummary(indicators) {
+  const activeAlerts = (indicators.alert_snapshot || []).filter((a) => a.active);
+  const critical = activeAlerts.filter((a) => /vencid|crític|atrasad/i.test(`${a.status} ${a.forecast}`)).length;
+  const attention = Math.max(0, activeAlerts.length - critical);
+  const missing = +indicators.quality?.missing_supplier || 0;
+  const rows = +indicators.sample?.item_rows || 0;
+  const incomplete = +indicators.sample?.incomplete_refuels || 0;
+  const refuels = (+indicators.sample?.complete_refuels || 0) + incomplete;
+  let score = 100;
+  score -= Math.min(35, critical * 15);
+  score -= Math.min(20, attention * 5);
+  score -= rows ? Math.min(10, (missing / rows) * 20) : 5;
+  score -= refuels ? Math.min(10, (incomplete / refuels) * 20) : 5;
+  score = Math.max(0, Math.round(score));
+  const status = score >= 85 ? "Excelente" : score >= 70 ? "Bom" : score >= 50 ? "Atenção" : "Crítico";
+  return { score, status, critical, attention };
 }
 
-function openAiPrintableReport() {
+function aiRecommendationRows(items) {
+  return (items || []).map((text, index) => {
+    const priority = index === 0 ? "Alta" : index < 3 ? "Média" : "Baixa";
+    const impact = priority === "Alta" ? "Redução de risco ou custo prioritário" : priority === "Média" ? "Melhoria operacional relevante" : "Aprimoramento preventivo";
+    return `<tr><td><span class="ai-priority ai-priority-${priority.toLowerCase()}">${priority}</span></td><td>${escapeAiHtml(text)}</td><td>${impact}</td></tr>`;
+  }).join("") || '<tr><td colspan="3">Nenhuma recomendação relevante.</td></tr>';
+}
+
+function aiAnomalyRows(items) {
+  return (items || []).map((text, index) => {
+    const level = /vencid|crític|risco|falha|muito acima/i.test(text) ? "Crítico" : index === 0 ? "Atenção" : "Normal";
+    return `<li><strong>${level}:</strong> ${escapeAiHtml(text)}</li>`;
+  }).join("") || "<li>Nenhuma ocorrência relevante.</li>";
+}
+
+function renderAiReport(report) {
+  const k = report.indicators;
+  const health = aiHealthSummary(k);
+  const annualProjection = k.period.days ? (k.financial.net_cost / k.period.days) * 365 : 0;
+  const topCost = Object.entries(k.costs_by_group || {}).sort((a,b) => b[1] - a[1])[0] || ["Sem dados", 0];
+  const mainRisk = health.critical ? `${health.critical} alerta(s) crítico(s)` : health.attention ? `${health.attention} alerta(s) em atenção` : "Nenhum alerta crítico ativo";
+  const mainRecommendation = (report.recommendations || ["Manter os registros atualizados."])[0];
+  return `<p class="ai-meta"><b>Veículo:</b> ${escapeAiHtml(k.vehicle.name)} · <b>Período:</b> ${escapeAiHtml(k.period.start)} a ${escapeAiHtml(k.period.end)} · <b>Movimentos:</b> ${k.sample.movements}</p>
+  <div class="ai-kpis"><div><small>Saúde veicular</small><strong>${health.score}/100 · ${health.status}</strong></div><div><small>Distância</small><strong>${intFmt(k.usage.distance_km)} km</strong></div><div><small>Custo líquido</small><strong>${money(k.financial.net_cost)}</strong></div><div><small>Custo por km</small><strong>${money(k.financial.cost_per_km)}</strong></div><div><small>Consumo médio</small><strong>${num(k.fuel.consumption_km_l,2)} km/L</strong></div><div><small>Confiança</small><strong>${escapeAiHtml(report.confidence)}</strong></div></div>
+  <div class="ai-executive-cards"><div><small>Principal custo</small><strong>${escapeAiHtml(topCost[0])}</strong><span>${money(topCost[1])}</span></div><div><small>Principal risco</small><strong>${escapeAiHtml(mainRisk)}</strong></div><div><small>Principal recomendação</small><strong>${escapeAiHtml(mainRecommendation)}</strong></div></div>
+  <section class="ai-report-section"><h4>1. Resumo executivo</h4><p>${escapeAiHtml(report.executive_summary)}</p></section>
+  <section class="ai-report-section"><h4>2. Combustível e consumo</h4><p>${escapeAiHtml(report.fuel_analysis)}</p><small>${k.sample.incomplete_refuels} abastecimento(s) incompleto(s) excluído(s) do consumo em km/L e mantido(s) nos custos.</small></section>
+  <section class="ai-report-section"><h4>3. Custos, uso e projeção</h4><p>${escapeAiHtml(report.cost_analysis)}</p><p><b>Projeção anual pelo ritmo do período:</b> ${money(annualProjection)}. A projeção é linear e não representa garantia de gasto futuro.</p></section>
+  <section class="ai-report-section"><h4>4. Anomalias classificadas</h4><ul>${aiAnomalyRows(report.anomalies)}</ul></section>
+  <section class="ai-report-section"><h4>5. Manutenção e alertas</h4><p>${escapeAiHtml(report.maintenance_analysis)}</p><p><b>Painel:</b> ${health.critical} crítico(s), ${health.attention} em atenção e ${(k.alert_snapshot || []).filter(a=>a.active).length} alerta(s) ativo(s).</p></section>
+  <section class="ai-report-section"><h4>6. Fornecedores</h4><p>${escapeAiHtml(report.supplier_analysis)}</p></section>
+  <section class="ai-report-section"><h4>7. Plano de ação priorizado</h4><table class="ai-action-table"><thead><tr><th>Prioridade</th><th>Recomendação</th><th>Impacto esperado</th></tr></thead><tbody>${aiRecommendationRows(report.recommendations)}</tbody></table></section>
+  <section class="ai-report-section"><h4>8. Critérios e limitações</h4><p>${escapeAiHtml(report.limitations)}</p><small>Indicadores calculados pelo MyCar+. Interpretação gerada por Inteligência Artificial. Esta análise não substitui avaliação mecânica profissional.</small></section>`;
+}
+
+function openAiPrintableReport(autoPrint = false) {
   if (!lastAiReport) return;
   const content = renderAiReport(lastAiReport);
   const win = window.open("", "_blank");
   if (!win) return alert("Permita janelas pop-up para visualizar ou gerar o PDF.");
-  win.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório MyCar+ Intelligence</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#243746;line-height:1.45;max-width:185mm;margin:auto}h1,h2,h4{color:#12395b}.header{border-bottom:3px solid #0788e8;margin-bottom:16px}.ai-meta{color:#607080}.ai-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ai-kpis div{background:#f1f7fb;padding:10px;border-radius:8px}.ai-kpis small{display:block;color:#607080}.ai-report-section{break-inside:avoid;margin:18px 0}.footer{margin-top:25px;border-top:1px solid #ccd9e2;padding-top:8px;color:#607080;font-size:11px}.report-actions{display:flex;gap:10px;margin:24px 0}.report-actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.report-actions button:last-child{background:#0788e8;color:#fff}@media print{button{display:none}}</style></head><body><div class="header"><h1>Relatório de Análise Inteligente Veicular</h1><p>MyCar+ Intelligence · emissão ${new Date().toLocaleString("pt-BR")}</p></div>${content}<div class="footer">Relatório gerado a partir dos dados informados no MyCar+. A IA interpreta indicadores calculados pelo aplicativo e não altera a base.</div><div class="report-actions"><button type="button" onclick="window.close()">Fechar relatório</button><button type="button" onclick="window.print()">Imprimir / Salvar em PDF</button></div></body></html>`);
+  win.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório MyCar+ Intelligence</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#243746;line-height:1.45;max-width:185mm;margin:auto}h1,h2,h4{color:#12395b}.header{border-bottom:3px solid #0788e8;margin-bottom:16px}.ai-meta{color:#607080}.ai-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ai-kpis div{background:#f1f7fb;padding:10px;border-radius:8px}.ai-kpis small{display:block;color:#607080}.ai-report-section{break-inside:avoid;margin:18px 0}.footer{margin-top:25px;border-top:1px solid #ccd9e2;padding-top:8px;color:#607080;font-size:11px}.report-actions{display:flex;gap:10px;margin:24px 0}.report-actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.report-actions button:last-child{background:#0788e8;color:#fff}@media print{button{display:none}}</style></head><body><div class="header"><h1>Relatório Executivo de Gestão Veicular</h1><p><strong>Gerado com Inteligência Artificial</strong> · MyCar+ Intelligence · emissão ${new Date().toLocaleString("pt-BR")}</p></div>${content}<div class="footer">Relatório gerado a partir dos dados informados no MyCar+. Os indicadores são calculados pelo MyCar+. A Inteligência Artificial interpreta os resultados e gera diagnósticos, tendências e recomendações. A qualidade das conclusões depende da consistência dos dados registrados.</div><div class="report-actions"><button type="button" onclick="window.close()">Fechar relatório</button><button type="button" onclick="window.print()">Imprimir / Salvar em PDF</button></div></body></html>`);
   win.document.close();
+  if (autoPrint) win.addEventListener("load", () => setTimeout(() => win.print(), 300));
 }
 
 function initializeAiModule() {
-  const form = $("#aiAnalysisForm");
-  if (!form) return;
-  const vehicleSelect = $("#aiVehicle");
-  const setDefaultAiPeriod = () => {
-    const vehicle = vehicles.find((v) => v.id === vehicleSelect.value);
-    if (!vehicle) return;
-    const dates = movements
-      .filter((m) => m.veiculo_id === vehicle.id || m.veiculo === vehicle.nome)
-      .map((m) => String(m.data_hora || "").slice(0, 10))
-      .filter(Boolean)
-      .sort();
-    $("#aiStart").value = dates[0] || "";
-    $("#aiEnd").value = dates.at(-1) || "";
-  };
-  const refreshVehicles = () => {
-    const selected = vehicleSelect.value;
-    vehicleSelect.innerHTML = '<option value="">Selecione o veículo</option>' +
-      alpha(vehicles).map((v) => `<option value="${escapeAiHtml(v.id)}">${escapeAiHtml(v.nome)}${v.placa ? " · " + escapeAiHtml(v.placa) : ""}</option>`).join("");
-    if (vehicles.some((v) => v.id === selected)) vehicleSelect.value = selected;
-    else if (vehicles.some((v) => v.padrao)) vehicleSelect.value = vehicles.find((v) => v.padrao).id;
-    setDefaultAiPeriod();
-  };
-  refreshVehicles();
-  window.addEventListener("vehicle-app-ready", refreshVehicles);
-  vehicleSelect.onchange = setDefaultAiPeriod;
-  form.onsubmit = async (event) => {
-    event.preventDefault();
-    const error = $("#aiFormError"), result = $("#aiResult"), progress = $("#aiProgress");
-    error.textContent = "";
-    const vehicleId = vehicleSelect.value, start = $("#aiStart").value, end = $("#aiEnd").value;
-    if (!vehicleId || !start || !end) return (error.textContent = "Informe o veículo e o período completo.");
-    if (start > end) return (error.textContent = "A data inicial não pode ser posterior à data final.");
-    if (!navigator.onLine) return (error.textContent = "Não foi possível gerar a análise inteligente. Verifique sua conexão com a internet e tente novamente.");
-    const indicators = buildAiIndicators(vehicleId, start, end, $("#aiType").value);
-    if (!indicators.sample.movements) return (error.textContent = "Não existem movimentos para o veículo e o período informados.");
-    if (typeof window.mycarAiAnalyze !== "function") return (error.textContent = "O Firebase AI Logic ainda não foi carregado. Atualize a página e tente novamente.");
-    progress.hidden = false; result.hidden = true; $("#generateAiAnalysis").disabled = true;
-    progress.scrollIntoView({ behavior: "smooth", block: "center" });
-    try {
-      const report = await window.mycarAiAnalyze(indicators);
-      lastAiReport = { ...report, indicators };
-      $("#aiConfidence").textContent = lastAiReport.confidence || "Não informada";
-      $("#aiReportContent").innerHTML = renderAiReport(lastAiReport);
-      result.hidden = false;
-      requestAnimationFrame(() => result.scrollIntoView({ behavior: "smooth", block: "start" }));
-    } catch (requestError) {
-      console.error(requestError);
-      error.textContent = requestError.message || "Falha de comunicação com o serviço de IA.";
-    } finally {
-      progress.hidden = true; $("#generateAiAnalysis").disabled = false;
-    }
-  };
-  $("#closeAiResult").onclick = () => {
-    $("#aiResult").hidden = true;
-    form.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-  $("#viewAiReport").onclick = openAiPrintableReport;
-  $("#exportAiPdf").onclick = () => { openAiPrintableReport(); setTimeout(() => {}, 0); };
-  $("#newAiAnalysis").onclick = () => { lastAiReport = null; $("#aiResult").hidden = true; form.scrollIntoView({ behavior: "smooth" }); };
+  const form=$("#aiAnalysisForm"); if(!form)return;
+  const refreshVehicleContext=()=>{const vehicle=selectedVehicleObject(); $("#aiVehicleName").textContent=vehicle?`${vehicle.nome}${vehicle.placa?" · "+vehicle.placa:""}`:"Nenhum veículo selecionado"; $("#aiVehicleStatus").textContent=vehicle?(vehicle.ativo===false?"Veículo inativo · consulta histórica":"Veículo ativo"):""; if(!vehicle)return; const dates=movements.filter((m)=>m.veiculo_id===vehicle.id||m.veiculo===vehicle.nome).map((m)=>String(m.data_hora||"").slice(0,10)).filter(Boolean).sort(); $("#aiStart").value=dates[0]||""; $("#aiEnd").value=dates.at(-1)||"";};
+  refreshVehicleContext(); window.addEventListener("vehicle-app-ready",refreshVehicleContext);
+  form.onsubmit=async(event)=>{event.preventDefault(); const error=$("#aiFormError"),result=$("#aiResult"),progress=$("#aiProgress"); error.textContent=""; const vehicle=selectedVehicleObject(),vehicleId=vehicle?.id||"",start=$("#aiStart").value,end=$("#aiEnd").value; if(!vehicleId)return(error.textContent="Selecione um veículo na tela inicial antes de gerar a análise."); if(!start||!end)return(error.textContent="Informe o período completo."); if(start>end)return(error.textContent="A data inicial não pode ser posterior à data final."); if(!navigator.onLine)return(error.textContent="Não foi possível gerar a análise inteligente. Verifique sua conexão com a internet e tente novamente."); const indicators=buildAiIndicators(vehicleId,start,end,$("#aiType").value); if(!indicators.sample.movements)return(error.textContent="Não existem movimentos para o veículo selecionado no período informado."); if(typeof window.mycarAiAnalyze!=="function")return(error.textContent="O Firebase AI Logic ainda não foi carregado. Atualize a página e tente novamente."); progress.hidden=false;result.hidden=true;$("#generateAiAnalysis").disabled=true; try{const report=await window.mycarAiAnalyze(indicators);lastAiReport={...report,indicators};$("#aiConfidence").textContent=`Confiabilidade: ${lastAiReport.confidence||"Não informada"}`;$("#aiReportContent").innerHTML=renderAiReport(lastAiReport);result.hidden=false;}catch(requestError){console.error(requestError);error.textContent=requestError.message||"Falha de comunicação com o serviço de IA.";}finally{progress.hidden=true;$("#generateAiAnalysis").disabled=false;}};
+  $("#closeAiResult").onclick=()=>{$("#aiResult").hidden=true;}; $("#viewAiReport").onclick=()=>openAiPrintableReport(false); $("#exportAiPdf").onclick=()=>openAiPrintableReport(true); $("#newAiAnalysis").onclick=()=>{lastAiReport=null;$("#aiResult").hidden=true;refreshVehicleContext();};
 }
 initializeAiModule();
 
@@ -2918,7 +2895,10 @@ load().then(() => {
   const params = new URLSearchParams(window.location.search);
   const page = params.get("pagina");
   if (page && document.getElementById(page)) go(page);
-  if (params.get("acao") === "novo") go("movimentos");
+  if (params.get("acao") === "novo") {
+    go("movimentos");
+    setTimeout(openEntryGroupChooser, 0);
+  }
   if (page || params.has("acao"))
     history.replaceState(null, "", window.location.pathname + window.location.hash);
   window.vehicleAppReady = true;

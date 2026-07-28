@@ -63,3 +63,19 @@ Data: 26/07/2026
 14. Versões atualizadas: app 5.29, pacote 5.29.0, Android versionCode 529 e versionName 5.29.0.
 15. Cache do service worker atualizado para V5.29.
 16. Manual de ajuda atualizado com regras de fechamento e retorno.
+
+
+VERSÃO 5.34 — CONSOLIDAÇÃO FINAL
+- Versões visível, Web/PWA, package-lock e Android alinhadas.
+- Relatórios vinculados ao veículo selecionado.
+- Relatório executivo de IA aprimorado com score, projeção e plano priorizado.
+- Ajuda e documentação consolidadas.
+
+
+V5.35 — CONSOLIDAÇÃO FINAL
+- Versão atual: app 5.35.0, Android versionCode 535 e versionName 5.35.0.
+- Cache atual: mycar-plus-v5-35.
+- Consultas, movimentos, relatórios, gráficos, alertas e IA vinculados ao veículo selecionado na tela inicial.
+- IA com segunda tentativa automática e relatório local de contingência.
+- Atalho PWA Novo lançamento abre diretamente a seleção do grupo de lançamento.
+- Documentos anteriores permanecem apenas como histórico de evolução.

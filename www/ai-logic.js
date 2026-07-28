@@ -39,36 +39,72 @@ function initializeAiLogic() {
   }
 }
 
-function parseReport(text) {
+function extractJsonObject(text) {
   const clean = String(text || "")
     .trim()
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/, "");
-  const report = JSON.parse(clean);
-  const required = [
-    "executive_summary",
-    "fuel_analysis",
-    "cost_analysis",
-    "anomalies",
-    "maintenance_analysis",
-    "supplier_analysis",
-    "recommendations",
-    "limitations",
-    "confidence",
+  try { return JSON.parse(clean); } catch (_) {}
+  const first = clean.indexOf("{");
+  const last = clean.lastIndexOf("}");
+  if (first >= 0 && last > first) return JSON.parse(clean.slice(first, last + 1));
+  throw new Error("A análise retornou conteúdo sem JSON válido.");
+}
+
+function parseReport(text) {
+  const report = extractJsonObject(text);
+  const textKeys = [
+    "executive_summary", "fuel_analysis", "cost_analysis",
+    "maintenance_analysis", "supplier_analysis", "limitations",
   ];
-  if (!required.every((key) => Object.prototype.hasOwnProperty.call(report, key))) {
+  textKeys.forEach((key) => { report[key] = String(report[key] || "").trim(); });
+  report.anomalies = Array.isArray(report.anomalies)
+    ? report.anomalies.map(String).filter(Boolean) : [];
+  report.recommendations = Array.isArray(report.recommendations)
+    ? report.recommendations.map(String).filter(Boolean) : [];
+  report.confidence = ["Baixa", "Média", "Alta"].includes(report.confidence)
+    ? report.confidence : "Baixa";
+  if (!report.executive_summary || !report.cost_analysis || !report.limitations) {
     throw new Error("A análise retornou um formato incompleto.");
   }
-  report.anomalies = Array.isArray(report.anomalies) ? report.anomalies : [];
-  report.recommendations = Array.isArray(report.recommendations) ? report.recommendations : [];
   return report;
 }
 
+function localFallbackReport(indicators, reason = "") {
+  const movements = Number(indicators?.sample?.movements || 0);
+  const complete = Number(indicators?.sample?.complete_refuels || 0);
+  const incomplete = Number(indicators?.sample?.incomplete_refuels || 0);
+  const activeAlerts = (indicators?.alert_snapshot || []).filter((a) => a.active);
+  const supplierMissing = Number(indicators?.quality?.missing_supplier || 0);
+  const recommendations = [];
+  if (activeAlerts.length) recommendations.push("Revisar e tratar os alertas ativos do veículo.");
+  if (incomplete) recommendations.push("Completar os próximos registros de abastecimento para elevar a confiabilidade do consumo.");
+  if (supplierMissing) recommendations.push("Informar o fornecedor quando disponível para melhorar a análise de custos.");
+  recommendations.push("Manter hodômetro, valores e datas atualizados em cada lançamento.");
+  return {
+    executive_summary: `Relatório calculado localmente com ${movements} movimento(s). A interpretação por IA não pôde ser concluída nesta tentativa.`,
+    fuel_analysis: complete
+      ? `Há ${complete} abastecimento(s) completo(s) apto(s) ao cálculo de consumo e ${incomplete} incompleto(s) mantido(s) apenas nos custos.`
+      : "A amostra não possui abastecimentos completos suficientes para interpretar o consumo em km/L.",
+    cost_analysis: "Os valores, custos por grupo, custo por quilômetro e projeções exibidos foram calculados diretamente pelo MyCar+.",
+    anomalies: activeAlerts.map((a) => `${a.description}: ${a.status} — ${a.forecast}`),
+    maintenance_analysis: activeAlerts.length
+      ? `Existem ${activeAlerts.length} alerta(s) ativo(s) que devem ser revisados.`
+      : "Não foram identificados alertas ativos no período analisado.",
+    supplier_analysis: supplierMissing
+      ? `${supplierMissing} registro(s) não possuem fornecedor informado; os demais indicadores permanecem válidos.`
+      : "Os registros analisados possuem informação de fornecedor quando aplicável.",
+    recommendations,
+    limitations: `Relatório de contingência gerado sem interpretação remota. ${reason ? "Motivo técnico: " + reason : ""}`.trim(),
+    confidence: "Baixa",
+    fallback: true,
+  };
+}
 window.mycarAiAnalyze = async (indicators) => {
-  if (initializationError) throw initializationError;
-  if (!model) throw new Error("O Firebase AI Logic ainda não foi inicializado.");
+  if (initializationError) return localFallbackReport(indicators, initializationError.message);
+  if (!model) return localFallbackReport(indicators, "Firebase AI Logic não inicializado.");
 
-  const prompt = `Você é um analista veicular. Responda em português do Brasil e use somente os indicadores fornecidos.
+  const prompt = `Você é um analista veicular sênior. Responda em português do Brasil, com linguagem executiva, objetiva e use somente os indicadores fornecidos.
 Não invente números, diagnósticos mecânicos ou causalidade. Informe quando a amostra for insuficiente.
 Abastecimentos incompletos entram nos custos, mas não no consumo em km/L.
 O fornecedor é opcional. Se estiver ausente ou a qualidade dessa informação for baixa,
@@ -78,14 +114,26 @@ sem afirmar qual foi o tipo de percurso.
 Retorne exclusivamente JSON válido, sem markdown, com estas chaves:
 executive_summary (string), fuel_analysis (string), cost_analysis (string),
 anomalies (array de strings), maintenance_analysis (string),
-supplier_analysis (string), recommendations (array de strings),
+supplier_analysis (string), recommendations (array de strings em ordem de prioridade, começando pela ação mais urgente),
 limitations (string) e confidence ("Baixa", "Média" ou "Alta").
 
 INDICADORES:
 ${JSON.stringify(indicators)}`;
 
-  const result = await model.generateContent(prompt);
-  return parseReport(result.response.text());
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      const request = attempt === 1
+        ? prompt
+        : `${prompt}\n\nCORREÇÃO OBRIGATÓRIA: a resposta anterior não pôde ser validada. Retorne somente um objeto JSON completo, sem qualquer texto antes ou depois.`;
+      const result = await model.generateContent(request);
+      return parseReport(result.response.text());
+    } catch (error) {
+      lastError = error;
+      console.warn(`Tentativa ${attempt} da análise inteligente falhou:`, error);
+    }
+  }
+  return localFallbackReport(indicators, lastError?.message || "Resposta inválida do serviço de IA.");
 };
 
 initializeAiLogic();

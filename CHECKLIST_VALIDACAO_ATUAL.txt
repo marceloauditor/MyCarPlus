@@ -1,0 +1,14 @@
+MYCARPLUS V5.35 — CHECKLIST DE INSTALAÇÃO E VALIDAÇÃO
+
+[ ] Backup do projeto anterior realizado
+[ ] Pacote extraído em pasta nova
+[ ] npm.cmd install executado sem erros
+[ ] npm.cmd run sync:android executado sem erros
+[ ] Login Firebase testado
+[ ] Tela inicial e versão 5.35 conferidas
+[ ] Cadastros testados: incluir, alterar, salvar, cancelar e fechar
+[ ] Navegação testada: botão Voltar, botão físico Android e Esc
+[ ] Relatório Inteligente aberto e fechado normalmente
+[ ] Contraste conferido nos temas claro e escuro
+[ ] APK de teste gerado e instalado
+[ ] git status revisado antes do commit

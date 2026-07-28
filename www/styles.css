@@ -529,3 +529,17 @@ html[data-theme="dark"] .ai-result .ai-kpis div{background:#12344d!important;bor
 .page-back{border:1px solid var(--line);background:var(--card);color:var(--primary,#075b9d);border-radius:10px;padding:9px 13px;font-weight:800}
 .page-back:hover{filter:brightness(.97)}
 @media(max-width:640px){.page-title{align-items:flex-start}.page-back{padding:8px 11px}}
+
+/* V5.32 — contexto global do veículo e relatório executivo de IA */
+.ai-vehicle-context span{display:block;margin-top:4px;color:var(--muted,#607080);font-size:.85rem}
+html[data-theme="light"] .ai-result,html[data-theme="light"] .ai-report-section,html[data-theme="light"] .selected-vehicle-context{color:#17232d}
+html[data-theme="light"] .ai-result h3,html[data-theme="light"] .ai-result h4,html[data-theme="light"] .selected-vehicle-context strong{color:#12395b}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+.cloud-status-row{display:flex;align-items:center;gap:9px;margin:8px 0}.cloud-dot{width:11px;height:11px;border-radius:50%;display:inline-block;background:#8796a1;box-shadow:0 0 0 3px rgba(135,150,161,.14)}.cloud-dot.online{background:#14804a}.cloud-dot.syncing{background:#087fd1;animation:cloudPulse 1s infinite}.cloud-dot.warning{background:#b27300}.cloud-dot.offline{background:#6d7880}.cloud-dot.error{background:#b3261e}.cloud-diagnostics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:13px 0}.cloud-diagnostics div{background:var(--surface,#fff);border:1px solid var(--border,#dbe5ec);border-radius:9px;padding:9px}.cloud-diagnostics dt{font-size:.78rem;opacity:.72}.cloud-diagnostics dd{margin:2px 0 0;font-weight:700;word-break:break-word}.cloud-actions{display:flex;gap:8px;flex-wrap:wrap}@keyframes cloudPulse{50%{opacity:.42;transform:scale(.82)}}
+
+/* V5.34 — relatório executivo consolidado */
+.ai-executive-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}.ai-executive-cards>div{border:1px solid var(--line,#d8e3ec);border-radius:12px;padding:14px;background:var(--card,#fff)}.ai-executive-cards small,.ai-executive-cards span{display:block}.ai-executive-cards strong{display:block;margin:5px 0}.ai-action-table{width:100%;border-collapse:collapse}.ai-action-table th,.ai-action-table td{border:1px solid var(--line,#d8e3ec);padding:9px;text-align:left;vertical-align:top}.ai-priority{display:inline-block;border-radius:999px;padding:3px 8px;font-weight:800}.ai-priority-alta{background:#fde8e7;color:#9f201a}.ai-priority-média{background:#fff3d8;color:#845400}.ai-priority-baixa{background:#e8f5ee;color:#17663d}@media(max-width:720px){.ai-executive-cards{grid-template-columns:1fr}.ai-action-table{font-size:.9rem}}
+
+/* V5.35 — consolidação final por veículo e resiliência da IA */
+.vehicle-context-filter{display:grid;gap:4px;min-width:220px}.vehicle-context-filter small{font-weight:700;color:var(--muted,#536572)}.vehicle-context-filter select:disabled{opacity:1;cursor:default;color:inherit;background:var(--card,#fff)}
