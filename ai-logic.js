@@ -70,6 +70,18 @@ function parseReport(text) {
   return report;
 }
 
+
+function friendlyAiLimitation(reason = "") {
+  const message = String(reason || "").toLowerCase();
+  if (message.includes("429") || message.includes("quota") || message.includes("rate limit")) {
+    return "A interpretação por Inteligência Artificial não estava disponível porque o limite temporário de utilização do serviço foi atingido. Os cálculos e indicadores locais foram processados normalmente. Tente novamente mais tarde.";
+  }
+  if (message.includes("network") || message.includes("fetch") || message.includes("internet") || message.includes("timeout")) {
+    return "A interpretação por Inteligência Artificial não estava disponível por falha temporária de conexão. Os cálculos e indicadores locais foram processados normalmente.";
+  }
+  return "A interpretação por Inteligência Artificial não estava disponível nesta tentativa. Os cálculos e indicadores locais foram processados normalmente.";
+}
+
 function localFallbackReport(indicators, reason = "") {
   const movements = Number(indicators?.sample?.movements || 0);
   const complete = Number(indicators?.sample?.complete_refuels || 0);
@@ -95,7 +107,7 @@ function localFallbackReport(indicators, reason = "") {
       ? `${supplierMissing} registro(s) não possuem fornecedor informado; os demais indicadores permanecem válidos.`
       : "Os registros analisados possuem informação de fornecedor quando aplicável.",
     recommendations,
-    limitations: `Relatório de contingência gerado sem interpretação remota. ${reason ? "Motivo técnico: " + reason : ""}`.trim(),
+    limitations: friendlyAiLimitation(reason),
     confidence: "Baixa",
     fallback: true,
   };
