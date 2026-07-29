@@ -17,7 +17,7 @@
     const host=document.querySelector('#sobre .about-card'); if(!host||document.querySelector('#cloudPanel'))return;
     host.insertAdjacentHTML('beforeend',`<div id="cloudPanel" class="cloud-panel"><h3>Conexão e sincronização</h3><div class="cloud-status-row"><span id="cloudDot" class="cloud-dot"></span><strong id="cloudHeadline">Inicializando…</strong></div><p id="cloudStatus">Verificando sessão e conexão…</p><dl class="cloud-diagnostics"><div><dt>Conta</dt><dd id="cloudAccount">Não conectada</dd></div><div><dt>Internet</dt><dd id="cloudNetwork">Verificando</dd></div><div><dt>Pendências</dt><dd id="cloudPending">0</dd></div><div><dt>Última sincronização</dt><dd id="cloudLastSync">Nunca</dd></div><div><dt>Último recebimento</dt><dd id="cloudLastPull">Nunca</dd></div></dl><div class="cloud-actions"><button id="cloudLogin" type="button" ${configured?'':'disabled'}>Entrar com Google</button><button id="cloudSyncNow" type="button" ${configured?'':'disabled'}>Sincronizar agora</button><button id="cloudLogout" type="button" hidden>Sair</button></div></div>`);
     document.querySelector('#cloudLogin').onclick=login;
-    document.querySelector('#cloudSyncNow').onclick=()=>flush(true);
+    document.querySelector('#cloudSyncNow').onclick=manualSync;
     document.querySelector('#cloudLogout').onclick=logout; draw();
   }
   function message(text,error=false){setMeta({message:text,error})}
@@ -29,7 +29,7 @@
     const h=document.querySelector('#cloudHeadline'),d=document.querySelector('#cloudDot');if(h)h.textContent=title;if(d)d.className=`cloud-dot ${cls}`;
     const vals={cloudAccount:user?.email||'Não conectada',cloudNetwork:on?'Online':'Offline',cloudPending:q?'1 estado aguardando envio':'0',cloudLastSync:when(m.lastPush),cloudLastPull:when(m.lastPull)};
     Object.entries(vals).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v});
-    const li=document.querySelector('#cloudLogin'),lo=document.querySelector('#cloudLogout');if(li)li.hidden=!!user;if(lo)lo.hidden=!user;
+    const li=document.querySelector('#cloudLogin'),lo=document.querySelector('#cloudLogout'),sy=document.querySelector('#cloudSyncNow');if(li)li.hidden=!!user;if(lo)lo.hidden=!user;if(sy){sy.disabled=!configured||syncing||!on;sy.textContent=syncing?'Sincronizando…':(!user?'Entrar para sincronizar':'Sincronizar agora');sy.setAttribute('aria-busy',syncing?'true':'false')}
   }
   const native=()=>!!window.Capacitor?.isNativePlatform?.()&&window.Capacitor?.getPlatform?.()==='android';
   async function login(){
@@ -44,14 +44,26 @@
     clearTimeout(timer);timer=setTimeout(()=>flush(false),700);
   }
   async function flush(manual=false){
-    if(syncing)return;const job=pending();
-    if(!navigator.onLine){message('Sem internet. As alterações permanecem salvas neste aparelho.');return}
-    if(!user||!ref){message(manual?'Entre com Google para sincronizar.':'Alterações locais aguardando login.');return}
-    if(!job){message('Nenhuma alteração pendente. Dados sincronizados.');return}
+    if(syncing)return false;const job=pending();
+    if(!navigator.onLine){message('Sem internet. As alterações permanecem salvas neste aparelho.');return false}
+    if(!user||!ref){message(manual?'Entre com Google para sincronizar.':'Alterações locais aguardando login.');return false}
+    if(!job){if(manual)message('Nenhuma alteração local pendente. Verificando a nuvem…');return true}
     syncing=true;draw();
-    try{await ref.set({...job.state,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),clientUpdatedAt:job.queuedAt,deviceId:job.deviceId,schemaVersion:7});setPending(null);setMeta({lastPush:iso(),message:'Dados sincronizados na nuvem.',error:false})}catch(e){console.error(e);setMeta({message:'Falha ao enviar. Os dados serão reenviados automaticamente.',error:true})}finally{syncing=false;draw()}
+    try{await ref.set({...job.state,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),clientUpdatedAt:job.queuedAt,deviceId:job.deviceId,schemaVersion:7});setPending(null);setMeta({lastPush:iso(),message:'Alterações enviadas para a nuvem.',error:false});return true}catch(e){console.error(e);setMeta({message:'Falha ao enviar. Os dados serão reenviados automaticamente.',error:true});return false}finally{syncing=false;draw()}
   }
-  window.cloudSync={queueSave:queue,syncNow:()=>flush(true),getStatus:()=>({online:navigator.onLine,authenticated:!!user,pending:!!pending(),syncing,...metadata()})};
+  async function pullLatest(){
+    if(!user||!ref||!navigator.onLine)return false;
+    syncing=true;draw();message('Consultando a versão mais recente na nuvem…');
+    try{const snap=await ref.get({source:'server'});if(!snap.exists){queue();await flush(false);setMeta({message:'Primeira sincronização concluída.',error:false});return true}if(!pending()){applying=true;window.vehicleAppBridge.applyState(snap.data());applying=false;setMeta({lastPull:iso(),message:'Dados conferidos e atualizados.',error:false})}else setMeta({message:'Há alterações locais aguardando envio.',error:false});return true}catch(e){console.error(e);setMeta({message:'Não foi possível consultar a nuvem agora. Os dados locais continuam disponíveis.',error:true});return false}finally{syncing=false;draw()}
+  }
+  async function manualSync(){
+    if(syncing)return;
+    if(!navigator.onLine){message('Sem internet. Conecte-se para sincronizar.');draw();return}
+    if(!user||!ref){message('Entre com Google para habilitar a sincronização.');await login();return}
+    message('Iniciando sincronização completa…');
+    const sent=await flush(true);if(sent)await pullLatest();
+  }
+  window.cloudSync={queueSave:queue,syncNow:manualSync,getStatus:()=>({online:navigator.onLine,authenticated:!!user,pending:!!pending(),syncing,...metadata()})};
   async function connect(current){
     user=current;if(unsub){unsub();unsub=null}draw();
     if(!user){ref=null;message('Entre com Google para manter os dados sincronizados entre aparelhos.');return}

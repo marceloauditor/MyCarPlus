@@ -586,3 +586,24 @@ html[data-theme="dark"] .ai-result,html[data-theme="dark"] .ai-result .ai-report
 html[data-theme="dark"] .ai-result h3,html[data-theme="dark"] .ai-result h4,html[data-theme="dark"] .ai-result p,html[data-theme="dark"] .ai-result li,html[data-theme="dark"] .ai-result strong,html[data-theme="dark"] .ai-result b{color:var(--theme-text)!important}
 .page-title-actions{display:flex;align-items:center;gap:8px}.page-title-actions .page-back{white-space:nowrap}
 @media(max-width:520px){.page-title-actions{gap:6px}.page-title-actions .page-back{padding:9px 10px}.page-title-actions .round{width:42px;height:42px}}
+
+
+/* MyCar+ V5.37 — contraste final da tela Sobre e valores do relatório */
+#sobre .cloud-panel{background:var(--theme-surface-2)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important;box-shadow:none}
+#sobre .cloud-panel h3,#sobre .cloud-panel strong,#sobre .cloud-panel p{color:var(--theme-text)!important;opacity:1!important}
+#sobre .cloud-diagnostics div{background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+#sobre .cloud-diagnostics dt{color:var(--theme-muted)!important;opacity:1!important}
+#sobre .cloud-diagnostics dd{color:var(--theme-text)!important;opacity:1!important}
+#sobre .cloud-actions button{color:#fff!important;opacity:1}
+#sobre .cloud-actions button:disabled{background:#617584!important;color:#e7eef3!important;opacity:.72}
+.category-table-wrap,.category-cost-table{background:var(--theme-surface)!important;color:var(--theme-text)!important}
+.category-cost-table th,.category-cost-table td,.category-cost-table tbody th{color:var(--theme-text)!important;opacity:1!important;text-shadow:none!important}
+.category-cost-table thead th{background:var(--theme-surface-2)!important;color:var(--theme-muted)!important}
+.category-cost-table tbody tr:not(.total-expenses):not(.income-row):not(.net-cost-row){background:var(--theme-surface)!important}
+.category-cost-table tbody tr:not(.total-expenses):not(.income-row):not(.net-cost-row):nth-child(even){background:var(--theme-surface-2)!important}
+html[data-theme="light"] .category-cost-table .total-expenses th,html[data-theme="light"] .category-cost-table .total-expenses td{background:#dfeef8!important;color:#124f73!important}
+html[data-theme="light"] .category-cost-table .income-row th,html[data-theme="light"] .category-cost-table .income-row td{background:#e6f5ed!important;color:#087443!important}
+html[data-theme="light"] .category-cost-table .net-cost-row th,html[data-theme="light"] .category-cost-table .net-cost-row td{background:#d9f0e5!important;color:#075f38!important}
+html[data-theme="dark"] .category-cost-table .total-expenses th,html[data-theme="dark"] .category-cost-table .total-expenses td{background:#0d3b5d!important;color:#fff!important}
+html[data-theme="dark"] .category-cost-table .income-row th,html[data-theme="dark"] .category-cost-table .income-row td{background:#082d2a!important;color:#69e6ad!important}
+html[data-theme="dark"] .category-cost-table .net-cost-row th,html[data-theme="dark"] .category-cost-table .net-cost-row td{background:#0a3a32!important;color:#8aefbd!important}
