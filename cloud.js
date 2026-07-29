@@ -18,7 +18,7 @@
     host.insertAdjacentHTML('beforeend',`<div id="cloudPanel" class="cloud-panel"><h3>Conexão e sincronização</h3><div class="cloud-status-row"><span id="cloudDot" class="cloud-dot"></span><strong id="cloudHeadline">Inicializando…</strong></div><p id="cloudStatus">Verificando sessão e conexão…</p><dl class="cloud-diagnostics"><div><dt>Conta</dt><dd id="cloudAccount">Não conectada</dd></div><div><dt>Internet</dt><dd id="cloudNetwork">Verificando</dd></div><div><dt>Pendências</dt><dd id="cloudPending">0</dd></div><div><dt>Última sincronização</dt><dd id="cloudLastSync">Nunca</dd></div><div><dt>Último recebimento</dt><dd id="cloudLastPull">Nunca</dd></div></dl><div class="cloud-actions"><button id="cloudLogin" type="button" ${configured?'':'disabled'}>Entrar com Google</button><button id="cloudSyncNow" type="button" ${configured?'':'disabled'}>Sincronizar agora</button><button id="cloudLogout" type="button" hidden>Sair</button></div></div>`);
     document.querySelector('#cloudLogin').onclick=login;
     document.querySelector('#cloudSyncNow').onclick=manualSync;
-    document.querySelector('#cloudLogout').onclick=logout; draw();
+    document.querySelector('#cloudLogout').onclick=logout; const homeStatus=document.querySelector('#homeCloudStatus');if(homeStatus)homeStatus.onclick=()=>{document.querySelector('[data-menu-page="sobre"]')?.click();setTimeout(()=>document.querySelector('#cloudPanel')?.scrollIntoView({behavior:'smooth',block:'center'}),120)}; draw();
   }
   function message(text,error=false){setMeta({message:text,error})}
   function draw(){
@@ -26,7 +26,7 @@
     const status=document.querySelector('#cloudStatus');if(status){status.textContent=m.message||'Aguardando…';status.classList.toggle('cloud-error',!!m.error)}
     let title='Desconectado',cls='offline';
     if(!configured){title='Firebase não configurado';cls='error'}else if(!on){title=q?'Offline — alterações pendentes':'Offline'}else if(syncing){title='Sincronizando…';cls='syncing'}else if(!user){title='Online — login necessário';cls='warning'}else if(q){title='Online — envio pendente';cls='warning'}else{title='Online e sincronizado';cls='online'}
-    const h=document.querySelector('#cloudHeadline'),d=document.querySelector('#cloudDot');if(h)h.textContent=title;if(d)d.className=`cloud-dot ${cls}`;
+    const h=document.querySelector('#cloudHeadline'),d=document.querySelector('#cloudDot'),hd=document.querySelector('#homeCloudStatus .cloud-dot'),hb=document.querySelector('#homeCloudStatus');if(h)h.textContent=title;if(d)d.className=`cloud-dot ${cls}`;if(hd)hd.className=`cloud-dot ${cls}`;if(hb){hb.title=title;hb.setAttribute('aria-label',title)}
     const vals={cloudAccount:user?.email||'Não conectada',cloudNetwork:on?'Online':'Offline',cloudPending:q?'1 estado aguardando envio':'0',cloudLastSync:when(m.lastPush),cloudLastPull:when(m.lastPull)};
     Object.entries(vals).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v});
     const li=document.querySelector('#cloudLogin'),lo=document.querySelector('#cloudLogout'),sy=document.querySelector('#cloudSyncNow');if(li)li.hidden=!!user;if(lo)lo.hidden=!user;if(sy){sy.disabled=!configured||syncing||!on;sy.textContent=syncing?'Sincronizando…':(!user?'Entrar para sincronizar':'Sincronizar agora');sy.setAttribute('aria-busy',syncing?'true':'false')}

@@ -608,7 +608,7 @@ html[data-theme="dark"] .category-cost-table .total-expenses th,html[data-theme=
 html[data-theme="dark"] .category-cost-table .income-row th,html[data-theme="dark"] .category-cost-table .income-row td{background:#082d2a!important;color:#69e6ad!important}
 html[data-theme="dark"] .category-cost-table .net-cost-row th,html[data-theme="dark"] .category-cost-table .net-cost-row td{background:#0a3a32!important;color:#8aefbd!important}
 
-/* MyCar+ V5.38 — contraste, navegação e tema sem perda de contexto */
+/* MyCar+ V5.39 — contraste, navegação e tema sem perda de contexto */
 .ai-executive-cards>div{
   background:#0b2539!important;
   border-color:#31556e!important;
@@ -643,3 +643,11 @@ html[data-theme="dark"] .category-cost-table .net-cost-row th,html[data-theme="d
 .menu-theme-quick>div{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .menu-theme-quick button{border:1px solid #31556e!important;border-radius:9px!important;background:#0b2539!important;color:#fff!important;padding:8px 10px!important;font-weight:800!important}
 .menu-theme-quick button:hover{filter:brightness(1.15)}
+
+
+/* MyCar+ V5.39 — identidade visual, responsividade e status discreto */
+header>div:first-child{position:relative}.home-cloud-status{display:inline-grid!important;place-items:center!important;width:22px!important;height:22px!important;margin-left:5px!important;padding:0!important;border:1px solid rgba(255,255,255,.28)!important;background:rgba(255,255,255,.08)!important;vertical-align:middle!important}.home-cloud-status .cloud-dot{width:8px;height:8px;box-shadow:none}.app-version{vertical-align:middle}
+.vehicle-card,.selected-vehicle-context{min-width:0;overflow:hidden}.vehicle-card>div,.selected-vehicle-context>*{min-width:0}.vehicle-card b,.vehicle-card strong,.vehicle-card span,.selected-vehicle-context strong,.selected-vehicle-context small{overflow-wrap:anywhere;word-break:normal}.selected-vehicle-context{display:grid;grid-template-columns:minmax(0,1fr);width:100%}
+html[data-theme="light"]{--bg:#f3f3f1;--card:#eaf4fb;--card-2:#eaf4fb;--line:#8a5a35;--ink:#111;--muted:#36454f}
+html[data-theme="light"] body{background:#f3f3f1;color:#111}html[data-theme="light"] .vehicle,html[data-theme="light"] .vehicle-card,html[data-theme="light"] .selected-vehicle-context,html[data-theme="light"] .metrics article,html[data-theme="light"] .report-grid article,html[data-theme="light"] .chart-card,html[data-theme="light"] .item,html[data-theme="light"] .register-row,html[data-theme="light"] .bars,html[data-theme="light"] .about-card,html[data-theme="light"] .help-card,html[data-theme="light"] .smart-insights article{background:#eaf4fb!important;border-color:#8a5a35!important;color:#111!important}html[data-theme="light"] .metrics b,html[data-theme="light"] .report-grid b,html[data-theme="light"] .amount,html[data-theme="light"] .bar strong,html[data-theme="light"] .chart-value{color:#e87519!important}html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{color:#111!important;background:#fff!important;border-color:#8a5a35!important}
+@media(max-width:560px){.home-vehicle-selector .vehicle-card{padding-right:72px;grid-template-columns:minmax(0,1fr)}.home-vehicle-selector .vehicle-card strong{justify-self:start;max-width:100%}.selected-vehicle-context{padding:11px 12px}.home-cloud-status{width:20px!important;height:20px!important}}
