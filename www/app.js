@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.37",
+  APP_VERSION = "5.38",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -2698,9 +2698,24 @@ function applyTheme(mode) {
   });
 }
 $$("[data-theme-mode]").forEach((button) => {
-  button.onclick = () => applyTheme(button.dataset.themeMode);
+  button.onclick = () => {
+    const returnPage = pageTrail.at(-1);
+    applyTheme(button.dataset.themeMode);
+    if (currentPageId === "configuracoes" && returnPage && returnPage !== "configuracoes") {
+      pageTrail.pop();
+      go(returnPage, { fromBack: true, instant: true });
+    }
+  };
 });
-applyTheme(localStorage.getItem("mycar_theme") || "auto");
+$$("[data-quick-theme]").forEach((button) => {
+  button.onclick = (event) => {
+    event.stopPropagation();
+    applyTheme(button.dataset.quickTheme);
+    headerMenu.hidden = true;
+    menuBtn.setAttribute("aria-expanded", "false");
+  };
+});
+applyTheme(localStorage.getItem("mycar_theme") || "dark");
 const gpsRadiusSelect = $("#gpsSupplierRadius");
 if (gpsRadiusSelect) {
   gpsRadiusSelect.value = String(gpsSupplierRadiusMeters());
@@ -2710,7 +2725,7 @@ if (gpsRadiusSelect) {
 }
 const systemTheme = matchMedia("(prefers-color-scheme: dark)");
 systemTheme.addEventListener?.("change", () => {
-  if ((localStorage.getItem("mycar_theme") || "auto") === "auto") applyTheme("auto");
+  if ((localStorage.getItem("mycar_theme") || "dark") === "auto") applyTheme("auto");
 });
 let lastAiReport = null;
 

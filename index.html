@@ -28,7 +28,7 @@
 <div>
 <small>Controle automotivo</small>
 <h1>MyCar+</h1>
-<span class="app-version" id="homeVersion">v5.37</span>
+<span class="app-version" id="homeVersion">v5.38</span>
 </div>
 <div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -38,6 +38,10 @@
 <button data-menu-page="alertas">⚠ Alertas e manutenção</button>
 <button data-menu-page="intelligence">✦ Análise inteligente</button>
 <small class="menu-group-title">SISTEMA</small>
+<div class="menu-theme-quick" role="group" aria-label="Alterar tema sem sair da tela atual">
+<small>TEMA RÁPIDO</small>
+<div><button type="button" data-quick-theme="dark">Escuro</button><button type="button" data-quick-theme="light">Claro</button></div>
+</div>
 <button data-menu-page="configuracoes">☷ Configurações</button>
 <button data-menu-page="seguranca">▣ Gestão de dados</button>
 <button id="installAppBtn" class="install-app-action">⬇ Instalação do aplicativo</button>
@@ -480,7 +484,7 @@
 <article class="settings-card">
 <div>
 <h3>Aparência</h3>
-<p>Defina como o MyCar+ acompanha o tema do aparelho.</p>
+<p>Altere o tema sem perder a tela em uso. Em uma instalação nova, o padrão é Escuro.</p>
 </div>
 <div class="settings-options" id="themeOptions">
 <button type="button" data-theme-mode="auto">Automático</button>
@@ -524,7 +528,7 @@
 <h3>Manual rápido de utilização</h3>
 <details open>
 <summary>1. Visão geral</summary>
-<p>Na tela inicial, escolha um veículo ativo ou inativo. O selecionado controla automaticamente o painel, os relatórios e os gráficos; o selo Padrão identifica a preferência definida no cadastro.</p>
+<p>Na tela inicial, escolha um veículo ativo ou inativo. O card destacado identifica o veículo selecionado e controla automaticamente lançamentos, painel, relatórios, gráficos, alertas e análise inteligente; o selo Padrão identifica a preferência definida no cadastro.</p>
 </details>
 <details>
 <summary>2. Cadastros</summary>
@@ -564,7 +568,7 @@
 </details>
 <details>
 <summary>11. Sincronização e segurança</summary>
-<p>Aguarde a conclusão da sincronização antes de fechar o aplicativo. Antes de alterações importantes, mantenha uma exportação XLSX de segurança.</p>
+<p>O comando Sincronizar agora executa o envio dos dados locais e a atualização com os dados disponíveis na nuvem. Aguarde a confirmação antes de fechar o aplicativo. Antes de alterações importantes, mantenha uma exportação XLSX de segurança.</p>
 </details>
 <details>
 <summary>12. Instalação no celular</summary>
@@ -573,8 +577,8 @@
 <p id="installHelpText" class="field-help">Toque no botão para instalar ou ver a orientação adequada ao seu navegador.</p>
 </details>
 <details>
-<summary>13. Como fechar telas e voltar</summary>
-<p>Telas, formulários, seletores e relatórios podem ser fechados pelo botão Voltar, Cancelar ou X. No navegador, a tecla Esc fecha a janela aberta ou retorna à tela anterior. No Android, o botão ou gesto Voltar fecha primeiro o diálogo ativo e depois retorna à página anterior, sem exigir que o aplicativo seja encerrado.</p>
+<summary>13. Como fechar telas, voltar e mudar o tema</summary>
+<p>Telas, formulários, seletores e relatórios podem ser fechados pelo botão Voltar, Cancelar ou X. No navegador, a tecla Esc fecha a janela aberta ou retorna à tela anterior. No Android, o botão ou gesto Voltar fecha primeiro o diálogo ativo e depois retorna à página anterior. O tema pode ser alterado pelo menu rápido sem sair da tela atual; em Configurações, após a escolha, o aplicativo retorna à tela que estava em uso.</p>
 </details>
 <details>
 <summary>14. Análise inteligente</summary>
@@ -609,7 +613,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.37</p>
+<strong>Versão:</strong> 5.38</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>
@@ -659,7 +663,7 @@
 <button class="active" data-page="inicio">
 <span>⌂</span>Início</button>
 <button data-page="movimentos">
-<span>＋</span>Lançamentos</button>
+<span>＋</span>Lançar</button>
 <button data-page="relatorios">
 <span>▥</span>Relatórios</button>
 <button data-page="graficos">

@@ -607,3 +607,39 @@ html[data-theme="light"] .category-cost-table .net-cost-row th,html[data-theme="
 html[data-theme="dark"] .category-cost-table .total-expenses th,html[data-theme="dark"] .category-cost-table .total-expenses td{background:#0d3b5d!important;color:#fff!important}
 html[data-theme="dark"] .category-cost-table .income-row th,html[data-theme="dark"] .category-cost-table .income-row td{background:#082d2a!important;color:#69e6ad!important}
 html[data-theme="dark"] .category-cost-table .net-cost-row th,html[data-theme="dark"] .category-cost-table .net-cost-row td{background:#0a3a32!important;color:#8aefbd!important}
+
+/* MyCar+ V5.38 — contraste, navegação e tema sem perda de contexto */
+.ai-executive-cards>div{
+  background:#0b2539!important;
+  border-color:#31556e!important;
+  color:#fff!important;
+}
+.ai-executive-cards>div small,
+.ai-executive-cards>div strong,
+.ai-executive-cards>div span{
+  color:#fff!important;
+  opacity:1!important;
+}
+.page-title-actions .page-back{
+  background:#0b2539!important;
+  border-color:#31556e!important;
+  color:#fff!important;
+}
+.page-title-actions .page-back:hover{filter:brightness(1.14)}
+.home-vehicle-selector .vehicle-card.selected{
+  background:#0b2539!important;
+  color:#fff!important;
+  border-color:#d62d34!important;
+}
+.home-vehicle-selector .vehicle-card.selected b,
+.home-vehicle-selector .vehicle-card.selected strong,
+.home-vehicle-selector .vehicle-card.selected small,
+.home-vehicle-selector .vehicle-card.selected span{
+  color:#fff!important;
+  opacity:1!important;
+}
+.menu-theme-quick{display:grid;gap:6px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12)}
+.menu-theme-quick>small{font-size:10px;font-weight:850;letter-spacing:.08em;color:#bfd2e1}
+.menu-theme-quick>div{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.menu-theme-quick button{border:1px solid #31556e!important;border-radius:9px!important;background:#0b2539!important;color:#fff!important;padding:8px 10px!important;font-weight:800!important}
+.menu-theme-quick button:hover{filter:brightness(1.15)}
