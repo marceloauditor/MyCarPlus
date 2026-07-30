@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.39",
+  APP_VERSION = "5.41",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -2273,17 +2273,25 @@ function exportPdfReport() {
   if (!periodIsValid("report")) return alert("Corrija o período antes de gerar o relatório.");
   if (!ms.length) return alert("Não existem movimentos no veículo e período selecionados.");
 
+  ensureTechnicalData();
   const s = stats(ms), groups = groupTotals(ms);
   const expenseGroups = [
     ["Combustível", +groups.Combustível || 0],
     ["Manutenção", +groups.Manutenção || 0],
     ["Administrativo", +groups.Administrativo || 0],
   ];
-  const gross = expenseGroups.reduce((a, [,v]) => a + v, 0);
+  const gross = expenseGroups.reduce((a, [, v]) => a + v, 0);
   const income = +groups.Receitas || 0;
   const net = gross - income;
   const costKm = s.km ? net / s.km : 0;
   const costDay = s.days ? net / s.days : 0;
+  const e = (v) => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+  const dateBR = (v) => { const p = String(v || "").slice(0,10).split("-"); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : "—"; };
+  const pct = (v, t) => t ? num(v / t * 100, 1) + "%" : "0,0%";
+  const period = periodText("report");
+  const emitted = new Intl.DateTimeFormat("pt-BR", { dateStyle:"short", timeStyle:"short" }).format(new Date());
+  const currentVehicle = selectedVehicleObject();
+
   const fuelRows = {};
   ms.filter(m => m.grupo === "COMBUSTÍVEL").forEach(m => {
     const key = m.item || "Combustível";
@@ -2298,81 +2306,96 @@ function exportPdfReport() {
   const fuelConsumption = fuelTotal.liters ? fuelTotal.distance / fuelTotal.liters : 0;
   const fuelCostKm = fuelTotal.distance ? fuelTotal.cost / fuelTotal.distance : 0;
   const fuelEntries = Object.entries(fuelRows).sort((a,b)=>b[1].cost-a[1].cost);
+  const fuelHtml = fuelEntries.length ? fuelEntries.map(([name,x])=>`<tr><td>${e(name)}</td><td class="num">${num(x.liters,1)} L</td><td class="num">${num(x.liters?x.distance/x.liters:0,2)} km/L</td><td class="num">${money(x.distance?x.cost/x.distance:0)}</td><td class="num">${money(x.cost)}</td></tr>`).join("") : '<tr><td colspan="5">Sem abastecimentos.</td></tr>';
 
   const monthly = {};
   ms.filter(m => m.grupo !== "RECEITA").forEach(m => {
-    const k = (m.data_hora || "").slice(0,7); if (k) monthly[k] = (monthly[k]||0) + (+m.valor||0);
+    const k = String(m.data_hora || "").slice(0,7);
+    if (k) monthly[k] = (monthly[k] || 0) + (+m.valor || 0);
   });
-  const monthKeys = Object.keys(monthly).sort();
-  const yearlyFuel = {};
-  ms.filter(m => m.grupo === "COMBUSTÍVEL" && m.tanque_completo !== "NAO").forEach(m => {
-    const y=(m.data_hora||"").slice(0,4); if(!y) return;
-    const x=yearlyFuel[y] ||= {l:0,d:0}; x.l += +m.quantidade_litros||0; x.d += +(m.distancia_abastecimento_km ?? m.distancia_km)||0;
+  const monthKeys = Object.keys(monthly).sort().slice(-12);
+  const monthLabels = monthKeys.map(k => {
+    const [y,m] = k.split("-");
+    return ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"][Number(m)-1] + "/" + y.slice(2);
   });
-  const years = Object.keys(yearlyFuel).sort();
-  const annualConsumption = years.map(y => yearlyFuel[y].l ? yearlyFuel[y].d/yearlyFuel[y].l : 0);
-
-  const maint = ms.filter(m => m.grupo === "MANUTENÇÃO").sort((a,b)=>new Date(b.data_hora)-new Date(a.data_hora));
-  const topExpenses = ms.filter(m => m.grupo !== "RECEITA").sort((a,b)=>(+b.valor||0)-(+a.valor||0)).slice(0,5);
-  const refuels = ms.filter(m => m.grupo === "COMBUSTÍVEL");
-  const avgTicket = refuels.length ? refuels.reduce((a,m)=>a+(+m.valor||0),0)/refuels.length : 0;
-  const maxRefuel = refuels.reduce((a,m)=>Math.max(a,+m.valor||0),0);
-  const avgDistance = refuels.length ? refuels.reduce((a,m)=>a+(+(m.distancia_abastecimento_km ?? m.distancia_km)||0),0)/refuels.length : 0;
-
-  const e = (v) => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
-  const dateBR = (v) => { const d=(v||"").slice(0,10).split("-"); return d.length===3 ? `${d[2]}/${d[1]}/${d[0]}` : "—"; };
-  const pct = (v,t) => t ? num(v/t*100,1)+"%" : "0,0%";
-  const period = periodText("report");
-  const emitted = new Intl.DateTimeFormat("pt-BR", {dateStyle:"short", timeStyle:"short"}).format(new Date());
-
-  function lineSvg(labels, values) {
+  function monthlyChart(labels, values) {
     if (!labels.length) return '<div class="empty">Sem dados suficientes.</div>';
-    const W=620,H=180,L=42,R=15,T=18,B=36,max=Math.max(...values,1),min=Math.min(...values,0),span=Math.max(max-min,1);
-    const pts=values.map((v,i)=>{const x=labels.length===1?(L+(W-L-R)/2):L+(W-L-R)*i/(labels.length-1);const y=T+(max-v)/span*(H-T-B);return [x,y];});
-    const grid=[0,1,2,3,4].map(i=>{const y=T+(H-T-B)*i/4;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}"/>`;}).join("");
-    const path=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
-    const dots=pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5"/>`).join("");
-    const labs=pts.map((p,i)=>`<text x="${p[0]}" y="${H-12}" text-anchor="middle">${e(labels[i])}</text>`).join("");
-    return `<svg viewBox="0 0 ${W} ${H}" class="svg-chart"><g class="grid">${grid}</g><path d="${path}" class="line"/><g class="dots">${dots}</g><g class="labels">${labs}</g></svg>`;
+    const W=760,H=225,L=62,R=16,T=18,B=42;
+    const maxValue=Math.max(...values,500), yMax=Math.ceil(maxValue/500)*500;
+    const ticks=[]; for(let v=0;v<=yMax;v+=500) ticks.push(v);
+    const grid=ticks.map(v=>{const y=T+(yMax-v)/yMax*(H-T-B);return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}"/><text x="${L-8}" y="${y+3}" text-anchor="end">R$ ${intFmt(v)}</text>`;}).join("");
+    const step=(W-L-R)/labels.length,bw=Math.min(38,step*.58);
+    const bars=values.map((v,i)=>{const h=(v/yMax)*(H-T-B),x=L+i*step+(step-bw)/2,y=H-B-h;return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4"><title>${labels[i]}: ${money(v)}</title></rect><text x="${x+bw/2}" y="${H-18}" text-anchor="middle">${e(labels[i])}</text>`;}).join("");
+    return `<svg viewBox="0 0 ${W} ${H}" class="svg-chart monthly"><g class="grid">${grid}</g><g class="bars">${bars}</g></svg>`;
   }
   function barSvg(labels, values) {
-    if (!labels.length) return '<div class="empty">Sem dados suficientes.</div>';
-    const W=620,H=180,L=45,R=12,T=15,B=42,max=Math.max(...values,1),step=(W-L-R)/labels.length,bw=Math.min(55,step*.58);
-    const bars=values.map((v,i)=>{const h=(v/max)*(H-T-B),x=L+i*step+(step-bw)/2,y=H-B-h;return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4"/><text x="${x+bw/2}" y="${H-18}" text-anchor="middle">${e(labels[i])}</text>`;}).join("");
+    const max=Math.max(...values,1), W=620,H=170,L=42,R=12,T=15,B=38,step=(W-L-R)/Math.max(labels.length,1),bw=Math.min(70,step*.56);
+    const bars=values.map((v,i)=>{const h=v/max*(H-T-B),x=L+i*step+(step-bw)/2,y=H-B-h;return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4"><title>${labels[i]}: ${money(v)}</title></rect><text x="${x+bw/2}" y="${H-15}" text-anchor="middle">${e(labels[i])}</text>`;}).join("");
     return `<svg viewBox="0 0 ${W} ${H}" class="svg-chart"><line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" class="axis"/><g class="bars">${bars}</g></svg>`;
   }
 
-  const fuelHtml = fuelEntries.length ? fuelEntries.map(([name,x])=>`<tr><td>${e(name)}</td><td class="num">${num(x.liters,1)} L</td><td class="num">${num(x.liters?x.distance/x.liters:0,2)} km/L</td><td class="num">${money(x.distance?x.cost/x.distance:0)}</td><td class="num">${money(x.cost)}</td></tr>`).join("") : '<tr><td colspan="5">Sem abastecimentos.</td></tr>';
-  const currentVehicle = selectedVehicleObject();
-  const executiveAlerts = alerts
-    .filter(a => a.vehicleId === currentVehicle?.id && a.active && !a.completed && ["PROGRAMADO","ATENÇÃO","VENCIDO"].includes(alertStatus(a)))
-    .sort((a,b) => ({"VENCIDO":0,"ATENÇÃO":1,"PROGRAMADO":2}[alertStatus(a)] ?? 9) - ({"VENCIDO":0,"ATENÇÃO":1,"PROGRAMADO":2}[alertStatus(b)] ?? 9))
-    .slice(0,8);
-  const alertsHtml = executiveAlerts.length ? executiveAlerts.map(a=>`<tr><td><b>${e(alertStatus(a))}</b></td><td>${e(a.description||"Alerta")}</td><td>${e(alertForecast(a))}</td></tr>`).join("") : '<tr><td colspan="3">Nenhum alerta futuro ou pendente para o veículo.</td></tr>';
+  const groupOrder = ["COMBUSTÍVEL","MANUTENÇÃO","ADMINISTRATIVO","RECEITA"];
+  const latestRows = groupOrder.flatMap(group => ms.filter(m => m.grupo === group).sort((a,b)=>new Date(b.data_hora)-new Date(a.data_hora)).slice(0,2));
+  const latestHtml = latestRows.length ? latestRows.map(m=>`<tr><td><span class="tag ${m.grupo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(m.grupo)}</span></td><td>${e(m.item || "—")}</td><td>${dateBR(m.data_hora)}</td><td class="num">${m.hodometro_km ? intFmt(m.hodometro_km)+" km" : "—"}</td><td class="num">${money(m.valor)}</td></tr>`).join("") : '<tr><td colspan="5">Sem lançamentos.</td></tr>';
 
-  const content = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório Executivo MyCar+</title><style>
-  :root{--navy:#12395b;--blue:#246b9e;--paper:#fff;--surface:#eaf4fb;--border:#8a5a35;--text:#111;--muted:#5c6872;--number:#e87519;--green:#1f8a70;--red:#b3261e}*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--text);font-family:Arial,Helvetica,sans-serif}.report{width:210mm;margin:auto;padding:10mm 11mm 9mm}.header{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;border-bottom:3px solid var(--navy);padding-bottom:7px;margin-bottom:8px}.header h1{margin:0;font-size:18px;color:var(--navy)}.header .brand{font-size:10px;font-weight:800;color:var(--blue)}.meta{font-size:8.5px;line-height:1.5;text-align:right;color:var(--muted)}.section{margin-top:8px;break-inside:avoid}.section-title{margin:0 0 5px;font-size:10px;text-transform:uppercase;letter-spacing:.45px;color:var(--navy)}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.kpi,.card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px}.kpi small{display:block;font-size:7px;color:var(--muted)}.kpi strong{display:block;margin-top:3px;font-size:13px;color:var(--number)}.kpi span{font-size:6.8px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.card h3{margin:0 0 4px;font-size:9px;color:var(--navy)}table{width:100%;border-collapse:collapse;font-size:7.6px;background:#fff;border:1px solid var(--border)}thead{display:table-header-group}tr{break-inside:avoid}th{background:var(--surface);color:var(--navy);text-align:left}th,td{padding:4px 5px;border-bottom:1px solid #d9c6b6}.num{text-align:right;color:var(--number);font-weight:700}.note{background:#fff8f0;border:1px solid var(--border);border-left:4px solid var(--number);border-radius:6px;padding:8px;font-size:8px;line-height:1.45}.svg-chart{width:100%;height:112px;display:block}.svg-chart .grid line,.axis{stroke:#d6dde3}.svg-chart .line{fill:none;stroke:var(--blue);stroke-width:3}.svg-chart .dots circle,.svg-chart .bars rect{fill:var(--number)}.svg-chart text{font-size:8px;fill:var(--number);font-weight:700}.empty{height:112px;display:grid;place-items:center;font-size:8px;color:var(--muted)}.footer{margin-top:9px;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;font-size:7px;color:var(--muted)}@page{size:A4;margin:0}@media print{.report{width:auto;min-height:auto}.section,.card,.kpi,table{break-inside:avoid}}
-  </style></head><body><main class="report">
-  <div class="header"><div><div class="brand">MyCar+</div><h1>Relatório Executivo Veicular</h1></div><div class="meta"><b>Veículo:</b> ${e(vehicleLabel)}<br><b>Período:</b> ${e(period)}<br><b>Emissão:</b> ${e(emitted)} · <b>Versão:</b> ${e(APP_VERSION)}</div></div>
+  const essentialNames = ["Troca de Óleo","Filtro de Óleo","Filtro de Ar do Motor","Fluido de Freio","Aditivo do Radiador","Pastilhas de Freio","Pneus","Rodízio dos Pneus","Calibração dos Pneus","Bateria","Alinhamento e Balanceamento","Correia Dentada / Corrente"];
+  const vehicleAlerts = alerts.filter(a => a.vehicleId === currentVehicle?.id && !a.archived);
+  const normalizeText = v => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const maintenanceMovements = movements.filter(m => m.veiculo === currentVehicle?.nome && m.grupo === "MANUTENÇÃO").sort((a,b)=>new Date(b.data_hora)-new Date(a.data_hora));
+  const essentialRows = essentialNames.map(name => {
+    const n=normalizeText(name);
+    const alertItem=vehicleAlerts.find(a=>normalizeText(a.description).includes(n) || n.includes(normalizeText(a.description)) || (name==="Troca de Óleo" && a.technicalKey==="OIL") || (name==="Bateria" && a.technicalKey==="BATTERY"));
+    const movement=maintenanceMovements.find(m=>{const x=normalizeText(m.item); return x.includes(n) || n.includes(x) || (name==="Troca de Óleo" && x.includes("oleo"));});
+    const history=alertItem ? alertHistory.filter(h=>h.vehicleId===currentVehicle?.id && (h.alertId===alertItem.id || (h.technicalKey && h.technicalKey===alertItem.technicalKey))).sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt))[0] : null;
+    let lastDate=movement?.data_hora, lastKm=movement?.hodometro_km;
+    if (history && (!lastDate || new Date(history.completedAt)>new Date(lastDate))) { lastDate=history.completedAt; lastKm=history.completedKm; }
+    const status=alertItem ? alertStatus(alertItem) : "SEM REGISTRO";
+    const forecast=alertItem ? alertForecast(alertItem) : "Não configurado";
+    return {name,lastDate,lastKm,forecast,status,active:alertItem?.active};
+  });
+  const maintenanceHtml = essentialRows.map(r=>`<tr><td>${e(r.name)}</td><td>${r.lastDate ? dateBR(r.lastDate) : "Sem registro"}</td><td class="num">${r.lastKm ? intFmt(r.lastKm)+" km" : "—"}</td><td>${e(r.forecast)}</td><td><span class="status ${String(r.status).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(r.status === "INATIVO" ? "Monitoramento inativo" : r.status)}</span></td><td>${r.active === true ? "Ativo" : r.active === false ? "Inativo" : "—"}</td></tr>`).join("");
+
+  const biggest = expenseGroups.slice().sort((a,b)=>b[1]-a[1])[0];
+  const content = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório Executivo MyCar+</title><style>
+  :root{--navy:#12395b;--blue:#246b9e;--surface:#eaf4fb;--border:#8a5a35;--text:#111;--muted:#5c6872;--number:#e87519;--green:#1f8a70;--red:#b3261e}*{box-sizing:border-box}body{margin:0;background:#e9edf0;color:var(--text);font-family:Arial,Helvetica,sans-serif}.actions{position:sticky;top:0;z-index:10;display:flex;justify-content:center;gap:8px;padding:10px;background:#12395b}.actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer}.actions .primary{background:#0788e8;color:#fff}.actions .danger{background:#b3261e;color:#fff}.page{width:210mm;min-height:297mm;margin:8px auto;background:#fff;padding:10mm 11mm 9mm;box-shadow:0 4px 18px #0002;display:flex;flex-direction:column}.header{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;border-bottom:3px solid var(--navy);padding-bottom:7px;margin-bottom:8px}.header h1{margin:0;font-size:18px;color:var(--navy)}.brand{font-size:10px;font-weight:800;color:var(--blue)}.meta{font-size:8.5px;line-height:1.5;text-align:right;color:var(--muted)}.section{margin-top:8px;break-inside:avoid}.section-title{margin:0 0 5px;font-size:10px;text-transform:uppercase;letter-spacing:.45px;color:var(--navy)}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.kpi,.card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px}.kpi small{display:block;font-size:7px;color:var(--muted)}.kpi strong{display:block;margin-top:3px;font-size:13px;color:var(--number)}.kpi span{font-size:6.8px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.card h3{margin:0 0 4px;font-size:9px;color:var(--navy)}table{width:100%;border-collapse:collapse;font-size:7.4px;background:#fff;border:1px solid var(--border)}thead{display:table-header-group}tr{break-inside:avoid}th{background:var(--surface);color:var(--navy);text-align:left}th,td{padding:4px 5px;border-bottom:1px solid #d9c6b6;vertical-align:middle}.num{text-align:right;color:var(--number);font-weight:700}.note{background:#fff8f0;border:1px solid var(--border);border-left:4px solid var(--number);border-radius:6px;padding:8px;font-size:8px;line-height:1.45}.svg-chart{width:100%;height:105px;display:block}.svg-chart.monthly{height:150px}.svg-chart .grid line,.axis{stroke:#d6dde3}.svg-chart .line{fill:none;stroke:var(--blue);stroke-width:3}.svg-chart .bars rect{fill:var(--number)}.svg-chart text{font-size:8px;fill:#5c6872;font-weight:700}.empty{height:112px;display:grid;place-items:center;font-size:8px;color:var(--muted)}.tag,.status{display:inline-block;border-radius:999px;padding:2px 6px;font-size:6.6px;font-weight:800;white-space:nowrap}.tag.combustivel{background:#e5f5ee;color:#176b50}.tag.manutencao{background:#fff0d9;color:#8a4c00}.tag.administrativo{background:#edf0ff;color:#3949ab}.tag.receita{background:#e4f5e7;color:#206b31}.status.programado,.status.em-dia{background:#e5f5ee;color:#176b50}.status.atencao{background:#fff0d9;color:#8a4c00}.status.vencido{background:#fde5e5;color:#9e2525}.status.inativo,.status.sem-registro{background:#eceff1;color:#59636b}.footer{margin-top:auto;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;font-size:7px;color:var(--muted)}@page{size:A4;margin:0}@media print{body{background:#fff}.actions{display:none!important}.page{margin:0;box-shadow:none;page-break-after:always}.page:last-child{page-break-after:auto}}@media(max-width:760px){.page{width:100%;min-height:auto;margin:0;padding:14px;box-shadow:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.actions{flex-wrap:wrap}}
+  </style></head><body><div class="actions"><button type="button" id="reportPrintButton">Imprimir</button><button type="button" id="reportPdfButton" class="primary">Salvar PDF</button><button type="button" id="reportCloseButton" class="danger">Fechar</button></div>
+  <main class="page"><div class="header"><div><div class="brand">MyCar+</div><h1>Relatório Executivo Veicular</h1></div><div class="meta"><b>Veículo:</b> ${e(vehicleLabel)}<br><b>Período:</b> ${e(period)}<br><b>Emissão:</b> ${e(emitted)} · <b>Versão:</b> ${e(APP_VERSION)}</div></div>
   <section class="section"><h2 class="section-title">Indicadores principais</h2><div class="kpis">
-  <div class="kpi"><small>Distância percorrida</small><strong>${intFmt(s.km)} km</strong><span>${num(s.days?s.km/s.days:0,1)} km/dia</span></div>
-  <div class="kpi"><small>Consumo médio geral</small><strong>${num(fuelConsumption,2)} km/L</strong><span>combustíveis consolidados</span></div>
-  <div class="kpi"><small>Custo bruto</small><strong>${money(gross)}</strong><span>despesas do período</span></div>
-  <div class="kpi"><small>Custo líquido</small><strong>${money(net)}</strong><span>receitas: ${money(income)}</span></div>
-  <div class="kpi"><small>Custo por km</small><strong>${money(costKm)}</strong><span>líquido ÷ distância</span></div>
-  <div class="kpi"><small>Custo diário</small><strong>${money(costDay)}</strong><span>${intFmt(s.days)} dias</span></div>
-  <div class="kpi"><small>Combustível</small><strong>${money(fuelTotal.cost)}</strong><span>${pct(fuelTotal.cost,gross)} do custo bruto</span></div>
-  <div class="kpi"><small>Manutenção</small><strong>${money(+groups.Manutenção||0)}</strong><span>${pct(+groups.Manutenção||0,gross)} do custo bruto</span></div></div></section>
-  <section class="section"><h2 class="section-title">Desempenho e composição dos custos</h2><div class="grid2"><div class="card"><h3>Consumo médio por ano</h3>${lineSvg(years,annualConsumption)}</div><div class="card"><h3>Custo por grupo</h3>${barSvg(expenseGroups.map(x=>x[0]),expenseGroups.map(x=>x[1]))}</div></div></section>
-  <section class="section"><h2 class="section-title">Evolução mensal dos gastos</h2><div class="card">${barSvg(monthKeys.map(k=>k.slice(5)+"/"+k.slice(2,4)),monthKeys.map(k=>monthly[k]))}</div></section>
-  <section class="section"><h2 class="section-title">Indicadores de combustível</h2><table><thead><tr><th>Combustível</th><th class="num">Litros</th><th class="num">Consumo</th><th class="num">Custo/km</th><th class="num">Gasto</th></tr></thead><tbody>${fuelHtml}<tr><td><b>Total consolidado</b></td><td class="num">${num(fuelTotal.liters,1)} L</td><td class="num">${num(fuelConsumption,2)} km/L</td><td class="num">${money(fuelCostKm)}</td><td class="num">${money(fuelTotal.cost)}</td></tr></tbody></table></section>
-  <section class="section"><h2 class="section-title">Alertas programados</h2><table><thead><tr><th>Situação</th><th>Descrição</th><th>Previsão</th></tr></thead><tbody>${alertsHtml}</tbody></table></section>
-  <section class="section"><h2 class="section-title">Leitura executiva</h2><div class="note">O maior grupo de gastos foi <b>${e(expenseGroups.slice().sort((a,b)=>b[1]-a[1])[0][0])}</b>, com <b>${pct(expenseGroups.slice().sort((a,b)=>b[1]-a[1])[0][1],gross)}</b> do custo bruto. O consumo médio geral foi de <b>${num(fuelConsumption,2)} km/L</b> e o custo líquido por quilômetro foi de <b>${money(costKm)}</b>. Foram consolidados <b>${ms.length}</b> lançamentos, sem apresentar listagem individual de movimentos ou manutenções.</div></section>
-  <div class="footer"><span>MyCar+ · Relatório Executivo</span><span>v${e(APP_VERSION)}</span></div></main><script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>`;
+  <div class="kpi"><small>Distância percorrida</small><strong>${intFmt(s.km)} km</strong><span>${num(s.days?s.km/s.days:0,1)} km/dia</span></div><div class="kpi"><small>Consumo médio geral</small><strong>${num(fuelConsumption,2)} km/L</strong><span>combustíveis consolidados</span></div><div class="kpi"><small>Custo bruto</small><strong>${money(gross)}</strong><span>despesas do período</span></div><div class="kpi"><small>Custo líquido</small><strong>${money(net)}</strong><span>receitas: ${money(income)}</span></div><div class="kpi"><small>Custo por km</small><strong>${money(costKm)}</strong><span>líquido ÷ distância</span></div><div class="kpi"><small>Custo diário</small><strong>${money(costDay)}</strong><span>${intFmt(s.days)} dias</span></div><div class="kpi"><small>Combustível</small><strong>${money(fuelTotal.cost)}</strong><span>${pct(fuelTotal.cost,gross)} do custo bruto</span></div><div class="kpi"><small>Manutenção</small><strong>${money(+groups.Manutenção||0)}</strong><span>${pct(+groups.Manutenção||0,gross)} do custo bruto</span></div></div></section>
+  <section class="section"><h2 class="section-title">Evolução mensal dos gastos — últimos 12 meses</h2><div class="card">${monthlyChart(monthLabels,monthKeys.map(k=>monthly[k]))}</div></section>
+  <section class="section"><h2 class="section-title">Desempenho e composição dos custos</h2><div class="grid2"><div class="card"><h3>Custo por grupo</h3>${barSvg(expenseGroups.map(x=>x[0]),expenseGroups.map(x=>x[1]))}</div><div class="card"><h3>Indicadores de combustível</h3><table><thead><tr><th>Combustível</th><th class="num">Litros</th><th class="num">Consumo</th><th class="num">Custo/km</th><th class="num">Gasto</th></tr></thead><tbody>${fuelHtml}<tr><td><b>Total</b></td><td class="num">${num(fuelTotal.liters,1)} L</td><td class="num">${num(fuelConsumption,2)} km/L</td><td class="num">${money(fuelCostKm)}</td><td class="num">${money(fuelTotal.cost)}</td></tr></tbody></table></div></div></section>
+  <section class="section"><h2 class="section-title">Leitura executiva</h2><div class="note">O maior grupo de gastos foi <b>${e(biggest[0])}</b>, com <b>${pct(biggest[1],gross)}</b> do custo bruto. O consumo médio geral foi de <b>${num(fuelConsumption,2)} km/L</b> e o custo líquido por quilômetro foi de <b>${money(costKm)}</b>. Foram consolidados <b>${ms.length}</b> lançamentos.</div></section><div class="footer"><span>MyCar+ · Relatório Executivo</span><span>Página 1 de 2 · v${e(APP_VERSION)}</span></div></main>
+  <main class="page"><div class="header"><div><div class="brand">MyCar+</div><h1>Movimentações e manutenção</h1></div><div class="meta"><b>Veículo:</b> ${e(vehicleLabel)}<br><b>Período:</b> ${e(period)}</div></div>
+  <section class="section"><h2 class="section-title">Últimos lançamentos por grupo</h2><table><thead><tr><th>Grupo</th><th>Item</th><th>Data</th><th class="num">Km</th><th class="num">Valor</th></tr></thead><tbody>${latestHtml}</tbody></table></section>
+  <section class="section"><h2 class="section-title">Manutenções essenciais</h2><table><thead><tr><th>Serviço</th><th>Último registro</th><th class="num">Km</th><th>Próxima referência</th><th>Situação técnica</th><th>Alerta</th></tr></thead><tbody>${maintenanceHtml}</tbody></table><div class="note" style="margin-top:7px"><b>Referência:</b> parâmetros dos alertas ativos e inativos do veículo selecionado, cruzados com o histórico de manutenção. Alertas inativos são exibidos apenas como referência histórica e não geram avisos.</div></section>
+  <div class="footer"><span>MyCar+ · Relatório Executivo</span><span>Página 2 de 2 · v${e(APP_VERSION)}</span></div></main><script>(function(){
+  function nativeBridge(){try{return window.MyCarNative||(window.opener&&window.opener.MyCarNative)||null}catch(e){return null}}
+  function printReport(mode){
+    var bridge=nativeBridge();
+    if(bridge&&typeof bridge.printDocument==='function'){
+      try{bridge.printDocument(mode==='pdf'?'Relatorio_Executivo_MyCarPlus':'Relatorio_Executivo_MyCarPlus');return}catch(e){}
+    }
+    try{window.focus();window.print()}catch(e){alert('Não foi possível abrir a impressão neste dispositivo.')}
+  }
+  function closeReport(){
+    try{window.close()}catch(e){}
+    setTimeout(function(){
+      if(!window.closed){
+        try{if(history.length>1){history.back()}else{location.replace('about:blank')}}catch(e){}
+      }
+    },150)
+  }
+  document.getElementById('reportPrintButton').addEventListener('click',function(){printReport('print')});
+  document.getElementById('reportPdfButton').addEventListener('click',function(){printReport('pdf')});
+  document.getElementById('reportCloseButton').addEventListener('click',closeReport);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeReport()});
+  window.closeReport=closeReport;
+})();<\/script></body></html>`;
   const win = window.open("", "_blank");
-  if (!win) return alert("Permita janelas pop-up para gerar o PDF.");
-  win.document.write(content); win.document.close();
+  if (!win) return alert("Permita janelas pop-up para gerar o relatório.");
+  win.document.open(); win.document.write(content); win.document.close();
 }
+
 const pdfButton = $("#exportPdf"); if (pdfButton) pdfButton.onclick = exportPdfReport;
 const DATA_TABLES = {
   movements: "Movimentos",
@@ -2880,7 +2903,7 @@ function openAiPrintableReport(autoPrint = false) {
   const content = renderAiReport(lastAiReport);
   const win = window.open("", "_blank");
   if (!win) return alert("Permita janelas pop-up para visualizar ou gerar o PDF.");
-  win.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório MyCar+ Intelligence</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#243746;line-height:1.45;max-width:185mm;margin:auto}h1,h2,h4{color:#12395b}.header{border-bottom:3px solid #0788e8;margin-bottom:16px}.ai-meta{color:#607080}.ai-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ai-kpis div{background:#f1f7fb;padding:10px;border-radius:8px}.ai-kpis small{display:block;color:#607080}.ai-report-section{break-inside:avoid;margin:18px 0}.footer{margin-top:25px;border-top:1px solid #ccd9e2;padding-top:8px;color:#607080;font-size:11px}.report-actions{display:flex;gap:10px;margin:24px 0}.report-actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.report-actions button:last-child{background:#0788e8;color:#fff}@media print{button{display:none}}</style></head><body><div class="header"><h1>Relatório Executivo de Gestão Veicular</h1><p><strong>Gerado com Inteligência Artificial</strong> · MyCar+ Intelligence · emissão ${new Date().toLocaleString("pt-BR")}</p></div>${content}<div class="footer">Relatório gerado a partir dos dados informados no MyCar+. Os indicadores são calculados pelo MyCar+. A Inteligência Artificial interpreta os resultados e gera diagnósticos, tendências e recomendações. A qualidade das conclusões depende da consistência dos dados registrados.</div><div class="report-actions"><button type="button" onclick="window.close()">Fechar relatório</button><button type="button" onclick="window.print()">Imprimir / Salvar em PDF</button></div></body></html>`);
+  win.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório MyCar+ Intelligence</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#243746;line-height:1.45;max-width:185mm;margin:auto}h1,h2,h4{color:#12395b}.header{border-bottom:3px solid #0788e8;margin-bottom:16px}.ai-meta{color:#607080}.ai-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ai-kpis div{background:#f1f7fb;padding:10px;border-radius:8px}.ai-kpis small{display:block;color:#607080}.ai-report-section{break-inside:avoid;margin:18px 0}.footer{margin-top:25px;border-top:1px solid #ccd9e2;padding-top:8px;color:#607080;font-size:11px}.report-actions{display:flex;gap:10px;margin:24px 0}.report-actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.report-actions button:last-child{background:#0788e8;color:#fff}@media print{button{display:none}}</style></head><body><div class="header"><h1>Relatório Executivo de Gestão Veicular</h1><p><strong>Gerado com Inteligência Artificial</strong> · MyCar+ Intelligence · emissão ${new Date().toLocaleString("pt-BR")}</p></div>${content}<div class="footer">Relatório gerado a partir dos dados informados no MyCar+. Os indicadores são calculados pelo MyCar+. A Inteligência Artificial interpreta os resultados e gera diagnósticos, tendências e recomendações. A qualidade das conclusões depende da consistência dos dados registrados.</div><div class="report-actions"><button type="button" id="aiReportClose">Fechar relatório</button><button type="button" id="aiReportPrint">Imprimir</button><button type="button" id="aiReportPdf">Salvar PDF</button></div><script>(function(){function bridge(){try{return window.MyCarNative||(window.opener&&window.opener.MyCarNative)||null}catch(e){return null}}function doPrint(){var b=bridge();if(b&&typeof b.printDocument==='function'){try{b.printDocument('Relatorio_Inteligencia_MyCarPlus');return}catch(e){}}try{window.focus();window.print()}catch(e){alert('Não foi possível abrir a impressão neste dispositivo.')}}function closeMe(){try{window.close()}catch(e){}setTimeout(function(){if(!window.closed){try{history.length>1?history.back():location.replace('about:blank')}catch(e){}}},150)}document.getElementById('aiReportClose').addEventListener('click',closeMe);document.getElementById('aiReportPrint').addEventListener('click',doPrint);document.getElementById('aiReportPdf').addEventListener('click',doPrint);document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMe()});})();<\/script></body></html>`);
   win.document.close();
   if (autoPrint) win.addEventListener("load", () => setTimeout(() => win.print(), 300));
 }
