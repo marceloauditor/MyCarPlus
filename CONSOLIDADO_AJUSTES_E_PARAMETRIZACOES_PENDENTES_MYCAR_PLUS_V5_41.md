@@ -2,11 +2,11 @@
 
 **Versão de referência:** 5.41  
 **Data da consolidação:** 31/07/2026  
-**Situação da especificação:** implementada na versão 5.42 em 31/07/2026  
+**Situação da especificação:** implementada na versão 5.42 e revisada na versão 5.43 em 31/07/2026  
 **Finalidade:** reunir em um único documento as especificações funcionais e técnicas recebidas para correção das rotinas do MYCAR+.
 
 
-> **Registro de implantação:** os itens deste consolidado foram aplicados na V5.42. A matriz de comprovação e os resultados da revisão de coesão estão em `RELATORIO_IMPLANTACAO_E_COESAO_MYCAR_PLUS_V5_42.md`.
+> **Registro de implantação:** os itens deste consolidado foram aplicados na V5.42 e receberam correção de coesão da consulta de movimentos na V5.43. A matriz de comprovação e os resultados da revisão de coesão estão em `RELATORIO_IMPLANTACAO_E_COESAO_MYCAR_PLUS_V5_42.md`.
 
 ## Critério de prevalência
 

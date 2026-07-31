@@ -16,8 +16,9 @@
       "showSpinner": false
     },
     "StatusBar": {
-      "style": "DARK",
-      "backgroundColor": "#0788E8"
+      "style": "LIGHT",
+      "backgroundColor": "#0788E8",
+      "overlaysWebView": false
     },
     "FirebaseAuthentication": {
       "skipNativeAuth": true,

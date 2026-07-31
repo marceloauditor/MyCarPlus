@@ -103,3 +103,58 @@ Data: 31/07/2026
 16. BAT atualizado para V5.42 com validação automática de coesão antes do build.
 17. Validador scripts/validate-cohesion.js implantado para comparar raiz, www e Android.
 
+VERSÃO 5.43 — CORREÇÃO DA CONSULTA E GERENCIAMENTO DE MOVIMENTOS
+Data: 31/07/2026
+
+1. Corrigida a identificação de movimentos antigos com IDs numéricos ou textuais.
+2. O botão Alterar passa a carregar o movimento existente, em vez de abrir um lançamento vazio.
+3. Alteração e exclusão de movimentos históricos permitidas também para veículos inativos.
+4. Novos lançamentos continuam restritos a veículos ativos.
+5. Comparações de movimento centralizadas nas funções movementIdOf e sameMovement.
+6. Testes automatizados aprovados para alteração de IDs numéricos em veículos ativos e inativos.
+7. Versões alinhadas: app 5.43.0, Android versionCode 543, cache mycar-plus-v5-43.
+
+
+VERSÃO 5.44 — CORREÇÃO DA EDIÇÃO HISTÓRICA COM VÁRIOS ITENS
+Data: 31/07/2026
+
+1. Corrigida a validação de hodômetro para movimentos ocorridos no mesmo dia.
+2. A sequência passa a considerar data, horário e ordem do lançamento.
+3. O horário original é preservado durante a alteração.
+4. Validada a conversão do movimento de 14/09/2025, R$ 380,00, em três itens com o mesmo total.
+5. Fonte, Web e Android sincronizados na versão 5.44.
+
+VERSÃO 5.45 — CORREÇÃO DA VISUALIZAÇÃO E IMPRESSÃO DO RELATÓRIO EXECUTIVO
+1. Corrigida a impressão que capturava a WebView inteira e reduzia o relatório dentro do iframe.
+2. Criada impressão nativa por HTML isolado em WebView exclusiva.
+3. Relatório Executivo ajustado para A4 retrato e visualização responsiva no celular.
+4. Aplicada a mesma rotina ao relatório com IA e ao histórico técnico.
+5. Fonte, Web e Android sincronizados na versão 5.45.
+
+
+VERSÃO 5.46 — FLUXO ÚNICO DOS RELATÓRIOS
+1. Relatório Executivo e Relatório de Inteligência exibidos dentro do aplicativo.
+2. Ações ao final do documento: Fechar e Salvar PDF.
+3. Botão Imprimir removido dos dois relatórios.
+4. Fechar retorna à tela anterior sem perder filtros.
+5. Salvamento em PDF encaminhado pelo frame ao aplicativo principal e à ponte Java.
+6. Cabeçalho ajustado para não ficar atrás da barra de status do Android.
+7. MainActivity.java corrigido e incluído no pacote-fonte.
+
+
+VERSÃO 5.47 — RELATÓRIOS RESPONSIVOS E COMPARTILHAMENTO EM PDF
+- Relatório Executivo e Relatório de Inteligência ajustados para ocupar a largura real da tela do celular sem cortar laterais.
+- Tabelas largas passam a ser exibidas como cartões responsivos na visualização móvel.
+- Botão Salvar PDF substituído por Compartilhar nos dois relatórios.
+- Android gera o PDF em cache e abre o compartilhamento nativo para WhatsApp, e-mail e outros aplicativos.
+- MainActivity.java atualizado com a ponte shareHtmlAsPdf e geração assíncrona do PDF.
+- Fluxo mantido: Fechar retorna à tela anterior; Compartilhar não fecha o relatório.
+
+
+VERSÃO 5.49 — COMPARTILHAMENTO DOS RELATÓRIOS EM HTML
+- Relatório Executivo e Relatório de Inteligência compartilham arquivos HTML.
+- Removida a dependência de geração interna de PDF para o botão Compartilhar.
+- Ponte nativa alterada para MainActivity.shareHtml.
+- Arquivo temporário criado em cache e disponibilizado por FileProvider.
+- Intent Android usa ACTION_SEND, text/html, ClipData e permissão temporária de leitura.
+- Fluxo mantido: Fechar retorna à tela anterior; Compartilhar não fecha o relatório.

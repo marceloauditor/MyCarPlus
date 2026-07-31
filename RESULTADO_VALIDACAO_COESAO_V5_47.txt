@@ -1,0 +1,22 @@
+MYCAR+ V5.47 — RESULTADO DA VALIDAÇÃO
+
+[APROVADO] Sintaxe JavaScript de app.js.
+[APROVADO] Sintaxe JavaScript do validador de coesão.
+[APROVADO] Versão 5.47.0, Android versionCode 547 e cache mycar-plus-v5-47.
+[APROVADO] 17 arquivos conferidos na cadeia raiz → www → Android.
+[APROVADO] Relatório Executivo contém somente Fechar e Compartilhar PDF.
+[APROVADO] Relatório de Inteligência contém somente Fechar e Compartilhar PDF.
+[APROVADO] Mensageria mycar-share-report-pdf presente nos dois relatórios.
+[APROVADO] Tabelas do Relatório Executivo possuem layout responsivo em cartões no celular.
+[APROVADO] Plano de ação do Relatório de Inteligência possui layout responsivo em cartões.
+[APROVADO] Regras de largura máxima e quebra de texto evitam corte lateral.
+[APROVADO] MainActivity.java inicia pelo pacote Java correto e não contém código Python.
+[APROVADO] MainActivity.java compilado com javac contra stubs compatíveis com as APIs utilizadas.
+[APROVADO] Ponte nativa shareHtmlAsPdf presente.
+[APROVADO] PDF gerado por PrintDocumentAdapter e compartilhado por Intent ACTION_SEND.
+[APROVADO] FileProvider configurado para o cache shared_reports.
+[APROVADO] BAT V5.47 aceita ZIPs com sufixos automáticos como (1).
+[APROVADO] BAT remove instaladores operacionais antigos V5.42 a V5.46.
+
+Observação: a compilação Gradle completa não foi executada neste ambiente porque o wrapper tentou baixar a distribuição externa sem acesso à internet. O BAT V5.47 executará o build no computador do usuário.
+[APROVADO] ZIP final extraído novamente e validado sem erros de compactação ou coesão.

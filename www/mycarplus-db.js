@@ -5,7 +5,7 @@
  * Este módulo lê e exporta diretamente a estrutura do arquivo MyCarPlus.xlsx.
  */
 window.MyCarPlusDB = (() => {
-  const FILE = "data/MyCarPlus.xlsx?v=542";
+  const FILE = "data/MyCarPlus.xlsx?v=545";
   const NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
   const REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 

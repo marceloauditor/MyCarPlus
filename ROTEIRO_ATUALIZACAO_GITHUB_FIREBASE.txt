@@ -543,3 +543,51 @@ O GitHub controla a versão do aplicativo.
 O Firebase controla os dados online do usuário.
 
 Atualizar o GitHub deve atualizar o funcionamento do app, mas nunca apagar ou substituir automaticamente o conteúdo já existente no Firebase.
+
+Versão 5.43:
+- Corrige a alteração de movimentos importados/antigos com identificadores numéricos.
+- Permite alterar e excluir movimentos históricos de veículos inativos.
+- Mantém novos lançamentos bloqueados para veículos inativos.
+- Executar ATUALIZAR_MYCAR_V5_43_WEB_ANDROID.bat e a validação de coesão.
+
+
+Versão 5.44:
+- Corrige a edição de movimentos históricos quando há lançamentos posteriores no mesmo dia.
+- Preserva o horário original do movimento alterado.
+- Permite dividir um movimento em vários itens sem bloqueio incorreto do hodômetro.
+- Executar ATUALIZAR_MYCAR_V5_45_WEB_ANDROID.bat e conferir o relatório RELATORIO_CORRECAO_EDICAO_MULTI_ITENS_V5_45.md.
+
+Versão 5.45:
+- Corrige a visualização interna do Relatório Executivo no Android.
+- Corrige o PDF que capturava toda a WebView e mostrava o relatório reduzido no canto.
+- Adiciona a ponte nativa printHtml para imprimir somente o documento do relatório.
+- Executar ATUALIZAR_MYCAR_V5_45_WEB_ANDROID.bat e validar o PDF em A4 retrato.
+
+Versão 5.46:
+- Relatório Executivo e Relatório de Inteligência são exibidos dentro do aplicativo.
+- Nos dois relatórios, manter somente Fechar e Salvar PDF ao final do documento.
+- Fechar deve retornar à tela anterior preservando veículo, período e filtros.
+- Salvar PDF deve encaminhar o HTML pelo aplicativo principal para MainActivity.printHtml.
+- Não manter botão Imprimir nos relatórios Executivo e de Inteligência.
+- Conferir se o cabeçalho MyCar+ não fica atrás da barra de status do Android.
+- Executar ATUALIZAR_MYCAR_V5_46_WEB_ANDROID.bat e validar a coesão antes do APK.
+
+
+Versão 5.47:
+- Relatórios Executivo e de Inteligência responsivos no Android, sem corte lateral.
+- Substituição de Salvar PDF por Compartilhar.
+- Geração nativa do PDF em cache e compartilhamento por Intent Android.
+- MainActivity.java obrigatório na atualização.
+- Executar ATUALIZAR_MYCAR_V5_47_WEB_ANDROID.bat e validar a coesão antes do APK.
+
+
+Versão 5.48:
+- Hotfix de compilação do compartilhamento Android.
+- Botões dos relatórios mantidos como Fechar e Compartilhar.
+
+Versão 5.49:
+- Relatório Executivo e Relatório de Inteligência passam a compartilhar arquivo HTML.
+- O botão Compartilhar envia a mensagem mycar-share-report-html ao aplicativo principal.
+- MainActivity.shareHtml grava o arquivo no cache, usa FileProvider e abre Intent.ACTION_SEND com tipo text/html.
+- Manter o relatório responsivo e sem corte lateral na tela do celular.
+- Executar ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat e validar a coesão antes do APK.

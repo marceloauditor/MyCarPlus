@@ -1,21 +1,19 @@
 ﻿@echo off
 setlocal EnableExtensions EnableDelayedExpansion
 chcp 65001 >nul
-title Atualizacao MyCar+ V5.42 - Web e Android
+title Atualizacao MyCar+ V5.49 - Web e Android
 
 rem ============================================================
 rem CONFIGURACAO
 rem ============================================================
-set "VERSAO=5.42"
-set "ZIP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_42_MASTER.zip"
+set "VERSAO=5.49"
+set "ZIP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_49_MASTER.zip"
 set "PROJETO=%USERPROFILE%\Documents\GitHub\MyCarPlus"
-set "TEMP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_42_TEMP"
-set "LOG=%USERPROFILE%\Downloads\ATUALIZACAO_MYCAR_V5_42_LOG.txt"
+set "TEMP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_49_TEMP"
+set "LOG=%USERPROFILE%\Downloads\ATUALIZACAO_MYCAR_V5_49_LOG.txt"
 
-for /f "tokens=1-4 delims=/ " %%a in ("%date%") do set "DATA=%%d%%c%%b"
-for /f "tokens=1-2 delims=: " %%a in ("%time%") do set "HORA=%%a%%b"
-set "HORA=%HORA: =0%"
-set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V5_42_%DATA%_%HORA%"
+for /f "delims=" %%I in ('powershell.exe -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set "STAMP=%%I"
+set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V5_49_%STAMP%"
 
 > "%LOG%" echo ============================================================
 >>"%LOG%" echo ATUALIZACAO MYCAR+ V%VERSAO%
@@ -49,8 +47,18 @@ rem ============================================================
 call :etapa "1/9 - Conferindo arquivos e pastas"
 
 if not exist "%ZIP%" (
-    call :erro "ZIP nao encontrado: %ZIP%"
-    goto :fim_erro
+    set "ZIP_ENCONTRADO="
+    for /f "delims=" %%Z in ('dir /B /A:-D /O:-D "%USERPROFILE%\Downloads\MYCAR_PLUS_V5_49_MASTER*.zip" 2^>nul') do (
+        if not defined ZIP_ENCONTRADO set "ZIP_ENCONTRADO=%USERPROFILE%\Downloads\%%Z"
+    )
+    if defined ZIP_ENCONTRADO (
+        set "ZIP=!ZIP_ENCONTRADO!"
+        >>"%LOG%" echo ZIP alternativo localizado: !ZIP!
+        echo ZIP localizado automaticamente: !ZIP!
+    ) else (
+        call :erro "ZIP nao encontrado. Esperado: %ZIP%"
+        goto :fim_erro
+    )
 )
 
 if not exist "%PROJETO%\package.json" (
@@ -77,7 +85,9 @@ rem 2. BACKUP
 rem ============================================================
 call :etapa "2/9 - Criando backup da versao atual"
 
-robocopy "%PROJETO%" "%BACKUP%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:2 /XD node_modules .git android\build android\app\build >>"%LOG%" 2>&1
+robocopy "%PROJETO%" "%BACKUP%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:2 ^
+ /XD "%PROJETO%\node_modules" "%PROJETO%\.git" "%PROJETO%\android\.gradle" "%PROJETO%\android\build" "%PROJETO%\android\app\build" "%PROJETO%\android\capacitor-cordova-android-plugins\build" ^
+ >>"%LOG%" 2>&1
 set "RC=!ERRORLEVEL!"
 if !RC! GEQ 8 (
     call :erro "Falha ao criar backup. Codigo Robocopy: !RC!"
@@ -100,35 +110,53 @@ if errorlevel 1 (
     goto :fim_erro
 )
 
-set "FONTE="
-for /f "delims=" %%D in ('dir /B /S /A:D "%TEMP%\MYCAR_PLUS_V5_42_MASTER" 2^>nul') do (
-    if exist "%%D\package.json" set "FONTE=%%D"
-)
+set "FONTE=%TEMP%\MYCAR_PLUS_V5_49_MASTER"
+if not exist "!FONTE!\package.json" set "FONTE="
+
 if not defined FONTE (
-    if exist "%TEMP%\MYCAR_PLUS_V5_42_MASTER\package.json" set "FONTE=%TEMP%\MYCAR_PLUS_V5_42_MASTER"
-)
-if not defined FONTE (
-    for /f "delims=" %%F in ('dir /B /S "%TEMP%\package.json" 2^>nul') do (
-        set "FONTE=%%~dpF"
-        goto :fonte_encontrada
+    for /f "delims=" %%F in ('dir /B /S /A:-D "%TEMP%\package.json" 2^>nul') do (
+        if not defined FONTE set "FONTE=%%~dpF"
     )
 )
-:fonte_encontrada
 
 if not defined FONTE (
     call :erro "Nao foi possivel localizar a pasta da fonte extraida."
     goto :fim_erro
 )
 
+rem Remove a barra final para evitar que o ROBOCOPY una origem e destino.
+if "!FONTE:~-1!"=="\" set "FONTE=!FONTE:~0,-1!"
+
 >>"%LOG%" echo Fonte localizada: !FONTE!
 
-robocopy "!FONTE!" "%PROJETO%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:2 /XD .git node_modules /XF ATUALIZACAO_MYCAR_V5_42_LOG.txt >>"%LOG%" 2>&1
+robocopy "!FONTE!" "%PROJETO%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:2 ^
+ /XD "!FONTE!\.git" "!FONTE!\node_modules" "!FONTE!\android\.gradle" "!FONTE!\android\build" "!FONTE!\android\app\build" "!FONTE!\android\capacitor-cordova-android-plugins\build" ^
+ /XF ATUALIZACAO_MYCAR_V5_49_LOG.txt >>"%LOG%" 2>&1
 set "RC=!ERRORLEVEL!"
 if !RC! GEQ 8 (
     call :erro "Falha ao copiar a nova fonte. Codigo Robocopy: !RC!"
     goto :fim_erro
 )
 call :ok "Nova fonte copiada para o projeto."
+
+rem Remove BATs operacionais antigos que permanecem como arquivos extras
+rem no projeto e fariam a validacao de coesao reprovar.
+>>"%LOG%" echo Removendo BATs operacionais antigos da raiz do projeto...
+for %%B in (
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_41_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_42_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_43_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_44_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_45_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_46_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_47_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_48_WEB_ANDROID*.bat"
+) do (
+    if exist "%%~fB" (
+        >>"%LOG%" echo Excluindo: %%~fB
+        del /F /Q "%%~fB" >>"%LOG%" 2>&1
+    )
+)
 
 rem ============================================================
 rem 4. INSTALAR DEPENDENCIAS
@@ -251,7 +279,7 @@ if errorlevel 1 (
     call :erro "git add falhou."
     goto :fim_erro
 )
-git commit -m "Atualiza MyCar+ para V5.42" >>"%LOG%" 2>&1
+git commit -m "Atualiza MyCar+ para V5.49" >>"%LOG%" 2>&1
 if errorlevel 1 (
     echo Nao houve novo commit ou o commit falhou. Verifique o log.
     >>"%LOG%" echo Commit nao realizado ou sem alteracoes.

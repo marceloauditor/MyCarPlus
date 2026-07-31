@@ -4,10 +4,10 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 const expected = {
-  semver: '5.42.0',
-  app: '5.42',
-  versionCode: '542',
-  cache: 'mycar-plus-v5-42',
+  semver: '5.49.0',
+  app: '5.49',
+  versionCode: '549',
+  cache: 'mycar-plus-v5-49',
 };
 const failures = [];
 const notices = [];
@@ -30,6 +30,12 @@ function hash(file) {
 const pkg = JSON.parse(read('package.json') || '{}');
 assert(pkg.version === expected.semver, `package.json deve estar em ${expected.semver}.`);
 assert(pkg.scripts && pkg.scripts['validate:cohesion'], 'Script validate:cohesion ausente no package.json.');
+const capacitorConfig = JSON.parse(read('capacitor.config.json') || '{}');
+const statusBarConfig = capacitorConfig.plugins && capacitorConfig.plugins.StatusBar;
+assert(statusBarConfig && statusBarConfig.overlaysWebView === false, 'StatusBar deve manter overlaysWebView=false.');
+assert(statusBarConfig && statusBarConfig.style === 'LIGHT', 'StatusBar deve usar ícones claros sobre o fundo azul.');
+const androidCapacitorConfig = JSON.parse(read('android/app/src/main/assets/capacitor.config.json') || '{}');
+assert(JSON.stringify(androidCapacitorConfig.plugins?.StatusBar || {}) === JSON.stringify(statusBarConfig || {}), 'Configuração StatusBar divergente nos assets Android.');
 
 const app = read('app.js');
 assert(new RegExp(`APP_VERSION\\s*=\\s*["']${expected.app.replace('.', '\\.')}`).test(app), `APP_VERSION deve ser ${expected.app}.`);
@@ -37,14 +43,36 @@ assert(/data\.vehicleId\s*=\s*f\.vehicleId\.value/.test(app), 'Cadastro de alert
 assert(/function\s+deleteAlert\s*\(/.test(app), 'Rotina de exclusão de alerta técnico ausente.');
 assert(/histórico técnico (será|foi) preservado|histórico técnico foi preservado/i.test(app), 'Mensagem de preservação do histórico técnico ausente.');
 assert(/function\s+restoreDataState\s*\(/.test(app), 'Restauração transacional do estado ausente.');
+assert(/function\s+sameMovement\s*\(/.test(app), 'Comparação normalizada de IDs de movimentos ausente.');
+assert(/o\.movimento_id\s*=\s*String\(/.test(app), 'Normalização textual do movimento_id ausente.');
+assert(/currentRows\s*=\s*id\s*\?\s*movements\.filter\(\(m\)\s*=>\s*sameMovement\(m, id\)\)/.test(app), 'Edição ainda não usa comparação normalizada de movimento.');
+assert(!/Veículo inativo: seus movimentos estão disponíveis somente para consulta e não podem ser alterados/.test(app), 'Bloqueio indevido de alteração histórica de veículo inativo ainda existe.');
+assert(/function\s+movementDateTimeForEdit\s*\(/.test(app), 'Preservação do horário original na edição de movimentos ausente.');
+assert(/referenceOrder\s*=\s*current/.test(app), 'Validação sequencial de hodômetro por horário e ordem ausente.');
+assert(/data_hora:\s*movementDateTimeForEdit\(d\.data, current\)/.test(app), 'Edição ainda substitui indevidamente o horário histórico do movimento.');
+
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');
+assert(/mycar-share-report-html/.test(app), 'Mensageria de compartilhamento HTML ausente nos relatórios.');
+assert(/bridge\.shareHtml\(jobName, html\)/.test(app), 'Aplicativo não encaminha o HTML à ponte nativa de compartilhamento.');
+assert(/id="reportCloseButton"[^>]*>Fechar</.test(app), 'Botão Fechar do Relatório Executivo ausente.');
+assert(/id="reportShareButton"[^>]*>Compartilhar</.test(app), 'Botão Compartilhar do Relatório Executivo ausente.');
+assert(/id="aiReportClose"[^>]*>Fechar</.test(app), 'Botão Fechar do relatório de inteligência ausente.');
+assert(/id="aiReportShare"[^>]*>Compartilhar</.test(app), 'Botão Compartilhar do relatório de inteligência ausente.');
+assert(!/reportPrintButton|aiReportPrint/.test(app), 'Botão Imprimir ainda existe no Relatório Executivo ou de Inteligência.');
+assert(!/id="reportPdfButton"|id="aiReportPdf"/.test(app), 'Botão antigo Salvar PDF ainda existe nos relatórios principais.');
+assert(/class="responsive-table"/.test(app), 'Relatório Executivo não possui tabelas responsivas para celular.');
+assert(/data-label="Situação técnica"/.test(app), 'Tabela de manutenção não possui rótulos móveis.');
+assert(/\.ai-action-table td::before/.test(app), 'Plano de ação da Inteligência não possui formatação móvel.');
+assert(/configureNativeStatusBar/.test(app), 'Configuração nativa da barra de status ausente.');
 assert(!/canOperate\s*&&\s*!a\.technicalKey/.test(app), 'Ainda existe bloqueio de exclusão para alertas técnicos.');
 assert(!/confirm\(["']Excluir este alerta\?/.test(app), 'Ainda existe confirmação genérica antiga de exclusão de alerta.');
 
 const html = read('index.html');
 assert(html.includes(`v${expected.app}`), `Versão visível v${expected.app} ausente no index.html.`);
 assert(html.includes(`<strong>Versão:</strong> ${expected.app}`), `Versão ${expected.app} ausente na tela Sobre.`);
-assert(html.includes('Relatório Executivo PDF'), 'Nome padronizado do botão Relatório Executivo PDF ausente.');
+assert(html.includes('Gerar Relatório Executivo'), 'Botão Gerar Relatório Executivo ausente.');
+assert(!html.includes('id="exportAiPdf"'), 'Botão externo redundante de PDF da Inteligência ainda existe.');
+assert(!html.includes('Visualização interna'), 'Cabeçalho redundante do visualizador interno ainda existe.');
 assert(html.includes('Exportar dados XLSX'), 'Nome padronizado do botão Exportar dados XLSX ausente.');
 assert(html.includes('technicalHistoryList'), 'Seção de histórico técnico visível ausente.');
 assert(html.includes('reportViewerDialog'), 'Visualizador interno de relatório ausente no HTML.');
@@ -59,12 +87,31 @@ const gradle = read('android/app/build.gradle');
 assert(new RegExp(`versionCode\\s+${expected.versionCode}\\b`).test(gradle), `Android versionCode deve ser ${expected.versionCode}.`);
 assert(gradle.includes(`versionName "${expected.semver}"`), `Android versionName deve ser ${expected.semver}.`);
 
-const batch = 'ATUALIZAR_MYCAR_V5_42_WEB_ANDROID.bat';
+
+const mainActivity = read('android/app/src/main/java/br/com/marceloauditor/mycarplus/MainActivity.java');
+assert(/public void printHtml\(String jobName, String html\)/.test(mainActivity), 'Ponte nativa printHtml de compatibilidade ausente no Android.');
+assert(/public void shareHtml\(String jobName, String html\)/.test(mainActivity), 'Ponte nativa shareHtml ausente no Android.');
+assert(!/shareHtmlAsPdf|PdfDocument/.test(mainActivity), 'Código antigo de compartilhamento em PDF ainda existe no Android.');
+assert(/Intent\.ACTION_SEND/.test(mainActivity), 'Compartilhamento nativo ACTION_SEND ausente.');
+assert(/FileProvider\.getUriForFile/.test(mainActivity), 'Compartilhamento não usa FileProvider.');
+assert(/setType\("text\/html"\)/.test(mainActivity), 'Compartilhamento nativo não usa o tipo text/html.');
+assert(/MediaSize\.ISO_A4/.test(mainActivity), 'Geração nativa não fixa papel A4.');
+assert(/public void onDestroy\(\)/.test(mainActivity), 'onDestroy do MainActivity deve permanecer público.');
+assert(!/from pathlib import Path/.test(mainActivity), 'MainActivity.java contém código Python indevido.');
+const androidStyles = read('android/app/src/main/res/values/styles.xml');
+assert(/windowOptOutEdgeToEdgeEnforcement/.test(androidStyles), 'Proteção contra sobreposição da barra de status ausente.');
+const filePaths = read('android/app/src/main/res/xml/file_paths.xml');
+assert(/name="shared_reports"/.test(filePaths), 'FileProvider não possui caminho de cache para relatórios compartilhados.');
+
+const batch = 'ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat';
 const batchText = read(batch);
-assert(batchText.includes('set "VERSAO=5.42"'), 'BAT não possui a variável VERSAO=5.42.');
-assert(batchText.includes('MYCAR_PLUS_V5_42_MASTER.zip'), 'BAT não espera o ZIP oficial V5.42.');
+assert(batchText.includes('set "VERSAO=5.49"'), 'BAT não possui a variável VERSAO=5.49.');
+assert(batchText.includes('MYCAR_PLUS_V5_49_MASTER.zip'), 'BAT não espera o ZIP oficial V5.49.');
+assert(batchText.includes('MYCAR_PLUS_V5_49_MASTER*.zip'), 'BAT não aceita nomes automáticos como (1) no ZIP baixado.');
 assert(batchText.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
-assert(!fs.existsSync(path.join(root, 'ATUALIZAR_MYCAR_V5_41_WEB_ANDROID.bat')), 'BAT operacional antigo V5.41 ainda está na raiz.');
+for (const oldVersion of ['41', '42', '43', '44', '45', '46', '47', '48']) {
+  assert(!fs.existsSync(path.join(root, `ATUALIZAR_MYCAR_V5_${oldVersion}_WEB_ANDROID.bat`)), `BAT operacional antigo V5.${oldVersion} ainda está na raiz.`);
+}
 
 const syncedFiles = [
   'index.html', 'styles.css', 'app.js', 'mycarplus-db.js', 'cloud.js',

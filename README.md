@@ -1,4 +1,4 @@
-# MyCar+ V5.42
+# MyCar+ V5.49
 
 Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas técnicos e análises veiculares com IA.
 
@@ -19,12 +19,16 @@ npm.cmd run validate:cohesion
 
 ## Identificação
 
-- versão: **5.42.0**
-- Android: `versionCode 542` / `versionName 5.42.0`
+- versão: **5.49.0**
+- Android: `versionCode 549` / `versionName 5.49.0`
 - pacote: `br.com.marceloauditor.mycarplus`
 - Firebase: `mycarplus-3180a`
-- cache PWA: `mycar-plus-v5-42`
+- cache PWA: `mycar-plus-v5-49`
 
 ## Atualização automatizada
 
-A fonte inclui `ATUALIZAR_MYCAR_V5_42_WEB_ANDROID.bat`. Em toda nova versão, o nome e o conteúdo do BAT devem ser atualizados junto com o software. Consulte `ROTEIRO_ATUALIZACAO_GITHUB_FIREBASE.txt`.
+A fonte inclui `ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat`. Em toda nova versão, o nome e o conteúdo do BAT devem ser atualizados junto com o software. Consulte `ROTEIRO_ATUALIZACAO_GITHUB_FIREBASE.txt`.
+
+## Relatórios e compartilhamento
+
+O Relatório Executivo e o Relatório de Inteligência são exibidos dentro do aplicativo, com os botões **Fechar** e **Compartilhar**. O compartilhamento cria um arquivo HTML temporário e abre a folha nativa do Android.
