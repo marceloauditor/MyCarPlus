@@ -4,10 +4,10 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 const expected = {
-  semver: '5.51.0',
-  app: '5.51',
-  versionCode: '551',
-  cache: 'mycar-plus-v5-51',
+  semver: '5.54.0',
+  app: '5.54',
+  versionCode: '554',
+  cache: 'mycar-plus-v5-54',
 };
 const failures = [];
 const notices = [];
@@ -70,7 +70,12 @@ assert(/function\s+normalizeAlertRecord\s*\(/.test(app), 'Normalização dos ale
 assert(/data\.group\s*=\s*["']MANUTENÇÃO["']/.test(app), 'Cadastro de alerta não fixa o grupo MANUTENÇÃO.');
 assert(/group:\s*["']MANUTENÇÃO["'][\s\S]{0,900}technical:\s*true/.test(app), 'Alertas gravados não estão padronizados como técnicos de manutenção.');
 assert(/não apagará[\s\S]*histórico técnico/i.test(app), 'Confirmação de exclusão não esclarece a preservação do histórico.');
-assert(/\["VENCIDO",\s*"ATENÇÃO",\s*"PROGRAMADO",\s*"CONCLUÍDO",\s*"INATIVO"\]/.test(app), 'Resumo dos alertas não inclui a situação INATIVO.');
+assert(/data-alert-view/.test(app), 'Ação Consultar do novo painel de alertas ausente.');
+assert(/data-alert-edit/.test(app), 'Ação Alterar do novo painel de alertas ausente.');
+assert(/data-alert-delete/.test(app), 'Ação Excluir do novo painel de alertas ausente.');
+assert(/function\s+setAlertFormMode\s*\(/.test(app), 'Modo Consultar somente leitura ausente.');
+assert(!/data-alert-complete/.test(app), 'Ação antiga Concluir ainda aparece na listagem de alertas.');
+assert(!/data-alert-toggle/.test(app), 'Ação antiga Ativar/Desativar ainda aparece na listagem de alertas.');
 
 const html = read('index.html');
 assert(html.includes(`v${expected.app}`), `Versão visível v${expected.app} ausente no index.html.`);
@@ -79,14 +84,25 @@ assert(html.includes('Gerar Relatório Executivo'), 'Botão Gerar Relatório Exe
 assert(!html.includes('id="exportAiPdf"'), 'Botão externo redundante de PDF da Inteligência ainda existe.');
 assert(!html.includes('Visualização interna'), 'Cabeçalho redundante do visualizador interno ainda existe.');
 assert(html.includes('Exportar dados XLSX'), 'Nome padronizado do botão Exportar dados XLSX ausente.');
-assert(html.includes('technicalHistoryList'), 'Seção de histórico técnico visível ausente.');
+assert(!html.includes('technicalHistoryList'), 'Histórico técnico antigo ainda está visível na tela de alertas.');
 assert(html.includes('reportViewerDialog'), 'Visualizador interno de relatório ausente no HTML.');
-assert(html.includes('Alertas de manutenção'), 'Título Alertas de manutenção ausente.');
-assert(html.includes('alert-guidance'), 'Orientação de vínculo e preservação do histórico ausente.');
+assert(html.includes('Alertas Técnicos'), 'Título Alertas Técnicos ausente.');
+assert(html.includes('alert-selected-vehicle'), 'Cartão do veículo selecionado ausente no painel.');
+assert(html.includes('alert-new-button'), 'Botão vermelho Novo alerta técnico ausente.');
+assert(html.includes('alert-panel-list'), 'Nova relação compacta de alertas ausente.');
+assert(!html.includes('alertSummary'), 'Resumo antigo por status ainda existe na tela.');
+assert(!html.includes('id="alertStatus"'), 'Filtro antigo de status ainda existe na tela.');
+assert(!html.includes('id="alertVehicle"'), 'Seletor antigo de veículo ainda existe na tela.');
+assert(!html.includes('technicalPdf'), 'Botão antigo de relatório técnico ainda existe na tela.');
 assert(/name="group"[^>]*disabled/.test(html), 'Grupo do alerta não está bloqueado em MANUTENÇÃO.');
 
 
 assert(html.includes('technical-alert-dialog'), 'Nova tela visual de Alerta Técnico ausente.');
+const styles = read('styles.css');
+assert(styles.includes('alert-panel-card'), 'Estilos do novo painel compacto ausentes.');
+assert(styles.includes('font-size:10.5px') || styles.includes('font-size:11.5px'), 'Tipografia compacta dos alertas não foi aplicada.');
+assert(styles.includes('width:calc(100vw - 16px)'), 'Formulário de alerta não está delimitado na tela móvel.');
+assert(styles.includes('alert-line-icon'), 'Ícones vetoriais consistentes ausentes.');
 assert(html.includes('data-alert-criterion="DATE"') && html.includes('data-alert-criterion="KM"') && html.includes('data-alert-criterion="BOTH"'), 'Seleção Data/KM/Data e KM ausente.');
 assert(html.includes('name="baseDate"') && html.includes('name="baseKm"'), 'Base de cálculo do alerta ausente.');
 assert(html.includes('alertForecastDate') && html.includes('alertForecastKm'), 'Previsão automática da próxima troca ausente.');
@@ -121,15 +137,15 @@ assert(/windowOptOutEdgeToEdgeEnforcement/.test(androidStyles), 'Proteção cont
 const filePaths = read('android/app/src/main/res/xml/file_paths.xml');
 assert(/name="shared_reports"/.test(filePaths), 'FileProvider não possui caminho de cache para relatórios compartilhados.');
 
-const batch = 'ATUALIZAR_MYCAR_V5_51_WEB_ANDROID.bat';
+const batch = 'ATUALIZAR_MYCAR_V5_54_WEB_ANDROID.bat';
 const batchText = read(batch);
-assert(batchText.includes('set "VERSAO=5.51"'), 'BAT não possui a variável VERSAO=5.51.');
-assert(batchText.includes('MYCAR_PLUS_V5_51_MASTER.zip'), 'BAT não espera o ZIP oficial V5.51.');
-assert(batchText.includes('MYCAR_PLUS_V5_51_MASTER*.zip'), 'BAT não aceita nomes automáticos como (1) no ZIP baixado.');
+assert(batchText.includes('set "VERSAO=5.54"'), 'BAT não possui a variável VERSAO=5.54.');
+assert(batchText.includes('MYCAR_PLUS_V5_54_MASTER.zip'), 'BAT não espera o ZIP oficial V5.52.');
+assert(batchText.includes('MYCAR_PLUS_V5_54_MASTER*.zip'), 'BAT não aceita nomes automáticos como (1) no ZIP baixado.');
 assert(batchText.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
-assert(!/powershell(?:\.exe)?[^\r\n]*-File[^\r\n]*APLICAR_ATUALIZACAO_MYCAR_V5_51\.ps1/i.test(batchText), 'BAT ainda depende de script PS1 externo.');
+assert(!/powershell(?:\.exe)?[^\r\n]*-File[^\r\n]*APLICAR_ATUALIZACAO_MYCAR_V5_52\.ps1/i.test(batchText), 'BAT ainda depende de script PS1 externo.');
 assert(batchText.includes('autocontido') || batchText.includes('Autocontido'), 'BAT não informa que é autocontido.');
-for (const oldVersion of ['41', '42', '43', '44', '45', '46', '47', '48', '49', '50']) {
+for (const oldVersion of ['41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51']) {
   assert(!fs.existsSync(path.join(root, `ATUALIZAR_MYCAR_V5_${oldVersion}_WEB_ANDROID.bat`)), `BAT operacional antigo V5.${oldVersion} ainda está na raiz.`);
 }
 

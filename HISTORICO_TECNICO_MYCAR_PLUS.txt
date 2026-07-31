@@ -160,7 +160,7 @@ VERSÃO 5.49 — COMPARTILHAMENTO DOS RELATÓRIOS EM HTML
 - Fluxo mantido: Fechar retorna à tela anterior; Compartilhar não fecha o relatório.
 
 
-VERSÃO 5.51 — ALERTAS DE MANUTENÇÃO
+VERSÃO 5.52 — ALERTAS DE MANUTENÇÃO
 Data: 31/07/2026
 
 - Alertas padronizados como técnicos do grupo MANUTENÇÃO.
@@ -168,4 +168,4 @@ Data: 31/07/2026
 - Veículos inativos sem novos alertas ou avisos ativos.
 - Exclusão remove apenas o alerta e preserva o histórico técnico.
 - Formulário coleta explicitamente vehicleId e fixa o grupo MANUTENÇÃO.
-- BAT V5.51 autocontido, sem dependência de arquivo PS1.
+- BAT V5.52 autocontido, sem dependência de arquivo PS1.

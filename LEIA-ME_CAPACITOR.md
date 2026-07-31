@@ -1,4 +1,4 @@
-# MyCar+ V5.51 — Capacitor 7
+# MyCar+ V5.52 — Capacitor 7
 
 ## Comandos Windows
 

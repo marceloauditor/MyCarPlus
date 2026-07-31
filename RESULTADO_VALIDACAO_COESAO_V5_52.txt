@@ -1,0 +1,27 @@
+MYCAR+ V5.52 — RESULTADO DE VALIDAÇÃO
+=======================================
+
+1. Sintaxe JavaScript
+   APROVADA — app.js verificado com node --check.
+
+2. Validação de coesão
+   APROVADA — versão 5.52.0, Android versionCode 552 e cache mycar-plus-v5-52.
+   17 arquivos conferidos na cadeia raiz → www → Android.
+
+3. Painel de Alertas Técnicos
+   APROVADO POR INSPEÇÃO E TESTES ESTRUTURAIS:
+   - tela abre diretamente na relação de alertas;
+   - resumo antigo, filtros, histórico e botão de relatório foram removidos;
+   - botão vermelho Novo alerta técnico incluído;
+   - cartões compactos com ícones SVG consistentes;
+   - ações Consultar, Alterar e Excluir;
+   - modo Consultar em somente leitura;
+   - formulário delimitado na área útil do celular;
+   - exclusão preserva histórico técnico.
+
+4. Sincronização
+   APROVADA — raiz, www e android/app/src/main/assets/public possuem os mesmos arquivos.
+
+5. Build Gradle neste ambiente
+   NÃO EXECUTADO ATÉ O FIM — o Gradle tentou baixar gradle-8.11.1-all.zip, mas este ambiente não possui acesso externo a services.gradle.org.
+   O BAT executará o build completo no computador do usuário.

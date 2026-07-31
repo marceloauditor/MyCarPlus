@@ -593,7 +593,7 @@ Versão 5.49:
 - Executar ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat e validar a coesão antes do APK.
 
 
-VERSÃO 5.51:
+VERSÃO 5.52:
 - Pacote oficial: MYCAR_PLUS_V5_51_MASTER.zip
 - Instalador: ATUALIZAR_MYCAR_V5_51_WEB_ANDROID.bat
 - O BAT é autocontido e não depende de APLICAR_ATUALIZACAO_MYCAR_V5_51.ps1.

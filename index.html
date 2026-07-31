@@ -28,7 +28,7 @@
 <div>
 <small>Controle automotivo</small>
 <h1>MyCar+</h1>
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.51</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.54</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -184,90 +184,107 @@
 </div>
 </section>
 <section id="relatorios" class="page">
-<div class="page-title">
+<div class="page-title report-guide-header">
 <div>
-<small>Análises</small>
-<h2>Relatórios</h2>
+<small>Relatórios do veículo</small>
+<h2>Guia de Relatórios</h2>
 </div>
 </div>
-<select id="reportVehicle" hidden aria-hidden="true">
-</select>
-<div class="selected-vehicle-context">
-<small>Veículo definido na tela inicial</small>
-<strong id="reportVehicleName">—</strong>
-</div>
-<div class="period-filter" data-period="report">
-<div>
-<small>Data inicial</small>
-<input id="reportStart" type="date">
-</div>
-<div>
-<small>Data final</small>
-<input id="reportEnd" type="date">
-</div>
-<button type="button" id="clearReportPeriod">Limpar período</button>
-</div>
-<p id="reportPeriodError" class="period-error">
-</p>
-<p id="reportPeriodLabel" class="period-label">Período: Geral</p>
-<div class="report-grid">
-<article>
-<small>Despesas</small>
-<b id="grossTotal">—</b>
-</article>
-<article>
-<small>Custo líquido</small>
-<b id="reportNet">—</b>
-</article>
-<article>
-<small>Receitas</small>
-<b id="incomeTotal">—</b>
-</article>
-<article>
-<small>Distância</small>
-<b id="reportDistance">—</b>
-</article>
-</div>
-<h3>Consumo e custo por combustível</h3>
-<div id="fuelBars" class="bars">
-</div>
-<h3>Custos por grupo</h3>
-<div id="categoryBars">
-</div>
-<div class="export">
-<h3>Exportação</h3>
-<p>Exporte os dados em planilha ou gere um relatório para visualizar e compartilhar em PDF.</p>
-<button id="exportXlsx">Exportar dados XLSX</button> <button id="exportPdf">Gerar Relatório Executivo</button>
-</div>
-<div class="intelligence-callout">
-<div><small>MYCAR+ INTELLIGENCE</small><strong>Análise e previsão veicular por IA</strong><p>O veículo selecionado na tela inicial será analisado no período informado.</p></div>
-<button type="button" class="primary" data-go="intelligence">Gerar análise inteligente</button>
+<select id="reportVehicle" hidden aria-hidden="true"></select>
+<div class="report-guide-screen">
+  <section class="report-guide-card report-guide-vehicle-card selected-vehicle-context">
+    <small>Veículo selecionado</small>
+    <strong id="reportVehicleName">—</strong>
+    <span id="reportVehicleMeta" class="report-guide-meta">—</span>
+  </section>
+
+  <section class="report-guide-card report-guide-period-card">
+    <div class="report-guide-card-title">Período</div>
+    <div class="report-guide-period-grid">
+      <label class="report-guide-field">
+        <span>Data inicial</span>
+        <input id="reportStart" type="date">
+      </label>
+      <label class="report-guide-field">
+        <span>Data final</span>
+        <input id="reportEnd" type="date">
+      </label>
+    </div>
+    <div class="report-guide-period-foot">
+      <small id="reportDefaultHint">Padrão: últimos 3 meses</small>
+      <button type="button" id="clearReportPeriod" class="report-guide-clear">Limpar período</button>
+    </div>
+    <p id="reportPeriodError" class="period-error"></p>
+  </section>
+
+  <section class="report-guide-card report-guide-actions-card">
+    <div class="report-guide-card-title">Ações</div>
+    <div class="report-guide-actions">
+      <button id="exportPdf" type="button" class="report-guide-action report-guide-action-blue">GERAR RELATÓRIO EXECUTIVO</button>
+      <button id="reportAiButton" type="button" class="report-guide-action report-guide-action-orange">GERAR RELATÓRIO POR I.A.</button>
+      <button id="exportXlsx" type="button" class="report-guide-action report-guide-action-red">Gerar Relatório XLSX</button>
+    </div>
+  </section>
+
+  <button type="button" id="reportBackButton" class="report-guide-back" data-back>Voltar</button>
+
+  <p id="reportPeriodLabel" class="report-guide-note">Os relatórios serão gerados conforme o período informado.</p>
 </div>
 </section>
 <section id="intelligence" class="page">
-<div class="page-title"><div><small>MyCar+ Intelligence</small><h2>Análise inteligente</h2></div><button type="button" class="page-back" data-back aria-label="Voltar">‹ Voltar</button></div>
-<div class="ai-online-notice"><span>◉</span><div><strong>Conexão com a internet necessária</strong><p>Os indicadores são calculados pelo aplicativo e enviados de forma consolidada para a IA interpretar. A IA não altera nem exclui movimentos.</p></div></div>
-<form id="aiAnalysisForm" class="ai-analysis-form">
-<div class="selected-vehicle-context ai-vehicle-context"><small>Veículo definido na tela inicial</small><strong id="aiVehicleName">—</strong><span id="aiVehicleStatus"></span></div>
-<div class="compact-grid">
-<label>Data inicial *<input id="aiStart" type="date" required></label>
-<label>Data final *<input id="aiEnd" type="date" required></label>
+<div class="page-title ai-guide-page-title">
+  <div>
+    <small>MyCar+ Intelligence</small>
+    <h2>Relatório por I.A.</h2>
+  </div>
+  <button type="button" class="page-back ai-guide-top-back" data-back aria-label="Voltar">Voltar</button>
 </div>
-<label>Tipo de análise *<select id="aiType" required>
-<option value="completa">Análise completa</option>
-<option value="combustivel">Combustível e consumo</option>
-<option value="custos">Custos e despesas</option>
-<option value="manutencao">Manutenções</option>
-<option value="fornecedores">Fornecedores</option>
-</select></label>
-<p id="aiFormError" class="form-error" role="alert"></p>
-<div id="aiProgress" class="ai-progress" hidden role="status" aria-live="polite"><span></span><p><strong>Calculando análise inteligente…</strong><small>Processando indicadores e preparando o relatório.</small></p></div>
-<button id="generateAiAnalysis" class="primary" type="submit">Gerar análise inteligente</button>
+<form id="aiAnalysisForm" class="ai-guide-screen">
+  <section class="ai-guide-card ai-guide-vehicle-card selected-vehicle-context ai-vehicle-context">
+    <small>Veículo selecionado</small>
+    <strong id="aiVehicleName">—</strong>
+    <span id="aiVehicleStatus" class="ai-guide-meta"></span>
+  </section>
+
+  <section class="ai-guide-card ai-guide-period-card">
+    <div class="ai-guide-card-title">Período da análise</div>
+    <div class="ai-guide-period-grid">
+      <label class="ai-guide-field">Data inicial *<input id="aiStart" type="date" required></label>
+      <label class="ai-guide-field">Data final *<input id="aiEnd" type="date" required></label>
+    </div>
+    <small class="ai-guide-help">O período informado na Guia de Relatórios é mantido aqui.</small>
+  </section>
+
+  <section class="ai-guide-card ai-guide-type-card">
+    <div class="ai-guide-card-title">Tipo de análise</div>
+    <label class="ai-guide-field ai-guide-select-field">Análise desejada *
+      <select id="aiType" required>
+        <option value="completa">Análise completa</option>
+        <option value="combustivel">Combustível e consumo</option>
+        <option value="custos">Custos e despesas</option>
+        <option value="manutencao">Manutenções</option>
+        <option value="fornecedores">Fornecedores</option>
+      </select>
+    </label>
+  </section>
+
+  <div class="ai-guide-online-notice">
+    <span class="ai-guide-online-dot">●</span>
+    <div><strong>Internet necessária</strong><small>Os dados são enviados de forma consolidada somente para interpretação.</small></div>
+  </div>
+
+  <p id="aiFormError" class="form-error ai-guide-error" role="alert"></p>
+  <div id="aiProgress" class="ai-progress ai-guide-progress" hidden role="status" aria-live="polite">
+    <span></span><p><strong>Calculando análise inteligente…</strong><small>Processando indicadores e preparando o relatório.</small></p>
+  </div>
+  <button id="generateAiAnalysis" class="ai-guide-generate" type="submit">GERAR RELATÓRIO POR I.A.</button>
+  <button type="button" class="ai-guide-back" data-back>Voltar</button>
 </form>
-<article id="aiResult" class="ai-result" hidden>
-<div class="ai-result-head"><div><small>RELATÓRIO GERADO</small><h3>Relatório Executivo de Gestão Veicular com Inteligência Artificial</h3></div><span id="aiConfidence" class="insight-badge">—</span></div>
-<div id="aiReportContent"></div>
-<div class="export"><button type="button" id="closeAiResult" class="form-cancel">Fechar resultado</button><button type="button" id="viewAiReport">Abrir relatório de inteligência</button><button type="button" id="newAiAnalysis">Gerar nova análise</button></div>
+
+<article id="aiResult" class="ai-result ai-guide-result" hidden>
+  <div class="ai-result-head"><div><small>RELATÓRIO GERADO</small><h3>Relatório Executivo de Gestão Veicular com Inteligência Artificial</h3></div><span id="aiConfidence" class="insight-badge">—</span></div>
+  <div id="aiReportContent"></div>
+  <div class="export ai-result-actions"><button type="button" id="viewAiReport">Visualizar relatório completo</button><button type="button" id="newAiAnalysis">Nova análise</button><button type="button" id="closeAiResult">Fechar</button></div>
 </article>
 </section>
 <section id="graficos" class="page">
@@ -460,23 +477,17 @@
 </div>
 </div>
 </section>
-<section id="alertas" class="page">
-<div class="page-title"><div><small>Controle técnico</small><h2>Alertas de manutenção</h2></div>
-<button type="button" class="round" id="newAlert" aria-label="Novo alerta de manutenção">＋</button></div>
-<div class="alert-guidance"><b>Veículo selecionado:</b> esta tela mostra somente os alertas e o histórico técnico do veículo ativo. Excluir um alerta remove apenas sua programação futura e preserva o histórico técnico.</div>
-<div id="alertSummary" class="alert-summary"></div>
-<div class="filters">
-<select id="alertVehicle"></select>
-<select id="alertStatus"><option value="">Todas as situações</option><option>PROGRAMADO</option><option>ATENÇÃO</option><option>VENCIDO</option><option>CONCLUÍDO</option><option>INATIVO</option></select>
+<section id="alertas" class="page alert-dashboard-page">
+<div class="alert-dashboard-heading">
+<div><small>Controle técnico</small><h2>Alertas Técnicos</h2></div>
 </div>
-<div id="alertList" class="list alert-list"></div>
-<section class="technical-history-section">
-<div class="technical-history-head"><div><small>Registros preservados</small><h3>Histórico técnico do veículo selecionado</h3></div></div>
-<div id="technicalHistoryList" class="list technical-history-list"></div>
-</section>
-<div class="technical-report-actions">
-<button type="button" id="technicalPdf">Histórico técnico PDF</button>
-</div>
+<article class="alert-selected-vehicle" id="alertSelectedVehicle">
+<span class="alert-selected-vehicle-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17v2m14-2v2M4 13l1.5-5A2 2 0 0 1 7.4 6h9.2a2 2 0 0 1 1.9 2L20 13M4 13h16v4H4zM7 14.5h.01M17 14.5h.01"/></svg></span>
+<div><small>Veículo selecionado</small><strong id="alertPanelVehicleName">—</strong><span id="alertPanelVehicleMeta">Placa: — · KM atual: 0</span></div>
+</article>
+<button type="button" id="newAlert" class="alert-new-button" aria-label="Novo alerta técnico"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><b>Novo alerta técnico</b></button>
+<div id="alertList" class="alert-panel-list"></div>
+<div class="alert-panel-note"><span>i</span><p>Os alertas são utilizados para programar e monitorar as manutenções do veículo selecionado.</p></div>
 </section>
 <section id="configuracoes" class="page">
 <div class="page-title">
@@ -618,7 +629,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.51</p>
+<strong>Versão:</strong> 5.54</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>
@@ -841,7 +852,7 @@
 </div>
 </dialog>
 <dialog id="alertDialog" class="technical-alert-dialog">
-<form method="dialog" id="alertForm" class="technical-alert-form">
+<form method="dialog" id="alertForm" class="technical-alert-form" data-mode="edit">
 <input type="hidden" name="id">
 <input type="hidden" name="vehicleId">
 <input type="hidden" name="criterion" value="BOTH">
@@ -849,32 +860,32 @@
 <header class="technical-alert-topbar">
 <button type="button" class="alert-cancel alert-top-action" aria-label="Voltar">‹</button>
 <h2 id="alertFormTitle">Novo Alerta Técnico</h2>
-<button type="submit" class="alert-top-action alert-top-save" aria-label="Salvar">✓</button>
+<button type="submit" id="alertTopSave" class="alert-top-action alert-top-save" aria-label="Salvar">✓</button>
 </header>
 <div class="technical-alert-scroll">
 <article class="technical-alert-vehicle">
-<div class="technical-alert-icon">🚙</div>
+<div class="technical-alert-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17v2m14-2v2M4 13l1.5-5A2 2 0 0 1 7.4 6h9.2a2 2 0 0 1 1.9 2L20 13M4 13h16v4H4zM7 14.5h.01M17 14.5h.01"/></svg></div>
 <div><small>Veículo selecionado</small><strong id="alertVehicleName">—</strong><span id="alertVehicleMeta">Placa: — · KM atual: 0</span></div>
 </article>
 
 <section class="technical-alert-card alert-select-card">
-<label><span class="field-icon">🔧</span><span><small>Grupo (padrão)</small><select name="group" disabled><option value="MANUTENÇÃO">Manutenção</option></select></span></label>
+<label><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5-5L12 3.6 9.6 6 7.3 3.7a4 4 0 0 0 5 5L5 16l3 3 7.3-7.3a4 4 0 0 0-.6-5.4z"/></svg></span><span><small>Grupo (padrão)</small><select name="group" disabled><option value="MANUTENÇÃO">Manutenção</option></select></span></label>
 </section>
 <section class="technical-alert-card alert-select-card">
-<label><span class="field-icon">🛢️</span><span><small>Item</small><select name="itemId" required></select></span></label>
+<label><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h13l3-3h2M5 13l1-5h7l2 5M7 8V5h3v3M16 15c0 2-1.2 3-2.5 3S11 17 11 15"/></svg></span><span><small>Item</small><select name="itemId" required></select></span></label>
 </section>
 
 <section class="technical-alert-card">
-<h3><span class="field-icon">📅</span>Controlar por</h3>
+<h3><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1zM8 12h2m4 0h2m-8 4h2m4 0h2"/></svg></span>Controlar por</h3>
 <div class="alert-segmented alert-criterion-options" role="group" aria-label="Critério do alerta">
-<button type="button" data-alert-criterion="DATE"><b>▣</b><span>Data</span></button>
-<button type="button" data-alert-criterion="KM"><b>◉</b><span>KM</span></button>
-<button type="button" data-alert-criterion="BOTH"><b>▣ + ◉</b><span>Data e KM</span></button>
+<button type="button" data-alert-criterion="DATE"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1zM8 12h2m4 0h2m-8 4h2m4 0h2"/></svg></b><span>Data</span></button>
+<button type="button" data-alert-criterion="KM"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0M12 13l4-4M7 17h10"/></svg></b><span>KM</span></button>
+<button type="button" data-alert-criterion="BOTH"><b class="dual-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1zM8 12h2m4 0h2m-8 4h2m4 0h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0M12 13l4-4M7 17h10"/></svg></b><span>Data e KM</span></button>
 </div>
 </section>
 
 <section class="technical-alert-card">
-<h3><span class="field-icon">⌛</span>Vida útil do item</h3>
+<h3><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10M7 21h10M8 3c0 4 2 5 4 7 2-2 4-3 4-7M8 21c0-4 2-5 4-7 2 2 4 3 4 7"/></svg></span>Vida útil do item</h3>
 <div class="technical-alert-grid">
 <label>Meses<input name="recurrenceMonths" type="number" min="0" inputmode="numeric"></label>
 <label>KM<input name="recurrenceKm" type="number" min="0" inputmode="numeric"></label>
@@ -882,7 +893,7 @@
 </section>
 
 <section class="technical-alert-card">
-<h3><span class="field-icon">▦</span>Base para cálculo <small>(último lançamento ou atual)</small></h3>
+<h3><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6zM8 6h8v4H8zm0 7h2m3 0h2m-7 3h2m3 0h2"/></svg></span>Base para cálculo <small>(último lançamento ou atual)</small></h3>
 <div class="technical-alert-grid">
 <label>Data base<input name="baseDate" type="date"></label>
 <label>KM base<input name="baseKm" type="number" min="0" inputmode="numeric"></label>
@@ -890,15 +901,15 @@
 </section>
 
 <section class="technical-alert-card">
-<h3><span class="field-icon">〽</span>Previsão próxima troca</h3>
+<h3><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8M15 8h5v5"/></svg></span>Previsão próxima troca</h3>
 <div class="alert-forecast-grid">
-<article id="alertForecastDateCard"><span>📅</span><div><small>Por Data</small><strong id="alertForecastDate">—</strong><em id="alertForecastDateRemaining">Informe a vida útil</em></div></article>
-<article id="alertForecastKmCard"><span>◉</span><div><small>Por KM</small><strong id="alertForecastKm">—</strong><em id="alertForecastKmRemaining">Informe a vida útil</em></div></article>
+<article id="alertForecastDateCard"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1zM8 12h2m4 0h2m-8 4h2m4 0h2"/></svg></span><div><small>Por Data</small><strong id="alertForecastDate">—</strong><em id="alertForecastDateRemaining">Informe a vida útil</em></div></article>
+<article id="alertForecastKmCard"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0M12 13l4-4M7 17h10"/></svg></span><div><small>Por KM</small><strong id="alertForecastKm">—</strong><em id="alertForecastKmRemaining">Informe a vida útil</em></div></article>
 </div>
 </section>
 
 <section class="technical-alert-card">
-<h3><span class="field-icon">🔔</span>Alertas</h3>
+<h3><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v4zM10 19h4"/></svg></span>Alertas</h3>
 <div class="technical-alert-grid">
 <label>Avisar com quantos dias de antecedência<input name="leadDays" type="number" min="0" value="15" inputmode="numeric"></label>
 <label>Avisar com quantos km de antecedência<input name="leadKm" type="number" min="0" value="1000" inputmode="numeric"></label>
@@ -906,7 +917,7 @@
 </section>
 
 <section class="technical-alert-card">
-<h3><span class="field-icon">🛡</span>Status</h3>
+<h3><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg></span>Status</h3>
 <div class="alert-status-options" role="group" aria-label="Status do alerta">
 <button type="button" data-alert-status="ACTIVE">Ativo</button>
 <button type="button" data-alert-status="EXPIRED" aria-disabled="true">Vencido</button>
@@ -915,16 +926,16 @@
 </section>
 
 <section class="technical-alert-card">
-<label class="alert-observation-label"><span><span class="field-icon">▤</span>Observações <small>(opcional)</small></span>
+<label class="alert-observation-label"><span><span class="field-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6zM14 3v4h4M9 11h6m-6 4h6"/></svg></span>Observações <small>(opcional)</small></span>
 <textarea name="observations" maxlength="300" rows="3" placeholder="Ex.: Troca recomendada a cada 6 meses ou 9.000 km."></textarea>
 <small class="alert-char-count"><span id="alertObservationCount">0</span>/300</small></label>
 </section>
 <p id="alertFormError" class="form-error"></p>
 </div>
 <footer class="technical-alert-footer">
-<button type="button" id="deleteAlertFromForm" class="alert-delete-form">🗑 Excluir</button>
-<button type="button" class="alert-cancel">Cancelar</button>
-<button type="submit" class="primary">▣ Salvar</button>
+<button type="button" id="deleteAlertFromForm" class="alert-delete-form"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5m4-5v5"/></svg><span>Excluir</span></button>
+<button type="button" id="alertFooterCancel" class="alert-cancel">Cancelar</button>
+<button type="submit" id="saveAlertFromForm" class="primary"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6"/></svg><span>Salvar</span></button>
 </footer>
 </form></dialog>
 <dialog id="registerDialog" class="compact-dialog">

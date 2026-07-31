@@ -1,0 +1,11 @@
+VALIDAÇÃO DE COESÃO V5.54 — APROVADA
+
+- Guia de Relatórios com ajuste visual compacto.
+- Tela Relatório por I.A. reformulada no mesmo padrão visual.
+- Tipografia, cartões, campos e botões adaptados à largura do celular.
+- Período da Guia de Relatórios preservado na análise por I.A.
+- app.js, index.html, styles.css e sw.js sincronizados em raiz, www e Android.
+- Service Worker: mycar-plus-v5-54.
+- Web: 5.54.0.
+- Android: versionCode 554 / versionName 5.54.0.
+- 17 arquivos conferidos na cadeia raiz → www → Android.

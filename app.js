@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.51",
+  APP_VERSION = "5.54",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -948,40 +948,101 @@ function categoryCostTable(ms) {
     .join("");
   return `<div class="category-table-wrap"><table class="category-cost-table"><thead><tr><th>Grupo</th><th>Participação</th><th>Valor</th><th>Custo/km</th><th>Custo/dia</th></tr></thead><tbody>${rows}<tr class="total-expenses"><th scope="row">Total de gastos</th><td>${totalExpenses ? num(100, 1) + "%" : "0,0%"}</td><td>${money(totalExpenses)}</td><td>${money(perKm(totalExpenses))}</td><td>${money(perDay(totalExpenses))}</td></tr><tr class="income-row"><th scope="row">Receitas</th><td>—</td><td>− ${money(income)}</td><td>− ${money(perKm(income))}</td><td>− ${money(perDay(income))}</td></tr><tr class="net-cost-row"><th scope="row">Custo líquido</th><td>—</td><td>${money(net)}</td><td>${money(perKm(net))}</td><td>${money(perDay(net))}</td></tr></tbody></table></div>`;
 }
-function renderReports() {
-  const ms = filterByPeriod(filtered(selectedVehicleName()), "report"),
-    s = stats(ms);
-  $("#reportPeriodLabel").textContent = `Período: ${periodText("report")}`;
-  $("#grossTotal").textContent = money(s.cost);
-  $("#reportNet").textContent = money(s.net);
-  $("#incomeTotal").textContent = money(s.income);
-  $("#reportDistance").textContent = intFmt(s.km) + " km";
-  const fuels = {};
-  ms.filter((m) => m.grupo === "COMBUSTÍVEL").forEach((m) => {
-    const k = m.item || "Combustível",
-      g = fuels[k] || (fuels[k] = { c: 0, l: 0, d: 0 });
-    g.c += +m.valor || 0;
-    if (m.tanque_completo !== "NAO") {
-      g.l += +m.quantidade_litros || 0;
-      g.d += +(m.distancia_abastecimento_km ?? m.distancia_km) || 0;
-    }
-  });
-  const fuelTotal = Object.values(fuels).reduce(
-      (t, g) => ({ c: t.c + g.c, l: t.l + g.l, d: t.d + g.d }),
-      { c: 0, l: 0, d: 0 },
-    ),
-    combined = fuelTotal.l
-      ? `<div class="bar fuel-combined"><div><span>Combustíveis: ${num(fuelTotal.d / fuelTotal.l)} km/L</span><b>${money(fuelTotal.d ? fuelTotal.c / fuelTotal.d : 0)}/km</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>`
-      : "";
-  $("#fuelBars").innerHTML =
-    (Object.entries(fuels)
-      .map(
-        ([k, g]) =>
-          `<div class="bar"><div><span>${k}: ${num(g.l ? g.d / g.l : 0)} km/L</span><b>${money(g.d ? g.c / g.d : 0)}/km</b></div><div class="track"><div class="fill" style="width:${Math.min(100, (g.c / Math.max(...Object.values(fuels).map((x) => x.c), 1)) * 100)}%"></div></div></div>`,
-      )
-      .join("") + combined) || '<p class="muted">Sem abastecimentos.</p>';
-  $("#categoryBars").innerHTML = categoryCostTable(ms);
+function reportDefaultRange() {
+  const end = new Date();
+  end.setHours(12, 0, 0, 0);
+  const start = new Date(end);
+  start.setDate(1);
+  start.setMonth(start.getMonth() - 2);
+  const iso = (value) => value.toISOString().slice(0, 10);
+  return { start: iso(start), end: iso(end) };
 }
+function ensureReportGuideDefaults(force = false) {
+  const startInput = $("#reportStart"), endInput = $("#reportEnd");
+  if (!startInput || !endInput) return;
+  if (force || (!startInput.value && !endInput.value)) {
+    const range = reportDefaultRange();
+    startInput.value = range.start;
+    endInput.value = range.end;
+  }
+}
+function renderReports() {
+  ensureReportGuideDefaults();
+  const vehicle = selectedVehicleObject();
+  if ($("#reportVehicleName")) $("#reportVehicleName").textContent = vehicle?.nome || "Nenhum veículo selecionado";
+  if ($("#reportVehicleMeta")) {
+    $("#reportVehicleMeta").textContent = vehicle
+      ? `Placa: ${vehicle.placa || "Não informada"} · KM atual: ${intFmt(vehicleSummary(vehicle).last)}`
+      : "Selecione um veículo na tela inicial.";
+  }
+  const periodInfo = $("#reportPeriodLabel");
+  if (periodInfo) {
+    const valid = periodIsValid("report");
+    periodInfo.className = `report-guide-note ${valid ? "info" : "error"}`;
+    periodInfo.textContent = valid
+      ? `Os relatórios serão gerados conforme o período informado: ${periodText("report")}.`
+      : "Corrija o período informado para gerar os relatórios.";
+  }
+}
+function openIntelligenceFromReports() {
+  const start = $("#reportStart")?.value || "";
+  const end = $("#reportEnd")?.value || "";
+  if (!periodIsValid("report")) return alert("Corrija o período antes de gerar a análise por I.A.");
+  go("intelligence");
+  if ($("#aiStart")) $("#aiStart").value = start;
+  if ($("#aiEnd")) $("#aiEnd").value = end;
+}
+function reportScopedState() {
+  const vehicle = selectedVehicleObject();
+  const vehicleName = vehicle?.nome || "";
+  const scopedMovements = filterByPeriod(filtered(vehicleName), "report");
+  return {
+    vehicle,
+    movements: scopedMovements,
+    registers,
+    vehicles: vehicle ? [vehicle] : vehicles,
+    drivers,
+    suppliers,
+    paymentMethods,
+    alerts: vehicle ? alerts.filter((a) => a.vehicleId === vehicle.id) : alerts,
+    alertHistory: vehicle ? alertHistory.filter((h) => h.vehicleId === vehicle.id) : alertHistory,
+    technicalParameters: vehicle ? technicalParameters.filter((p) => p.vehicleId === vehicle.id) : technicalParameters,
+  };
+}
+async function exportReportXlsx() {
+  const vehicle = selectedVehicleObject();
+  if (!vehicle) return alert("Selecione um veículo na tela inicial antes de gerar o relatório XLSX.");
+  if (!periodIsValid("report")) return alert("Corrija o período antes de gerar o relatório XLSX.");
+  const state = reportScopedState();
+  if (!state.movements.length) return alert("Não existem movimentos no veículo e período selecionados.");
+  await MyCarPlusDB.exportDatabase(state);
+}
+function setupReportGuideControls() {
+  const start = $("#reportStart"), end = $("#reportEnd"), clear = $("#clearReportPeriod");
+  if (start && !start.dataset.boundReportGuide) {
+    start.dataset.boundReportGuide = "1";
+    start.addEventListener("change", () => renderReports());
+    start.addEventListener("input", () => renderReports());
+  }
+  if (end && !end.dataset.boundReportGuide) {
+    end.dataset.boundReportGuide = "1";
+    end.addEventListener("change", () => renderReports());
+    end.addEventListener("input", () => renderReports());
+  }
+  if (clear && !clear.dataset.boundReportGuide) {
+    clear.dataset.boundReportGuide = "1";
+    clear.addEventListener("click", () => {
+      ensureReportGuideDefaults(true);
+      renderReports();
+    });
+  }
+  const aiButton = $("#reportAiButton");
+  if (aiButton && !aiButton.dataset.boundReportGuide) {
+    aiButton.dataset.boundReportGuide = "1";
+    aiButton.addEventListener("click", openIntelligenceFromReports);
+  }
+}
+
 function withTotal(labels, values) {
   return {
     labels: [...labels, "Total"],
@@ -1371,6 +1432,7 @@ function renderAll() {
   fillOperationalLists();
   renderHome();
   renderMovements();
+  setupReportGuideControls();
   renderReports();
   renderRegisters();
   renderAlerts();
@@ -2344,10 +2406,7 @@ function sheet(rows) {
   return `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${rows.map((r, i) => `<row r="${i + 1}">${r.map((v, j) => (typeof v === "number" ? `<c r="${col(j + 1)}${i + 1}"><v>${v}</v></c>` : `<c r="${col(j + 1)}${i + 1}" t="inlineStr"><is><t>${esc(v)}</t></is></c>`)).join("")}</row>`).join("")}</sheetData></worksheet>`;
 }
 async function exportXlsx() {
-  await MyCarPlusDB.exportDatabase({
-    movements, registers, drivers, vehicles, suppliers, paymentMethods,
-    alerts, alertHistory, technicalParameters
-  });
+  await exportReportXlsx();
 }
 window.vehicleAppBridge = {
   getState: () => ({ movements, registers, drivers, vehicles, suppliers, paymentMethods, alerts, alertHistory, technicalParameters }),
@@ -2987,73 +3046,98 @@ function deleteAlert(id) {
     return false;
   }
 }
-function technicalHistoryRecords(vehicleId) {
-  if (!vehicleId) return [];
-  const vehicle = vehicles.find((v) => v.id === vehicleId);
-  const completed = alertHistory
-    .filter((h) => h.vehicleId === vehicleId)
-    .map((h) => ({
-      id: `history-${h.id}`,
-      date: h.completedAt,
-      km: Number(h.completedKm || 0),
-      description: h.description || "Manutenção concluída",
-      supplier: NI,
-      observation: "Conclusão registrada no histórico técnico",
-      value: 0,
-      status: "CONCLUÍDO",
-      forecast: "Histórico preservado",
-      source: "ALERTA",
-    }));
-  const maintenance = movements
-    .filter((m) => m.grupo === "MANUTENÇÃO" &&
-      (m.veiculo_id === vehicleId || m.veiculo === vehicle?.nome))
-    .map((m) => {
-      const related = alerts.find((a) => a.vehicleId === vehicleId &&
-        (a.itemId === m.item_id || a.description === m.item));
-      return {
-        id: `movement-${m.id}`,
-        date: m.data_hora,
-        km: Number(m.hodometro_km || 0),
-        description: m.item || "Manutenção",
-        supplier: m.fornecedor || NI,
-        observation: m.observacao || "",
-        value: Number(m.valor || 0),
-        status: related ? alertStatus(related) : "REGISTRADO",
-        forecast: related ? alertForecast(related) : "—",
-        source: "MOVIMENTO",
-      };
-    });
-  const seen = new Set();
-  return [...completed, ...maintenance]
-    .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0) || b.km - a.km)
-    .filter((record) => {
-      const key = `${String(record.date || "").slice(0, 10)}|${record.km}|${normalizeText(record.description)}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+function alertPanelSvg(name) {
+  const icons = {
+    oil: '<path d="M3 13h13l3-3h2M5 13l1-5h7l2 5M7 8V5h3v3M16 15c0 2-1.2 3-2.5 3S11 17 11 15"/>',
+    brake: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 5v2m0 10v2M5 12h2m10 0h2M7 7l1.5 1.5m7 7L17 17m0-10-1.5 1.5m-7 7L7 17"/>',
+    battery: '<rect x="5" y="6" width="14" height="13" rx="2"/><path d="M9 3v3m6-3v3M8 11h3m5 0h-3"/>',
+    fluid: '<path d="M8 4h8l2 4v12H6V8zM9 4V2h6v2M12 10c-2 3-3 4.5-3 6a3 3 0 0 0 6 0c0-1.5-1-3-3-6z"/>',
+    tire: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v2m0 12v2M4 12h2m12 0h2"/>',
+    wrench: '<path d="M14.7 6.3a4 4 0 0 0-5-5L12 3.6 9.6 6 7.3 3.7a4 4 0 0 0 5 5L5 16l3 3 7.3-7.3a4 4 0 0 0-.6-5.4z"/>',
+    calendar: '<path d="M7 3v3m10-3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1zM8 12h2m4 0h2m-8 4h2m4 0h2"/>',
+    gauge: '<path d="M4 17a8 8 0 1 1 16 0M12 13l4-4M7 17h10"/>',
+    search: '<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/>',
+    edit: '<path d="M4 20h4l11-11-4-4L4 16zM13 7l4 4"/>',
+    trash: '<path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5m4-5v5"/>',
+  };
+  return `<svg class="alert-line-icon" viewBox="0 0 24 24" aria-hidden="true">${icons[name] || icons.wrench}</svg>`;
 }
+function alertPanelItemIcon(item) {
+  const text = normalizeText(`${item.description || ""} ${registers.find((r) => r.id === item.itemId)?.item || ""}`);
+  if (text.includes("oleo") || item.technicalKey === "OIL") return "oil";
+  if (text.includes("pastilha") || text.includes("freio")) return text.includes("fluido") ? "fluid" : "brake";
+  if (text.includes("bateria") || item.technicalKey === "BATTERY") return "battery";
+  if (text.includes("pneu")) return "tire";
+  return "wrench";
+}
+function alertPanelStatus(item) {
+  const raw = alertStatus(item);
+  const labels = { PROGRAMADO: "Ativo", ATENÇÃO: "Atenção", VENCIDO: "Vencido", INATIVO: "Desativado", CONCLUÍDO: "Concluído" };
+  return { raw, label: labels[raw] || raw, css: normalizeText(raw).replace(/\s+/g, "-") };
+}
+function alertPanelRemaining(item, vehicle) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const date = dateOnly(item.dueDate);
+  const days = date ? Math.ceil((date.getTime() - today.getTime()) / 86400000) : null;
+  const currentKm = vehicle ? vehicleSummary(vehicle).last : 0;
+  const dueKm = Number(item.dueKm || 0);
+  return {
+    days,
+    km: dueKm ? dueKm - currentKm : null,
+  };
+}
+
 function renderAlerts() {
   if (!$("#alertList")) return;
   ensureTechnicalData();
   const selectedVehicle = selectedVehicleObject();
-  const vehicleSelect = $("#alertVehicle");
-  vehicleSelect.innerHTML = selectedVehicle ? `<option value="${selectedVehicle.id}">${esc(selectedVehicle.nome)}${selectedVehicle.ativo === false ? " (Inativo)" : ""}</option>` : '<option value="">Nenhum veículo selecionado</option>';
-  vehicleSelect.value = selectedVehicle?.id || ""; vehicleSelect.disabled = true;
-  $("#newAlert").disabled = !selectedVehicle || selectedVehicle.ativo === false;
-  $("#newAlert").title = selectedVehicle?.ativo === false
+  const panelName = $("#alertPanelVehicleName");
+  const panelMeta = $("#alertPanelVehicleMeta");
+  if (panelName) panelName.textContent = selectedVehicle?.nome || "Nenhum veículo selecionado";
+  if (panelMeta) panelMeta.textContent = selectedVehicle
+    ? `Placa: ${selectedVehicle.placa || "Não informada"} · KM atual: ${intFmt(vehicleSummary(selectedVehicle).last)}`
+    : "Selecione um veículo na tela inicial";
+  const newButton = $("#newAlert");
+  newButton.disabled = !selectedVehicle || selectedVehicle.ativo === false;
+  newButton.title = selectedVehicle?.ativo === false
     ? "Veículos inativos não podem receber novos alertas."
     : "Novo alerta técnico";
-  const filteredAlerts = alerts.filter((a) => a.vehicleId === selectedVehicle?.id);
-  const rows = filteredAlerts.filter((a) => !$("#alertStatus").value || alertStatus(a) === $("#alertStatus").value);
-  const counts = ["VENCIDO", "ATENÇÃO", "PROGRAMADO", "CONCLUÍDO", "INATIVO"].map((status) => [status, filteredAlerts.filter((a) => alertStatus(a) === status).length]);
-  $("#alertSummary").innerHTML = counts.map(([status,total]) => `<article><small>${status}</small><b>${total}</b></article>`).join("");
-  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>⚙ ${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span><span>Alerta técnico</span>${a.observations ? `<span>${esc(a.observations)}</span>` : ""}</div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta de manutenção encontrado para o veículo selecionado.</p>';
-  const history = technicalHistoryRecords(selectedVehicle?.id);
-  $("#technicalHistoryList").innerHTML = history.length
-    ? history.map((record) => `<article class="item"><div><b>${esc(record.description)}</b><small>${record.date ? new Date(record.date).toLocaleDateString("pt-BR") : "Data não informada"} · ${intFmt(record.km)} km · ${record.source === "ALERTA" ? "Conclusão de alerta" : "Lançamento de manutenção"}</small><div class="alert-meta"><span>${esc(record.status)}</span><span>${esc(record.supplier)}</span>${record.observation ? `<span>${esc(record.observation)}</span>` : ""}</div></div><div class="amount"><b>${record.value ? money(record.value) : "Histórico"}</b><small>${esc(record.forecast)}</small></div></article>`).join("")
-    : '<div class="technical-history-empty">Nenhum registro técnico para o veículo selecionado.</div>';
-  $$("[data-alert-edit]").forEach((b)=>b.onclick=()=>openAlert(b.dataset.alertEdit)); $$("[data-alert-complete]").forEach((b)=>b.onclick=()=>completeAlert(b.dataset.alertComplete)); $$("[data-alert-toggle]").forEach((b)=>b.onclick=()=>toggleAlert(b.dataset.alertToggle)); $$("[data-alert-delete]").forEach((b)=>b.onclick=()=>deleteAlert(b.dataset.alertDelete));
+
+  const statusOrder = { VENCIDO: 0, ATENÇÃO: 1, PROGRAMADO: 2, INATIVO: 3, CONCLUÍDO: 4 };
+  const rows = alerts
+    .filter((item) => item.vehicleId === selectedVehicle?.id && !item.archived)
+    .sort((a, b) => (statusOrder[alertStatus(a)] ?? 9) - (statusOrder[alertStatus(b)] ?? 9) || String(a.description).localeCompare(String(b.description), "pt-BR"));
+
+  $("#alertList").innerHTML = rows.map((item) => {
+    const status = alertPanelStatus(item);
+    const remaining = alertPanelRemaining(item, selectedVehicle);
+    const criterion = item.criterion || "BOTH";
+    const controlLabel = criterion === "DATE" ? "Data" : criterion === "KM" ? "KM" : "Data e KM";
+    const dateMetric = criterion !== "KM" ? `<div class="alert-card-metric"><span>${alertPanelSvg("calendar")}</span><div><small>Data</small><strong>${formatAlertDate(item.dueDate)}</strong><em>${remaining.days == null ? "Sem previsão" : remaining.days >= 0 ? `${remaining.days} dia(s)` : `${Math.abs(remaining.days)} dia(s) vencido`}</em></div></div>` : "";
+    const kmMetric = criterion !== "DATE" ? `<div class="alert-card-metric"><span>${alertPanelSvg("gauge")}</span><div><small>KM</small><strong>${Number(item.dueKm) > 0 ? intFmt(item.dueKm) : "—"}</strong><em>${remaining.km == null ? "Sem previsão" : remaining.km >= 0 ? `${intFmt(remaining.km)} km` : `${intFmt(Math.abs(remaining.km))} km vencido`}</em></div></div>` : "";
+    return `<article class="alert-panel-card" data-status="${status.raw}">
+      <div class="alert-panel-card-body">
+        <span class="alert-item-icon">${alertPanelSvg(alertPanelItemIcon(item))}</span>
+        <div class="alert-card-content">
+          <div class="alert-card-title-row"><h3>${esc(item.description || "Alerta técnico")}</h3><span class="alert-status-badge status-${status.css}">${status.label}</span></div>
+          <div class="alert-card-metrics">
+            ${dateMetric}
+            ${kmMetric}
+            <div class="alert-card-metric alert-control-metric"><span>${criterion === "DATE" ? alertPanelSvg("calendar") : criterion === "KM" ? alertPanelSvg("gauge") : `${alertPanelSvg("calendar")}${alertPanelSvg("gauge")}`}</span><div><small>Controle</small><strong>${controlLabel}</strong></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="alert-card-actions">
+        <button type="button" data-alert-view="${item.id}">${alertPanelSvg("search")}<span>Consultar</span></button>
+        <button type="button" data-alert-edit="${item.id}" ${selectedVehicle?.ativo === false ? "disabled" : ""}>${alertPanelSvg("edit")}<span>Alterar</span></button>
+        <button type="button" class="danger" data-alert-delete="${item.id}" ${selectedVehicle?.ativo === false ? "disabled" : ""}>${alertPanelSvg("trash")}<span>Excluir</span></button>
+      </div>
+    </article>`;
+  }).join("") || '<div class="alert-panel-empty"><b>Nenhum alerta técnico cadastrado.</b><span>Use o botão “Novo alerta técnico” para iniciar a programação.</span></div>';
+
+  $$('[data-alert-view]').forEach((button) => button.onclick = () => openAlert(button.dataset.alertView, "view"));
+  $$('[data-alert-edit]').forEach((button) => button.onclick = () => openAlert(button.dataset.alertEdit, "edit"));
+  $$('[data-alert-delete]').forEach((button) => button.onclick = () => deleteAlert(button.dataset.alertDelete));
 }
 function fillAlertItems() {
   const f = $("#alertForm");
@@ -3172,7 +3256,27 @@ function applyAlertItemDefaults({ preserveValues = false } = {}) {
   }
   updateAlertForecastPreview();
 }
-function openAlert(id = "") {
+
+function setAlertFormMode(mode, item) {
+  const f = $("#alertForm");
+  const viewOnly = mode === "view";
+  f.dataset.mode = viewOnly ? "view" : "edit";
+  $("#alertFormTitle").textContent = viewOnly ? "Consultar Alerta Técnico" : item ? "Alterar Alerta Técnico" : "Novo Alerta Técnico";
+  $("#alertTopSave").hidden = viewOnly;
+  $("#saveAlertFromForm").hidden = viewOnly;
+  $("#deleteAlertFromForm").hidden = viewOnly || !item;
+  $("#deleteAlertFromForm").disabled = !item;
+  $("#alertFooterCancel").textContent = viewOnly ? "Fechar" : "Cancelar";
+  f.querySelectorAll('input:not([type="hidden"]), select, textarea').forEach((field) => {
+    field.disabled = viewOnly || field.name === "group";
+  });
+  $$('[data-alert-criterion], [data-alert-status]').forEach((button) => {
+    button.disabled = viewOnly || button.dataset.alertStatus === "EXPIRED";
+  });
+  f.classList.toggle("is-view-only", viewOnly);
+}
+
+function openAlert(id = "", mode = "edit") {
   const f = $("#alertForm"), item = alerts.find((a) => a.id === id);
   f.reset();
   f.elements.id.value = id;
@@ -3209,70 +3313,14 @@ function openAlert(id = "") {
   f.statusMode.value = item?.active === false ? "DISABLED" : "ACTIVE";
   $("#alertVehicleName").textContent = selectedVehicle?.nome || "Veículo não localizado";
   $("#alertVehicleMeta").textContent = `Placa: ${selectedVehicle?.placa || "Não informada"} · KM atual: ${intFmt(selectedVehicle ? vehicleSummary(selectedVehicle).last : 0)}`;
-  $("#alertFormTitle").textContent = item ? "Alterar Alerta Técnico" : "Novo Alerta Técnico";
-  $("#deleteAlertFromForm").disabled = !item;
-  $("#deleteAlertFromForm").classList.toggle("disabled", !item);
   $("#alertFormError").textContent = "";
   setAlertCriterion(criterion);
   setAlertStatusMode(f.statusMode.value);
   updateAlertForecastPreview();
+  setAlertFormMode(mode, item);
   $("#alertDialog").showModal();
 }
-function completeAlert(id) {
-  const item = alerts.find((a) => a.id === id);
-  if (!item) return;
-  const vehicle = vehicles.find((v) => v.id === item.vehicleId);
-  const date = prompt("Data da conclusão (AAAA-MM-DD):", new Date().toISOString().slice(0, 10));
-  if (!date) return;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(dateOnly(date)?.getTime()))
-    return alert("Informe uma data válida no formato AAAA-MM-DD.");
-  const kmAnswer = prompt("Hodômetro da conclusão:", String(vehicle ? vehicleSummary(vehicle).last : 0));
-  if (kmAnswer == null) return;
-  const km = Number(String(kmAnswer).replace(/\D/g, ""));
-  if (!(km >= 0)) return alert("Informe um hodômetro válido.");
-  const stateBeforeSave = cloneDataState();
-  alertHistory.push({ id: crypto.randomUUID(), alertId: item.id, vehicleId: item.vehicleId,
-    technicalKey: item.technicalKey || "", description: item.description, completedAt: date + "T12:00:00", completedKm: km });
-  item.baseDate = date;
-  item.baseKm = km;
-  if (item.criterion !== "KM" && Number(item.recurrenceMonths) > 0)
-    item.dueDate = addMonths(dateOnly(date), Number(item.recurrenceMonths)).toISOString().slice(0, 10);
-  if (item.criterion !== "DATE" && Number(item.recurrenceKm) > 0)
-    item.dueKm = km + Number(item.recurrenceKm);
-  item.completed = false;
-  item.manualSchedule = true;
-  try {
-    save();
-    showToast("Manutenção concluída e novo ciclo do alerta programado.");
-  } catch (error) {
-    restoreDataState(stateBeforeSave);
-    console.error("Falha ao concluir o alerta:", error);
-    alert("Não foi possível registrar a conclusão. Nenhum histórico foi alterado.");
-  }
-}
-function toggleAlert(id) {
-  const item = alerts.find((a) => a.id === id);
-  const vehicle = vehicles.find((v) => v.id === item?.vehicleId);
-  if (!item || vehicle?.ativo === false) return alert("Alarmes só podem ser ativados para veículos ativos.");
-  const stateBeforeSave = cloneDataState();
-  item.active = !item.active;
-  item.statusMode = item.active ? "ACTIVE" : "DISABLED";
-  if (item.technicalKey) {
-    const p = technicalParameters.find((x) => x.vehicleId === item.vehicleId && x.technicalKey === item.technicalKey);
-    if (p) p.active = item.active;
-  }
-  try {
-    save();
-    showToast(item.active ? "Alerta técnico ativado." : "Alerta técnico desativado.");
-  } catch (error) {
-    restoreDataState(stateBeforeSave);
-    console.error("Falha ao alterar a situação do alerta:", error);
-    alert("Não foi possível alterar a situação do alerta. Nenhum dado foi alterado.");
-  }
-}
-$("#newAlert").onclick = () => openAlert();
-$("#alertVehicle").onchange = renderAlerts;
-$("#alertStatus").onchange = renderAlerts;
+$("#newAlert").onclick = () => openAlert("", "edit");
 $$(".alert-cancel").forEach((button) => button.onclick = () => $("#alertDialog").close());
 $$("[data-alert-criterion]").forEach((button) => button.onclick = () => setAlertCriterion(button.dataset.alertCriterion));
 $$("[data-alert-status]").forEach((button) => {
@@ -3294,6 +3342,7 @@ $("#deleteAlertFromForm").onclick = () => {
 $("#alertForm").onsubmit = (event) => {
   event.preventDefault();
   const f = event.target;
+  if (f.dataset.mode === "view") return;
   const data = Object.fromEntries(new FormData(f));
   data.vehicleId = f.vehicleId.value;
   data.group = "MANUTENÇÃO";
@@ -3368,20 +3417,6 @@ $("#alertForm").onsubmit = (event) => {
     $("#alertFormError").textContent = "Não foi possível salvar o alerta. Verifique os dados e tente novamente.";
   }
 };
-function exportTechnicalPdf() {
-  const vehicle = selectedVehicleObject();
-  const records = technicalHistoryRecords(vehicle?.id || "");
-  const rows = records.map((record) =>
-    `<tr><td>${record.date ? new Date(record.date).toLocaleDateString("pt-BR") : "—"}</td><td>${intFmt(record.km)}</td><td>${esc(record.description)}</td><td>${esc(record.supplier || NI)}</td><td>${esc(record.observation || "")}</td><td>${record.value ? money(record.value) : "—"}</td><td>${esc(record.status)}</td><td>${esc(record.forecast)}</td></tr>`,
-  ).join("");
-  const content = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Histórico técnico</title><style>@page{size:A4 landscape;margin:12mm}body{font:12px Arial;color:#203040;margin:0;padding:12px}h1{color:#0f3f66}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccd8e0;padding:6px;text-align:left}th{background:#eaf1f6}.actions{display:flex;gap:8px;margin-bottom:14px}.actions button{border:0;border-radius:8px;padding:10px 13px;font-weight:800}.actions .primary{background:#0788e8;color:#fff}.actions .danger{background:#b3261e;color:#fff}@media print{.actions{display:none}}</style></head><body><div class="actions"><button type="button" id="technicalClose" class="danger">Fechar</button><button type="button" id="technicalPrint">Imprimir</button><button type="button" id="technicalSave" class="primary">Histórico técnico PDF</button></div><h1>Histórico técnico de manutenção</h1><p>Veículo: ${esc(vehicle?.nome || "Nenhum veículo selecionado")} · Emissão: ${new Date().toLocaleDateString("pt-BR")}</p><table><thead><tr><th>Data</th><th>Hodômetro</th><th>Serviço/item</th><th>Fornecedor/oficina</th><th>Descrição</th><th>Valor</th><th>Situação</th><th>Próxima previsão</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Sem registros técnicos para o veículo selecionado.</td></tr>'}</tbody></table><script>(function(){function bridge(){try{return window.MyCarNative||(window.parent&&window.parent.MyCarNative)||(window.opener&&window.opener.MyCarNative)||null}catch(e){return null}}function printable(){var clone=document.documentElement.cloneNode(true);clone.querySelectorAll('.actions,script').forEach(function(n){n.remove()});return '<!doctype html>'+clone.outerHTML}function closeMe(){try{if(window.parent&&window.parent!==window){window.parent.postMessage({type:'mycar-close-report'},'*');return}}catch(e){}try{window.close()}catch(e){}}function printMe(){var b=bridge();if(b&&typeof b.printHtml==='function'){try{b.printHtml('Historico_Tecnico_MyCarPlus',printable());return}catch(e){}}try{window.focus();window.print()}catch(e){alert('Não foi possível abrir a impressão neste dispositivo.')}}document.getElementById('technicalClose').onclick=closeMe;document.getElementById('technicalPrint').onclick=printMe;document.getElementById('technicalSave').onclick=printMe;document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMe()});})();<\/script></body></html>`;
-  openReportDocument(content, {
-    title: "Histórico técnico de manutenção",
-    popupMessage: "Permita janelas pop-up para gerar o histórico técnico.",
-  });
-}
-$("#technicalPdf").onclick = exportTechnicalPdf;
-
 function applyTheme(mode) {
   const dark = mode === "dark" || (mode === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
   document.documentElement.dataset.theme = dark ? "dark" : "light";
@@ -3585,7 +3620,7 @@ function openAiPrintableReport() {
 
 function initializeAiModule() {
   const form=$("#aiAnalysisForm"); if(!form)return;
-  const refreshVehicleContext=()=>{const vehicle=selectedVehicleObject(); $("#aiVehicleName").textContent=vehicle?`${vehicle.nome}${vehicle.placa?" · "+vehicle.placa:""}`:"Nenhum veículo selecionado"; $("#aiVehicleStatus").textContent=vehicle?(vehicle.ativo===false?"Veículo inativo · consulta histórica":"Veículo ativo"):""; if(!vehicle)return; const dates=movements.filter((m)=>m.veiculo_id===vehicle.id||m.veiculo===vehicle.nome).map((m)=>String(m.data_hora||"").slice(0,10)).filter(Boolean).sort(); $("#aiStart").value=dates[0]||""; $("#aiEnd").value=dates.at(-1)||"";};
+  const refreshVehicleContext=()=>{const vehicle=selectedVehicleObject(); $("#aiVehicleName").textContent=vehicle?`${vehicle.nome}${vehicle.placa?" · "+vehicle.placa:""}`:"Nenhum veículo selecionado"; $("#aiVehicleStatus").textContent=vehicle?(vehicle.ativo===false?"Veículo inativo · consulta histórica":"Veículo ativo"):""; if(!vehicle)return; const dates=movements.filter((m)=>m.veiculo_id===vehicle.id||m.veiculo===vehicle.nome).map((m)=>String(m.data_hora||"").slice(0,10)).filter(Boolean).sort(); if(!$("#aiStart").value||!$("#aiEnd").value){const range=typeof reportDefaultRange==="function"?reportDefaultRange():{start:dates[0]||"",end:dates.at(-1)||""}; $("#aiStart").value=range.start||dates[0]||""; $("#aiEnd").value=range.end||dates.at(-1)||"";}};
   refreshVehicleContext(); window.addEventListener("vehicle-app-ready",refreshVehicleContext);
   form.onsubmit=async(event)=>{event.preventDefault(); const error=$("#aiFormError"),result=$("#aiResult"),progress=$("#aiProgress"); error.textContent=""; const vehicle=selectedVehicleObject(),vehicleId=vehicle?.id||"",start=$("#aiStart").value,end=$("#aiEnd").value; if(!vehicleId)return(error.textContent="Selecione um veículo na tela inicial antes de gerar a análise."); if(!start||!end)return(error.textContent="Informe o período completo."); if(start>end)return(error.textContent="A data inicial não pode ser posterior à data final."); if(!navigator.onLine)return(error.textContent="Não foi possível gerar a análise inteligente. Verifique sua conexão com a internet e tente novamente."); const indicators=buildAiIndicators(vehicleId,start,end,$("#aiType").value); if(!indicators.sample.movements)return(error.textContent="Não existem movimentos para o veículo selecionado no período informado."); if(typeof window.mycarAiAnalyze!=="function")return(error.textContent="O Firebase AI Logic ainda não foi carregado. Atualize a página e tente novamente."); progress.hidden=false;result.hidden=true;$("#generateAiAnalysis").disabled=true; try{const report=await window.mycarAiAnalyze(indicators);lastAiReport={...report,indicators};$("#aiConfidence").textContent=`Confiabilidade: ${lastAiReport.confidence||"Não informada"}`;$("#aiReportContent").innerHTML=renderAiReport(lastAiReport);result.hidden=false;}catch(requestError){console.error(requestError);error.textContent=requestError.message||"Falha de comunicação com o serviço de IA.";}finally{progress.hidden=true;$("#generateAiAnalysis").disabled=false;}};
   $("#closeAiResult").onclick=()=>{$("#aiResult").hidden=true;}; $("#viewAiReport").onclick=()=>openAiPrintableReport(); $("#newAiAnalysis").onclick=()=>{lastAiReport=null;$("#aiResult").hidden=true;refreshVehicleContext();};

@@ -1,4 +1,4 @@
-# MyCar+ V5.51
+# MyCar+ V5.52
 
 Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas técnicos e análises veiculares com IA.
 
@@ -19,8 +19,8 @@ npm.cmd run validate:cohesion
 
 ## Identificação
 
-- versão: **5.51.0**
-- Android: `versionCode 551` / `versionName 5.51.0`
+- versão: **5.52.0**
+- Android: `versionCode 552` / `versionName 5.52.0`
 - pacote: `br.com.marceloauditor.mycarplus`
 - Firebase: `mycarplus-3180a`
 - cache PWA: `mycar-plus-v5-51`
@@ -34,7 +34,7 @@ A fonte inclui `ATUALIZAR_MYCAR_V5_51_WEB_ANDROID.bat`. Em toda nova versão, o 
 O Relatório Executivo e o Relatório de Inteligência são exibidos dentro do aplicativo, com os botões **Fechar** e **Compartilhar**. O compartilhamento cria um arquivo HTML temporário e abre a folha nativa do Android.
 
 
-## Alertas de manutenção — V5.51
+## Alertas de manutenção — V5.52
 
 - a tela apresenta somente os alertas e o histórico do veículo selecionado;
 - veículos inativos não geram alertas ativos e ficam apenas para consulta;
@@ -45,6 +45,6 @@ O Relatório Executivo e o Relatório de Inteligência são exibidos dentro do a
 - alertas antigos são normalizados sem apagar movimentos ou históricos reais.
 
 
-## Novo Alerta Técnico — V5.51
+## Novo Alerta Técnico — V5.52
 
 A tela de alertas segue a simulação aprovada, com vida útil, base de cálculo, previsão automática, antecedência, status e observações.
