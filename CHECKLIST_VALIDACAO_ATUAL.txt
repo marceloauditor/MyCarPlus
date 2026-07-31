@@ -1,13 +1,13 @@
-MYCARPLUS V5.49 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.50 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
 [ ] Backup do projeto anterior realizado
-[ ] Pacote MYCAR_PLUS_V5_49_MASTER.zip localizado na pasta Downloads
-[ ] ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat executado
+[ ] Pacote MYCAR_PLUS_V5_50_MASTER.zip localizado na pasta Downloads
+[ ] ATUALIZAR_MYCAR_V5_50_WEB_ANDROID.bat executado
 [ ] npm.cmd install executado sem erros
 [ ] npm.cmd run sync:web executado sem erros
 [ ] npm.cmd run sync:android executado sem erros
 [ ] npm.cmd run validate:cohesion aprovado
-[ ] Tela inicial e versão 5.49 conferidas
+[ ] Tela inicial e versão 5.50 conferidas
 [ ] Cabeçalho MyCar+ aparece abaixo da hora e dos ícones do Android
 [ ] Relatório Executivo abre dentro do aplicativo
 [ ] Relatório Executivo apresenta somente Fechar e Compartilhar ao final
@@ -22,7 +22,7 @@ MYCARPLUS V5.49 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 [ ] Edição de lançamento antigo com múltiplos itens testada
 [ ] Alertas técnicos testados: incluir, alterar, ativar, desativar e excluir
 [ ] Exclusão de alerta preserva o histórico técnico
-[ ] Histórico técnico PDF testado
+[ ] Histórico técnico do veículo selecionado testado
 [ ] Exportação XLSX inclui as bases técnicas
 [ ] Contraste conferido nos temas claro, escuro e automático
 [ ] APK de teste gerado e instalado no dispositivo
@@ -30,3 +30,10 @@ MYCARPLUS V5.49 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 [ ] git status revisado antes do commit
 [ ] Relatórios conferidos em tela estreita sem corte das laterais
 [ ] Tabelas dos relatórios exibidas como cartões no celular
+
+[ ] BAT V5.50 executado sem arquivo PS1 externo
+[ ] Tela de alertas mostra somente o veículo selecionado
+[ ] Grupo do alerta permanece fixo em MANUTENÇÃO
+[ ] Veículo inativo não gera aviso ativo nem aceita novo alerta
+[ ] Exclusão exige confirmação e não apaga histórico técnico
+[ ] Troca do veículo selecionado atualiza imediatamente alertas e histórico

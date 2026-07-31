@@ -28,7 +28,7 @@
 <div>
 <small>Controle automotivo</small>
 <h1>MyCar+</h1>
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.49</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.50</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -461,8 +461,9 @@
 </div>
 </section>
 <section id="alertas" class="page">
-<div class="page-title"><div><small>Controle técnico</small><h2>Alertas e manutenção</h2></div>
-<button type="button" class="round" id="newAlert" aria-label="Novo alerta">＋</button></div>
+<div class="page-title"><div><small>Controle técnico</small><h2>Alertas de manutenção</h2></div>
+<button type="button" class="round" id="newAlert" aria-label="Novo alerta de manutenção">＋</button></div>
+<div class="alert-guidance"><b>Veículo selecionado:</b> esta tela mostra somente os alertas e o histórico técnico do veículo ativo. Excluir um alerta remove apenas sua programação futura e preserva o histórico técnico.</div>
 <div id="alertSummary" class="alert-summary"></div>
 <div class="filters">
 <select id="alertVehicle"></select>
@@ -617,7 +618,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.49</p>
+<strong>Versão:</strong> 5.50</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>
@@ -841,12 +842,12 @@
 </dialog>
 <dialog id="alertDialog" class="compact-dialog">
 <form method="dialog" id="alertForm" class="sectioned-form">
-<input type="hidden" name="id"><div class="dialog-head"><div><small>Central de Alertas</small><h2 id="alertFormTitle">Novo alerta</h2></div><button type="button" class="alert-cancel" aria-label="Fechar">×</button></div>
+<input type="hidden" name="id"><div class="dialog-head"><div><small>Central de manutenção</small><h2 id="alertFormTitle">Novo alerta de manutenção</h2></div><button type="button" class="alert-cancel" aria-label="Fechar">×</button></div>
 <div class="form-scroll">
 <section class="form-section always-open"><h3><span>1</span> Identificação</h3><div class="section-body">
 <label>Veículo *<select name="vehicleId" required></select></label>
-<label>Grupo *<select name="group" required></select></label>
-<label>Item *<select name="itemId" required></select></label>
+<label>Grupo *<select name="group" required disabled><option value="MANUTENÇÃO">MANUTENÇÃO</option></select></label>
+<label>Item de manutenção *<select name="itemId" required></select></label>
 <label>Descrição *<input name="description" required placeholder="Ex.: Trocar óleo do motor"></label>
 </div></section>
 <section class="form-section always-open"><h3><span>2</span> Vencimento e recorrência</h3><div class="section-body">

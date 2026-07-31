@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.49",
+  APP_VERSION = "5.50",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -249,6 +249,60 @@ function normalizeVehicle(v = {}) {
   }
   return v;
 }
+
+function normalizeAlertRecord(item = {}) {
+  const criterion = ["DATE", "KM", "BOTH"].includes(item.criterion)
+    ? item.criterion
+    : "DATE";
+  const recurrence = ["NONE", "MONTHS", "KM", "BOTH"].includes(item.recurrence)
+    ? item.recurrence
+    : "NONE";
+  return {
+    ...item,
+    id: String(item.id || crypto.randomUUID()),
+    vehicleId: String(item.vehicleId || item.veiculo_id || ""),
+    group: "MANUTENÇÃO",
+    itemId: String(item.itemId || item.item_id || ""),
+    description: String(item.description || item.descricao || "").trim(),
+    criterion,
+    dueDate: String(item.dueDate || item.data_prevista || ""),
+    dueKm: Number(item.dueKm ?? item.km_previsto ?? 0) || 0,
+    leadDays: Number(item.leadDays ?? item.antecedencia_dias ?? 0) || 0,
+    leadKm: Number(item.leadKm ?? item.antecedencia_km ?? 0) || 0,
+    recurrence,
+    recurrenceMonths: Number(item.recurrenceMonths ?? item.meses_recorrencia ?? 0) || 0,
+    recurrenceKm: Number(item.recurrenceKm ?? item.km_recorrencia ?? 0) || 0,
+    active: item.active !== false,
+    technical: true,
+    technicalKey: String(item.technicalKey || item.chave_tecnica || ""),
+    manualSchedule: Boolean(item.manualSchedule),
+    completed: Boolean(item.completed),
+  };
+}
+function normalizeAlertHistoryRecord(item = {}) {
+  return {
+    ...item,
+    id: String(item.id || crypto.randomUUID()),
+    alertId: String(item.alertId || item.alerta_id || ""),
+    vehicleId: String(item.vehicleId || item.veiculo_id || ""),
+    technicalKey: String(item.technicalKey || item.chave_tecnica || ""),
+    description: String(item.description || item.descricao || "").trim(),
+    completedAt: item.completedAt || item.concluido_em || "",
+    completedKm: Number(item.completedKm ?? item.hodometro_conclusao ?? 0) || 0,
+  };
+}
+function normalizeTechnicalParameter(item = {}) {
+  return {
+    ...item,
+    id: String(item.id || crypto.randomUUID()),
+    vehicleId: String(item.vehicleId || item.veiculo_id || ""),
+    technicalKey: String(item.technicalKey || item.chave_tecnica || ""),
+    intervalKm: Number(item.intervalKm ?? item.intervalo_km ?? 0) || 0,
+    intervalMonths: Number(item.intervalMonths ?? item.intervalo_meses ?? 0) || 0,
+    active: item.active !== false,
+    deleted: Boolean(item.deleted),
+  };
+}
 function newestFirst(a, b) {
   const byDate = new Date(b.data_hora || 0) - new Date(a.data_hora || 0);
   return (
@@ -280,9 +334,12 @@ async function load() {
   vehicles = JSON.parse(localStorage.getItem("mycar_vehicles_v1") || "null") || official.vehicles;
   suppliers = JSON.parse(localStorage.getItem("mycar_suppliers_v1") || "null") || official.suppliers;
   paymentMethods = JSON.parse(localStorage.getItem("mycar_payment_methods_v1") || "null") || official.paymentMethods;
-  alerts = JSON.parse(localStorage.getItem("mycar_alerts_v1") || "null") || official.alerts || [];
-  alertHistory = JSON.parse(localStorage.getItem("mycar_alert_history_v1") || "null") || official.alertHistory || [];
-  technicalParameters = JSON.parse(localStorage.getItem("mycar_technical_parameters_v1") || "null") || official.technicalParameters || [];
+  alerts = (JSON.parse(localStorage.getItem("mycar_alerts_v1") || "null") || official.alerts || [])
+    .map(normalizeAlertRecord);
+  alertHistory = (JSON.parse(localStorage.getItem("mycar_alert_history_v1") || "null") || official.alertHistory || [])
+    .map(normalizeAlertHistoryRecord);
+  technicalParameters = (JSON.parse(localStorage.getItem("mycar_technical_parameters_v1") || "null") || official.technicalParameters || [])
+    .map(normalizeTechnicalParameter);
 
   vehicles = vehicles.map(normalizeVehicle);
   registers = registers.map(normalizeRegister);
@@ -2794,6 +2851,9 @@ function technicalBase(vehicle, key) {
   return { date: first?.data_hora || vehicle.criadoEm || new Date().toISOString(), km: Number(first?.hodometro_km ?? vehicle.kmInicial ?? 0) };
 }
 function ensureTechnicalData() {
+  alerts = alerts.map(normalizeAlertRecord);
+  alertHistory = alertHistory.map(normalizeAlertHistoryRecord);
+  technicalParameters = technicalParameters.map(normalizeTechnicalParameter);
   registers.forEach((r) => {
     const name = String(r.item || "").toLocaleLowerCase("pt-BR");
     if (name === "troca de óleo") r.technicalKey = "OIL";
@@ -2802,8 +2862,16 @@ function ensureTechnicalData() {
   if (!registers.some((r) => r.item === NI))
     registers.push({ id: "technical-ni", grupo: "MANUTENÇÃO", item: NI, padrao: false, ativo: true });
   alerts.forEach((item) => {
+    item.group = "MANUTENÇÃO";
+    item.technical = true;
     const vehicle = vehicles.find((v) => v.id === item.vehicleId);
-    if (vehicle?.ativo === false) {
+    if (!vehicle) {
+      item.active = false;
+      item.orphaned = true;
+      return;
+    }
+    delete item.orphaned;
+    if (vehicle.ativo === false) {
       if (item.active) item.activeBeforeVehicleInactive = true;
       item.active = false;
     } else if (item.activeBeforeVehicleInactive) {
@@ -2883,8 +2951,8 @@ function deleteAlert(id) {
   if (!confirm(
     "Excluir alerta técnico?\n\n" +
     "Os alertas são utilizados na programação das manutenções do veículo. " +
-    "A exclusão removerá somente este alerta e sua programação futura; " +
-    "os registros do histórico técnico serão preservados.\n\n" +
+    "A exclusão removerá somente este alerta e sua programação futura e não apagará " +
+    "os registros do histórico técnico.\n\n" +
     "Tem certeza de que deseja excluir?",
   )) return;
   const stateBeforeSave = cloneDataState();
@@ -2968,9 +3036,9 @@ function renderAlerts() {
     : "Novo alerta técnico";
   const filteredAlerts = alerts.filter((a) => a.vehicleId === selectedVehicle?.id);
   const rows = filteredAlerts.filter((a) => !$("#alertStatus").value || alertStatus(a) === $("#alertStatus").value);
-  const counts = ["VENCIDO", "ATENÇÃO", "PROGRAMADO", "CONCLUÍDO"].map((status) => [status, filteredAlerts.filter((a) => alertStatus(a) === status).length]);
+  const counts = ["VENCIDO", "ATENÇÃO", "PROGRAMADO", "CONCLUÍDO", "INATIVO"].map((status) => [status, filteredAlerts.filter((a) => alertStatus(a) === status).length]);
   $("#alertSummary").innerHTML = counts.map(([status,total]) => `<article><small>${status}</small><b>${total}</b></article>`).join("");
-  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>⚙ ${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span><span>Alerta técnico</span></div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta encontrado para o veículo selecionado.</p>';
+  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>⚙ ${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span><span>Alerta técnico</span></div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta de manutenção encontrado para o veículo selecionado.</p>';
   const history = technicalHistoryRecords(selectedVehicle?.id);
   $("#technicalHistoryList").innerHTML = history.length
     ? history.map((record) => `<article class="item"><div><b>${esc(record.description)}</b><small>${record.date ? new Date(record.date).toLocaleDateString("pt-BR") : "Data não informada"} · ${intFmt(record.km)} km · ${record.source === "ALERTA" ? "Conclusão de alerta" : "Lançamento de manutenção"}</small><div class="alert-meta"><span>${esc(record.status)}</span><span>${esc(record.supplier)}</span>${record.observation ? `<span>${esc(record.observation)}</span>` : ""}</div></div><div class="amount"><b>${record.value ? money(record.value) : "Histórico"}</b><small>${esc(record.forecast)}</small></div></article>`).join("")
@@ -2979,8 +3047,10 @@ function renderAlerts() {
 }
 function fillAlertItems() {
   const f = $("#alertForm");
-  f.itemId.innerHTML = alpha(registers.filter((r) => r.grupo === f.group.value && r.ativo !== false), "item")
-    .map((r) => `<option value="${r.id}">${esc(r.item)}</option>`).join("");
+  f.itemId.innerHTML = alpha(
+    registers.filter((r) => r.grupo === "MANUTENÇÃO" && r.ativo !== false),
+    "item",
+  ).map((r) => `<option value="${r.id}">${esc(r.item)}</option>`).join("");
 }
 function openAlert(id = "") {
   const f = $("#alertForm"), item = alerts.find((a) => a.id === id);
@@ -2993,19 +3063,21 @@ function openAlert(id = "") {
   f.vehicleId.innerHTML = selectedVehicle ? `<option value="${selectedVehicle.id}">${esc(selectedVehicle.nome)}</option>` : "";
   f.vehicleId.value = item?.vehicleId || selectedVehicle?.id || "";
   f.vehicleId.disabled = true;
-  f.group.innerHTML = GROUPS.map((g) => `<option>${g}</option>`).join("");
-  f.group.value = item?.group || "MANUTENÇÃO"; fillAlertItems();
+  f.group.innerHTML = '<option value="MANUTENÇÃO">MANUTENÇÃO</option>';
+  f.group.value = "MANUTENÇÃO";
+  f.group.disabled = true;
+  fillAlertItems();
   if (item) Object.entries(item).forEach(([key, value]) => {
     if (!f.elements[key]) return;
     if (f.elements[key].type === "checkbox") f.elements[key].checked = Boolean(value);
     else f.elements[key].value = value ?? "";
   });
   if (item) {
-    f.group.value = item.group;
+    f.group.value = "MANUTENÇÃO";
     fillAlertItems();
     f.itemId.value = item.itemId || "";
   }
-  $("#alertFormTitle").textContent = item ? "Alterar alerta técnico" : "Novo alerta técnico";
+  $("#alertFormTitle").textContent = item ? "Alterar alerta de manutenção" : "Novo alerta de manutenção";
   $("#alertFormError").textContent = "";
   $("#alertDialog").showModal();
 }
@@ -3063,14 +3135,14 @@ function toggleAlert(id) {
 $("#newAlert").onclick = () => openAlert();
 $("#alertVehicle").onchange = renderAlerts;
 $("#alertStatus").onchange = renderAlerts;
-$("#alertForm [name=group]").onchange = fillAlertItems;
 $$(".alert-cancel").forEach((b) => b.onclick = () => $("#alertDialog").close());
 $("#alertForm").onsubmit = (event) => {
   event.preventDefault();
   const f = event.target, data = Object.fromEntries(new FormData(f));
   data.vehicleId = f.vehicleId.value;
+  data.group = "MANUTENÇÃO";
   const current = alerts.find((a) => a.id === data.id);
-  if (!data.vehicleId || !data.description || !data.itemId) return ($("#alertFormError").textContent = "Preencha veículo, item e descrição.");
+  if (!data.vehicleId || !data.description || !data.itemId) return ($("#alertFormError").textContent = "Preencha veículo, item de manutenção e descrição.");
   const vehicle = vehicles.find((v) => v.id === data.vehicleId);
   if (!vehicle || vehicle.ativo === false)
     return ($("#alertFormError").textContent = "Alertas somente podem ser gravados para veículos ativos.");
@@ -3089,7 +3161,7 @@ $("#alertForm").onsubmit = (event) => {
     if (previousParameter) Object.assign(previousParameter, { active: false, deleted: true });
   }
   const object = { ...current, ...data, id: data.id || crypto.randomUUID(), active: f.active.checked,
-    technical: true, technicalKey, manualSchedule: true, completed: false,
+    group: "MANUTENÇÃO", technical: true, technicalKey, manualSchedule: true, completed: false,
     leadDays: Number(data.leadDays || 0), leadKm: Number(data.leadKm || 0), dueKm: Number(data.dueKm || 0),
     recurrenceMonths: Number(data.recurrenceMonths || 0), recurrenceKm: Number(data.recurrenceKm || 0) };
   if (current) Object.assign(current, object); else alerts.push(object);
@@ -3105,7 +3177,7 @@ $("#alertForm").onsubmit = (event) => {
   try {
     save();
     $("#alertDialog").close();
-    showToast("Alerta técnico salvo com sucesso.");
+    showToast("Alerta de manutenção salvo com sucesso.");
   } catch (error) {
     restoreDataState(stateBeforeSave);
     console.error("Falha ao salvar o alerta técnico:", error);

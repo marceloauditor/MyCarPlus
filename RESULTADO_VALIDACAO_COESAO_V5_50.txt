@@ -1,0 +1,25 @@
+MYCAR+ V5.50 — RESULTADO DA VALIDAÇÃO
+Data: 31/07/2026
+
+[APROVADO] Versão da aplicação: 5.50.0.
+[APROVADO] Android versionCode 550 e versionName 5.50.0.
+[APROVADO] Cache PWA mycar-plus-v5-50.
+[APROVADO] Sintaxe JavaScript do app.js na raiz.
+[APROVADO] Sintaxe JavaScript da cópia Web.
+[APROVADO] Sintaxe JavaScript da cópia Android.
+[APROVADO] Coesão de 17 arquivos na cadeia raiz → www → Android.
+[APROVADO] MainActivity.java inicia com o pacote Java correto.
+[APROVADO] MainActivity.java mantém public void onDestroy().
+[APROVADO] Cadastro de alerta coleta explicitamente vehicleId.
+[APROVADO] Grupo dos alertas fixado em MANUTENÇÃO.
+[APROVADO] Alertas normalizados como registros técnicos.
+[APROVADO] Tela restrita ao veículo selecionado.
+[APROVADO] Veículos inativos sem novos alertas e sem avisos ativos.
+[APROVADO] Exclusão preserva histórico técnico e movimentos reais.
+[APROVADO] Resumo inclui alertas inativos.
+[APROVADO] BAT V5.50 autocontido, sem execução de arquivo PS1 externo.
+[APROVADO] BAT aceita ZIP com sufixos automáticos como (1).
+[APROVADO] BAT cria backup, sincroniza Web/Android, valida coesão e gera APK.
+
+OBSERVAÇÃO:
+O build Gradle completo será executado pelo BAT no computador do projeto, que possui Android SDK e JDK configurados. A validação deste pacote concentrou-se na estrutura, sintaxe, versões, integridade das regras e sincronização dos arquivos.

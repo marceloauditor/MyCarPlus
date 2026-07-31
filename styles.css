@@ -671,7 +671,7 @@ html[data-theme="light"] .report-viewer-dialog,html[data-theme="light"] .report-
 header{min-height:calc(78px + env(safe-area-inset-top));height:auto;padding-top:calc(12px + env(safe-area-inset-top))}
 html.native-app header{scroll-margin-top:env(safe-area-inset-top)}
 
-/* MyCar+ V5.49 — visualizador de relatórios responsivo e compartilhamento HTML */
+/* MyCar+ V5.50 — visualizador de relatórios responsivo e compartilhamento HTML */
 .report-viewer-dialog,
 .report-viewer-shell,
 .report-viewer-frame {
@@ -686,4 +686,22 @@ html.native-app header{scroll-margin-top:env(safe-area-inset-top)}
 .report-viewer-frame {
   display: block;
   min-width: 0;
+}
+
+
+/* MyCar+ V5.50 — orientação e integridade dos alertas de manutenção */
+.alert-guidance{
+  margin:0 0 14px;
+  padding:11px 13px;
+  border:1px solid var(--border);
+  border-left:4px solid var(--accent);
+  border-radius:10px;
+  background:var(--card);
+  color:var(--text);
+  font-size:.88rem;
+  line-height:1.45;
+}
+.alert-guidance b{color:var(--accent)}
+@media (max-width:600px){
+  .alert-guidance{font-size:.82rem;padding:10px 11px}
 }

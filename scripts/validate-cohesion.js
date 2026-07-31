@@ -4,10 +4,10 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 const expected = {
-  semver: '5.49.0',
-  app: '5.49',
-  versionCode: '549',
-  cache: 'mycar-plus-v5-49',
+  semver: '5.50.0',
+  app: '5.50',
+  versionCode: '550',
+  cache: 'mycar-plus-v5-50',
 };
 const failures = [];
 const notices = [];
@@ -66,6 +66,11 @@ assert(/\.ai-action-table td::before/.test(app), 'Plano de ação da Inteligênc
 assert(/configureNativeStatusBar/.test(app), 'Configuração nativa da barra de status ausente.');
 assert(!/canOperate\s*&&\s*!a\.technicalKey/.test(app), 'Ainda existe bloqueio de exclusão para alertas técnicos.');
 assert(!/confirm\(["']Excluir este alerta\?/.test(app), 'Ainda existe confirmação genérica antiga de exclusão de alerta.');
+assert(/function\s+normalizeAlertRecord\s*\(/.test(app), 'Normalização dos alertas de manutenção ausente.');
+assert(/data\.group\s*=\s*["']MANUTENÇÃO["']/.test(app), 'Cadastro de alerta não fixa o grupo MANUTENÇÃO.');
+assert(/group:\s*["']MANUTENÇÃO["'],\s*technical:\s*true/.test(app), 'Alertas gravados não estão padronizados como técnicos de manutenção.');
+assert(/não apagará[\s\S]*histórico técnico/i.test(app), 'Confirmação de exclusão não esclarece a preservação do histórico.');
+assert(/\["VENCIDO",\s*"ATENÇÃO",\s*"PROGRAMADO",\s*"CONCLUÍDO",\s*"INATIVO"\]/.test(app), 'Resumo dos alertas não inclui a situação INATIVO.');
 
 const html = read('index.html');
 assert(html.includes(`v${expected.app}`), `Versão visível v${expected.app} ausente no index.html.`);
@@ -76,6 +81,9 @@ assert(!html.includes('Visualização interna'), 'Cabeçalho redundante do visua
 assert(html.includes('Exportar dados XLSX'), 'Nome padronizado do botão Exportar dados XLSX ausente.');
 assert(html.includes('technicalHistoryList'), 'Seção de histórico técnico visível ausente.');
 assert(html.includes('reportViewerDialog'), 'Visualizador interno de relatório ausente no HTML.');
+assert(html.includes('Alertas de manutenção'), 'Título Alertas de manutenção ausente.');
+assert(html.includes('alert-guidance'), 'Orientação de vínculo e preservação do histórico ausente.');
+assert(/name="group"[^>]*disabled/.test(html), 'Grupo do alerta não está bloqueado em MANUTENÇÃO.');
 
 const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map((m) => m[1]);
 const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -103,13 +111,15 @@ assert(/windowOptOutEdgeToEdgeEnforcement/.test(androidStyles), 'Proteção cont
 const filePaths = read('android/app/src/main/res/xml/file_paths.xml');
 assert(/name="shared_reports"/.test(filePaths), 'FileProvider não possui caminho de cache para relatórios compartilhados.');
 
-const batch = 'ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat';
+const batch = 'ATUALIZAR_MYCAR_V5_50_WEB_ANDROID.bat';
 const batchText = read(batch);
-assert(batchText.includes('set "VERSAO=5.49"'), 'BAT não possui a variável VERSAO=5.49.');
-assert(batchText.includes('MYCAR_PLUS_V5_49_MASTER.zip'), 'BAT não espera o ZIP oficial V5.49.');
-assert(batchText.includes('MYCAR_PLUS_V5_49_MASTER*.zip'), 'BAT não aceita nomes automáticos como (1) no ZIP baixado.');
+assert(batchText.includes('set "VERSAO=5.50"'), 'BAT não possui a variável VERSAO=5.50.');
+assert(batchText.includes('MYCAR_PLUS_V5_50_MASTER.zip'), 'BAT não espera o ZIP oficial V5.50.');
+assert(batchText.includes('MYCAR_PLUS_V5_50_MASTER*.zip'), 'BAT não aceita nomes automáticos como (1) no ZIP baixado.');
 assert(batchText.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
-for (const oldVersion of ['41', '42', '43', '44', '45', '46', '47', '48']) {
+assert(!/powershell(?:\.exe)?[^\r\n]*-File[^\r\n]*APLICAR_ATUALIZACAO_MYCAR_V5_50\.ps1/i.test(batchText), 'BAT ainda depende de script PS1 externo.');
+assert(batchText.includes('autocontido') || batchText.includes('Autocontido'), 'BAT não informa que é autocontido.');
+for (const oldVersion of ['41', '42', '43', '44', '45', '46', '47', '48', '49']) {
   assert(!fs.existsSync(path.join(root, `ATUALIZAR_MYCAR_V5_${oldVersion}_WEB_ANDROID.bat`)), `BAT operacional antigo V5.${oldVersion} ainda está na raiz.`);
 }
 

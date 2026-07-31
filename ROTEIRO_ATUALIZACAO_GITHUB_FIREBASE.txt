@@ -591,3 +591,11 @@ Versão 5.49:
 - MainActivity.shareHtml grava o arquivo no cache, usa FileProvider e abre Intent.ACTION_SEND com tipo text/html.
 - Manter o relatório responsivo e sem corte lateral na tela do celular.
 - Executar ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat e validar a coesão antes do APK.
+
+
+VERSÃO 5.50:
+- Pacote oficial: MYCAR_PLUS_V5_50_MASTER.zip
+- Instalador: ATUALIZAR_MYCAR_V5_50_WEB_ANDROID.bat
+- O BAT é autocontido e não depende de APLICAR_ATUALIZACAO_MYCAR_V5_50.ps1.
+- Atualiza alertas de manutenção, sincroniza Web/Android, valida coesão e gera APK.
+- Em versões futuras, atualizar o nome do ZIP, o nome do BAT, VERSAO, versionCode, versionName e cache PWA.
