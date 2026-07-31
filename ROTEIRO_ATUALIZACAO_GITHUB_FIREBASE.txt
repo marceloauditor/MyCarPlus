@@ -593,9 +593,9 @@ Versão 5.49:
 - Executar ATUALIZAR_MYCAR_V5_49_WEB_ANDROID.bat e validar a coesão antes do APK.
 
 
-VERSÃO 5.50:
-- Pacote oficial: MYCAR_PLUS_V5_50_MASTER.zip
-- Instalador: ATUALIZAR_MYCAR_V5_50_WEB_ANDROID.bat
-- O BAT é autocontido e não depende de APLICAR_ATUALIZACAO_MYCAR_V5_50.ps1.
+VERSÃO 5.51:
+- Pacote oficial: MYCAR_PLUS_V5_51_MASTER.zip
+- Instalador: ATUALIZAR_MYCAR_V5_51_WEB_ANDROID.bat
+- O BAT é autocontido e não depende de APLICAR_ATUALIZACAO_MYCAR_V5_51.ps1.
 - Atualiza alertas de manutenção, sincroniza Web/Android, valida coesão e gera APK.
 - Em versões futuras, atualizar o nome do ZIP, o nome do BAT, VERSAO, versionCode, versionName e cache PWA.

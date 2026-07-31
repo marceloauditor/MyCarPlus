@@ -1,19 +1,19 @@
 ﻿@echo off
 setlocal EnableExtensions EnableDelayedExpansion
 chcp 65001 >nul
-title Atualizacao MyCar+ V5.50 - Web e Android
+title Atualizacao MyCar+ V5.51 - Web e Android
 
 rem ============================================================
 rem CONFIGURACAO
 rem ============================================================
-set "VERSAO=5.50"
-set "ZIP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_50_MASTER.zip"
+set "VERSAO=5.51"
+set "ZIP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_51_MASTER.zip"
 set "PROJETO=%USERPROFILE%\Documents\GitHub\MyCarPlus"
-set "TEMP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_50_TEMP"
-set "LOG=%USERPROFILE%\Downloads\ATUALIZACAO_MYCAR_V5_50_LOG.txt"
+set "TEMP=%USERPROFILE%\Downloads\MYCAR_PLUS_V5_51_TEMP"
+set "LOG=%USERPROFILE%\Downloads\ATUALIZACAO_MYCAR_V5_51_LOG.txt"
 
 for /f "delims=" %%I in ('powershell.exe -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set "STAMP=%%I"
-set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V5_50_%STAMP%"
+set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V5_51_%STAMP%"
 
 > "%LOG%" echo ============================================================
 >>"%LOG%" echo ATUALIZACAO MYCAR+ V%VERSAO%
@@ -50,7 +50,7 @@ call :etapa "1/9 - Conferindo arquivos e pastas"
 
 if not exist "%ZIP%" (
     set "ZIP_ENCONTRADO="
-    for /f "delims=" %%Z in ('dir /B /A:-D /O:-D "%USERPROFILE%\Downloads\MYCAR_PLUS_V5_50_MASTER*.zip" 2^>nul') do (
+    for /f "delims=" %%Z in ('dir /B /A:-D /O:-D "%USERPROFILE%\Downloads\MYCAR_PLUS_V5_51_MASTER*.zip" 2^>nul') do (
         if not defined ZIP_ENCONTRADO set "ZIP_ENCONTRADO=%USERPROFILE%\Downloads\%%Z"
     )
     if defined ZIP_ENCONTRADO (
@@ -112,7 +112,7 @@ if errorlevel 1 (
     goto :fim_erro
 )
 
-set "FONTE=%TEMP%\MYCAR_PLUS_V5_50_MASTER"
+set "FONTE=%TEMP%\MYCAR_PLUS_V5_51_MASTER"
 if not exist "!FONTE!\package.json" set "FONTE="
 
 if not defined FONTE (
@@ -133,7 +133,7 @@ if "!FONTE:~-1!"=="\" set "FONTE=!FONTE:~0,-1!"
 
 robocopy "!FONTE!" "%PROJETO%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:2 ^
  /XD "!FONTE!\.git" "!FONTE!\node_modules" "!FONTE!\android\.gradle" "!FONTE!\android\build" "!FONTE!\android\app\build" "!FONTE!\android\capacitor-cordova-android-plugins\build" ^
- /XF ATUALIZACAO_MYCAR_V5_50_LOG.txt >>"%LOG%" 2>&1
+ /XF ATUALIZACAO_MYCAR_V5_51_LOG.txt >>"%LOG%" 2>&1
 set "RC=!ERRORLEVEL!"
 if !RC! GEQ 8 (
     call :erro "Falha ao copiar a nova fonte. Codigo Robocopy: !RC!"
@@ -154,6 +154,7 @@ for %%B in (
     "%PROJETO%\ATUALIZAR_MYCAR_V5_47_WEB_ANDROID*.bat"
     "%PROJETO%\ATUALIZAR_MYCAR_V5_48_WEB_ANDROID*.bat"
     "%PROJETO%\ATUALIZAR_MYCAR_V5_49_WEB_ANDROID*.bat"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_50_WEB_ANDROID*.bat"
 ) do (
     if exist "%%~fB" (
         >>"%LOG%" echo Excluindo: %%~fB
@@ -161,10 +162,10 @@ for %%B in (
     )
 )
 
-rem Remove instaladores parciais antigos da V5.50 que dependiam de PS1.
+rem Remove instaladores parciais antigos da V5.51 que dependiam de PS1.
 for %%P in (
-    "%PROJETO%\APLICAR_ATUALIZACAO_MYCAR_V5_50.ps1"
-    "%PROJETO%\ATUALIZAR_MYCAR_V5_50.bat"
+    "%PROJETO%\APLICAR_ATUALIZACAO_MYCAR_V5_51.ps1"
+    "%PROJETO%\ATUALIZAR_MYCAR_V5_51.bat"
 ) do (
     if exist "%%~fP" (
         >>"%LOG%" echo Excluindo instalador parcial: %%~fP
@@ -293,7 +294,7 @@ if errorlevel 1 (
     call :erro "git add falhou."
     goto :fim_erro
 )
-git commit -m "Atualiza MyCar+ para V5.50" >>"%LOG%" 2>&1
+git commit -m "Atualiza MyCar+ para V5.51" >>"%LOG%" 2>&1
 if errorlevel 1 (
     echo Nao houve novo commit ou o commit falhou. Verifique o log.
     >>"%LOG%" echo Commit nao realizado ou sem alteracoes.

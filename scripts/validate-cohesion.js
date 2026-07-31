@@ -4,10 +4,10 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 const expected = {
-  semver: '5.50.0',
-  app: '5.50',
-  versionCode: '550',
-  cache: 'mycar-plus-v5-50',
+  semver: '5.51.0',
+  app: '5.51',
+  versionCode: '551',
+  cache: 'mycar-plus-v5-51',
 };
 const failures = [];
 const notices = [];
@@ -68,7 +68,7 @@ assert(!/canOperate\s*&&\s*!a\.technicalKey/.test(app), 'Ainda existe bloqueio d
 assert(!/confirm\(["']Excluir este alerta\?/.test(app), 'Ainda existe confirmação genérica antiga de exclusão de alerta.');
 assert(/function\s+normalizeAlertRecord\s*\(/.test(app), 'Normalização dos alertas de manutenção ausente.');
 assert(/data\.group\s*=\s*["']MANUTENÇÃO["']/.test(app), 'Cadastro de alerta não fixa o grupo MANUTENÇÃO.');
-assert(/group:\s*["']MANUTENÇÃO["'],\s*technical:\s*true/.test(app), 'Alertas gravados não estão padronizados como técnicos de manutenção.');
+assert(/group:\s*["']MANUTENÇÃO["'][\s\S]{0,900}technical:\s*true/.test(app), 'Alertas gravados não estão padronizados como técnicos de manutenção.');
 assert(/não apagará[\s\S]*histórico técnico/i.test(app), 'Confirmação de exclusão não esclarece a preservação do histórico.');
 assert(/\["VENCIDO",\s*"ATENÇÃO",\s*"PROGRAMADO",\s*"CONCLUÍDO",\s*"INATIVO"\]/.test(app), 'Resumo dos alertas não inclui a situação INATIVO.');
 
@@ -84,6 +84,16 @@ assert(html.includes('reportViewerDialog'), 'Visualizador interno de relatório 
 assert(html.includes('Alertas de manutenção'), 'Título Alertas de manutenção ausente.');
 assert(html.includes('alert-guidance'), 'Orientação de vínculo e preservação do histórico ausente.');
 assert(/name="group"[^>]*disabled/.test(html), 'Grupo do alerta não está bloqueado em MANUTENÇÃO.');
+
+
+assert(html.includes('technical-alert-dialog'), 'Nova tela visual de Alerta Técnico ausente.');
+assert(html.includes('data-alert-criterion="DATE"') && html.includes('data-alert-criterion="KM"') && html.includes('data-alert-criterion="BOTH"'), 'Seleção Data/KM/Data e KM ausente.');
+assert(html.includes('name="baseDate"') && html.includes('name="baseKm"'), 'Base de cálculo do alerta ausente.');
+assert(html.includes('alertForecastDate') && html.includes('alertForecastKm'), 'Previsão automática da próxima troca ausente.');
+assert(html.includes('name="observations"'), 'Campo Observações do alerta ausente.');
+assert(/function\s+updateAlertForecastPreview\s*\(/.test(app), 'Cálculo visual da previsão do alerta ausente.');
+assert(/function\s+alertBaseForItem\s*\(/.test(app), 'Busca da base pelo último lançamento do item ausente.');
+assert(/baseDate,\s*baseKm,\s*dueDate,\s*dueKm/.test(app), 'Persistência da base e previsão do alerta ausente.');
 
 const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map((m) => m[1]);
 const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -111,15 +121,15 @@ assert(/windowOptOutEdgeToEdgeEnforcement/.test(androidStyles), 'Proteção cont
 const filePaths = read('android/app/src/main/res/xml/file_paths.xml');
 assert(/name="shared_reports"/.test(filePaths), 'FileProvider não possui caminho de cache para relatórios compartilhados.');
 
-const batch = 'ATUALIZAR_MYCAR_V5_50_WEB_ANDROID.bat';
+const batch = 'ATUALIZAR_MYCAR_V5_51_WEB_ANDROID.bat';
 const batchText = read(batch);
-assert(batchText.includes('set "VERSAO=5.50"'), 'BAT não possui a variável VERSAO=5.50.');
-assert(batchText.includes('MYCAR_PLUS_V5_50_MASTER.zip'), 'BAT não espera o ZIP oficial V5.50.');
-assert(batchText.includes('MYCAR_PLUS_V5_50_MASTER*.zip'), 'BAT não aceita nomes automáticos como (1) no ZIP baixado.');
+assert(batchText.includes('set "VERSAO=5.51"'), 'BAT não possui a variável VERSAO=5.51.');
+assert(batchText.includes('MYCAR_PLUS_V5_51_MASTER.zip'), 'BAT não espera o ZIP oficial V5.51.');
+assert(batchText.includes('MYCAR_PLUS_V5_51_MASTER*.zip'), 'BAT não aceita nomes automáticos como (1) no ZIP baixado.');
 assert(batchText.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
-assert(!/powershell(?:\.exe)?[^\r\n]*-File[^\r\n]*APLICAR_ATUALIZACAO_MYCAR_V5_50\.ps1/i.test(batchText), 'BAT ainda depende de script PS1 externo.');
+assert(!/powershell(?:\.exe)?[^\r\n]*-File[^\r\n]*APLICAR_ATUALIZACAO_MYCAR_V5_51\.ps1/i.test(batchText), 'BAT ainda depende de script PS1 externo.');
 assert(batchText.includes('autocontido') || batchText.includes('Autocontido'), 'BAT não informa que é autocontido.');
-for (const oldVersion of ['41', '42', '43', '44', '45', '46', '47', '48', '49']) {
+for (const oldVersion of ['41', '42', '43', '44', '45', '46', '47', '48', '49', '50']) {
   assert(!fs.existsSync(path.join(root, `ATUALIZAR_MYCAR_V5_${oldVersion}_WEB_ANDROID.bat`)), `BAT operacional antigo V5.${oldVersion} ainda está na raiz.`);
 }
 

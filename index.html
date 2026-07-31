@@ -28,7 +28,7 @@
 <div>
 <small>Controle automotivo</small>
 <h1>MyCar+</h1>
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.50</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.51</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -591,7 +591,7 @@
 </details>
 <details>
 <summary>15. Alertas e histórico técnico</summary>
-<p>Alertas e histórico técnico são restritos ao veículo selecionado. Veículos inativos permanecem disponíveis para consulta histórica, mas não geram operações ou alertas ativos. Ao concluir uma manutenção técnica, o ciclo correspondente é reiniciado.</p>
+<p>Alertas e histórico técnico são restritos ao veículo selecionado. No cadastro, escolha o item, controle por Data, KM ou Data e KM, informe a vida útil e a base de cálculo; o aplicativo apresenta automaticamente a próxima previsão. Veículos inativos permanecem disponíveis para consulta histórica, mas não geram alertas ativos. Excluir um alerta preserva o histórico técnico.</p>
 </details>
 <details>
 <summary>16. GPS e fornecedores</summary>
@@ -618,7 +618,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.50</p>
+<strong>Versão:</strong> 5.51</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>
@@ -840,25 +840,92 @@
 <div class="form-footer"><button type="button" id="cancelContextSelector" class="form-cancel">Voltar ao lançamento</button></div>
 </div>
 </dialog>
-<dialog id="alertDialog" class="compact-dialog">
-<form method="dialog" id="alertForm" class="sectioned-form">
-<input type="hidden" name="id"><div class="dialog-head"><div><small>Central de manutenção</small><h2 id="alertFormTitle">Novo alerta de manutenção</h2></div><button type="button" class="alert-cancel" aria-label="Fechar">×</button></div>
-<div class="form-scroll">
-<section class="form-section always-open"><h3><span>1</span> Identificação</h3><div class="section-body">
-<label>Veículo *<select name="vehicleId" required></select></label>
-<label>Grupo *<select name="group" required disabled><option value="MANUTENÇÃO">MANUTENÇÃO</option></select></label>
-<label>Item de manutenção *<select name="itemId" required></select></label>
-<label>Descrição *<input name="description" required placeholder="Ex.: Trocar óleo do motor"></label>
-</div></section>
-<section class="form-section always-open"><h3><span>2</span> Vencimento e recorrência</h3><div class="section-body">
-<label>Critério<select name="criterion"><option value="DATE">Data</option><option value="KM">Quilometragem</option><option value="BOTH">Data e quilometragem — primeiro que ocorrer</option></select></label>
-<div class="compact-grid"><label>Data prevista<input name="dueDate" type="date"></label><label>Avisar antes (dias)<input name="leadDays" type="number" min="0" value="30"></label></div>
-<div class="compact-grid"><label>Quilometragem prevista<input name="dueKm" type="number" min="0"></label><label>Avisar antes (km)<input name="leadKm" type="number" min="0" value="500"></label></div>
-<label>Recorrência<select name="recurrence"><option value="NONE">Sem recorrência</option><option value="MONTHS">Por meses</option><option value="KM">Por quilômetros</option><option value="BOTH">Por meses e quilômetros</option></select></label>
-<div class="compact-grid"><label>Repetir a cada (meses)<input name="recurrenceMonths" type="number" min="1"></label><label>Repetir a cada (km)<input name="recurrenceKm" type="number" min="1"></label></div>
-<label class="check-field"><input name="active" type="checkbox" checked> Alerta ativo</label>
-</div></section><p id="alertFormError" class="form-error"></p></div>
-<div class="form-footer"><button type="button" class="form-cancel alert-cancel">Cancelar</button><button class="primary" value="default">Salvar alerta</button></div>
+<dialog id="alertDialog" class="technical-alert-dialog">
+<form method="dialog" id="alertForm" class="technical-alert-form">
+<input type="hidden" name="id">
+<input type="hidden" name="vehicleId">
+<input type="hidden" name="criterion" value="BOTH">
+<input type="hidden" name="statusMode" value="ACTIVE">
+<header class="technical-alert-topbar">
+<button type="button" class="alert-cancel alert-top-action" aria-label="Voltar">‹</button>
+<h2 id="alertFormTitle">Novo Alerta Técnico</h2>
+<button type="submit" class="alert-top-action alert-top-save" aria-label="Salvar">✓</button>
+</header>
+<div class="technical-alert-scroll">
+<article class="technical-alert-vehicle">
+<div class="technical-alert-icon">🚙</div>
+<div><small>Veículo selecionado</small><strong id="alertVehicleName">—</strong><span id="alertVehicleMeta">Placa: — · KM atual: 0</span></div>
+</article>
+
+<section class="technical-alert-card alert-select-card">
+<label><span class="field-icon">🔧</span><span><small>Grupo (padrão)</small><select name="group" disabled><option value="MANUTENÇÃO">Manutenção</option></select></span></label>
+</section>
+<section class="technical-alert-card alert-select-card">
+<label><span class="field-icon">🛢️</span><span><small>Item</small><select name="itemId" required></select></span></label>
+</section>
+
+<section class="technical-alert-card">
+<h3><span class="field-icon">📅</span>Controlar por</h3>
+<div class="alert-segmented alert-criterion-options" role="group" aria-label="Critério do alerta">
+<button type="button" data-alert-criterion="DATE"><b>▣</b><span>Data</span></button>
+<button type="button" data-alert-criterion="KM"><b>◉</b><span>KM</span></button>
+<button type="button" data-alert-criterion="BOTH"><b>▣ + ◉</b><span>Data e KM</span></button>
+</div>
+</section>
+
+<section class="technical-alert-card">
+<h3><span class="field-icon">⌛</span>Vida útil do item</h3>
+<div class="technical-alert-grid">
+<label>Meses<input name="recurrenceMonths" type="number" min="0" inputmode="numeric"></label>
+<label>KM<input name="recurrenceKm" type="number" min="0" inputmode="numeric"></label>
+</div>
+</section>
+
+<section class="technical-alert-card">
+<h3><span class="field-icon">▦</span>Base para cálculo <small>(último lançamento ou atual)</small></h3>
+<div class="technical-alert-grid">
+<label>Data base<input name="baseDate" type="date"></label>
+<label>KM base<input name="baseKm" type="number" min="0" inputmode="numeric"></label>
+</div>
+</section>
+
+<section class="technical-alert-card">
+<h3><span class="field-icon">〽</span>Previsão próxima troca</h3>
+<div class="alert-forecast-grid">
+<article id="alertForecastDateCard"><span>📅</span><div><small>Por Data</small><strong id="alertForecastDate">—</strong><em id="alertForecastDateRemaining">Informe a vida útil</em></div></article>
+<article id="alertForecastKmCard"><span>◉</span><div><small>Por KM</small><strong id="alertForecastKm">—</strong><em id="alertForecastKmRemaining">Informe a vida útil</em></div></article>
+</div>
+</section>
+
+<section class="technical-alert-card">
+<h3><span class="field-icon">🔔</span>Alertas</h3>
+<div class="technical-alert-grid">
+<label>Avisar com quantos dias de antecedência<input name="leadDays" type="number" min="0" value="15" inputmode="numeric"></label>
+<label>Avisar com quantos km de antecedência<input name="leadKm" type="number" min="0" value="1000" inputmode="numeric"></label>
+</div>
+</section>
+
+<section class="technical-alert-card">
+<h3><span class="field-icon">🛡</span>Status</h3>
+<div class="alert-status-options" role="group" aria-label="Status do alerta">
+<button type="button" data-alert-status="ACTIVE">Ativo</button>
+<button type="button" data-alert-status="EXPIRED" aria-disabled="true">Vencido</button>
+<button type="button" data-alert-status="DISABLED">Desativado</button>
+</div>
+</section>
+
+<section class="technical-alert-card">
+<label class="alert-observation-label"><span><span class="field-icon">▤</span>Observações <small>(opcional)</small></span>
+<textarea name="observations" maxlength="300" rows="3" placeholder="Ex.: Troca recomendada a cada 6 meses ou 9.000 km."></textarea>
+<small class="alert-char-count"><span id="alertObservationCount">0</span>/300</small></label>
+</section>
+<p id="alertFormError" class="form-error"></p>
+</div>
+<footer class="technical-alert-footer">
+<button type="button" id="deleteAlertFromForm" class="alert-delete-form">🗑 Excluir</button>
+<button type="button" class="alert-cancel">Cancelar</button>
+<button type="submit" class="primary">▣ Salvar</button>
+</footer>
 </form></dialog>
 <dialog id="registerDialog" class="compact-dialog">
 <form method="dialog" id="registerForm" class="sectioned-form">

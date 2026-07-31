@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.50",
+  APP_VERSION = "5.51",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -272,6 +272,10 @@ function normalizeAlertRecord(item = {}) {
     recurrence,
     recurrenceMonths: Number(item.recurrenceMonths ?? item.meses_recorrencia ?? 0) || 0,
     recurrenceKm: Number(item.recurrenceKm ?? item.km_recorrencia ?? 0) || 0,
+    baseDate: String(item.baseDate || item.data_base || ""),
+    baseKm: Number(item.baseKm ?? item.km_base ?? 0) || 0,
+    observations: String(item.observations || item.observacao || "").slice(0, 300),
+    statusMode: item.active === false || item.statusMode === "DISABLED" ? "DISABLED" : "ACTIVE",
     active: item.active !== false,
     technical: true,
     technicalKey: String(item.technicalKey || item.chave_tecnica || ""),
@@ -2907,8 +2911,10 @@ function ensureTechnicalData() {
         item.criterion = parameter.intervalKm > 0 && parameter.intervalMonths > 0 ? "BOTH" :
           parameter.intervalKm > 0 ? "KM" : "DATE";
         const base = technicalBase(vehicle, spec.key);
-        item.dueKm = parameter.intervalKm ? base.km + Number(parameter.intervalKm) : 0;
-        item.dueDate = parameter.intervalMonths ? addMonths(dateOnly(base.date), parameter.intervalMonths).toISOString().slice(0, 10) : "";
+        item.baseDate = dateOnly(base.date)?.toISOString().slice(0, 10) || new Date().toISOString().slice(0, 10);
+        item.baseKm = Number(base.km || 0);
+        item.dueKm = parameter.intervalKm ? item.baseKm + Number(parameter.intervalKm) : 0;
+        item.dueDate = parameter.intervalMonths ? addMonths(dateOnly(item.baseDate), parameter.intervalMonths).toISOString().slice(0, 10) : "";
       }
     });
   });
@@ -2944,17 +2950,19 @@ function evaluateAlerts(notify = false) {
 }
 function deleteAlert(id) {
   const item = alerts.find((a) => a.id === id);
-  if (!item) return;
+  if (!item) return false;
   const vehicle = vehicles.find((v) => v.id === item.vehicleId);
-  if (vehicle?.ativo === false)
-    return alert("Veículo inativo: os alertas estão disponíveis somente para consulta.");
+  if (vehicle?.ativo === false) {
+    alert("Veículo inativo: os alertas estão disponíveis somente para consulta.");
+    return false;
+  }
   if (!confirm(
     "Excluir alerta técnico?\n\n" +
     "Os alertas são utilizados na programação das manutenções do veículo. " +
     "A exclusão removerá somente este alerta e sua programação futura e não apagará " +
     "os registros do histórico técnico.\n\n" +
     "Tem certeza de que deseja excluir?",
-  )) return;
+  )) return false;
   const stateBeforeSave = cloneDataState();
   if (item.technicalKey) {
     let parameter = technicalParameters.find((p) =>
@@ -2971,10 +2979,12 @@ function deleteAlert(id) {
   try {
     save();
     showToast("Alerta excluído. O histórico técnico foi preservado.");
+    return true;
   } catch (error) {
     restoreDataState(stateBeforeSave);
     console.error("Falha ao excluir o alerta técnico:", error);
     alert("Não foi possível excluir o alerta. Nenhum dado foi alterado.");
+    return false;
   }
 }
 function technicalHistoryRecords(vehicleId) {
@@ -3038,7 +3048,7 @@ function renderAlerts() {
   const rows = filteredAlerts.filter((a) => !$("#alertStatus").value || alertStatus(a) === $("#alertStatus").value);
   const counts = ["VENCIDO", "ATENÇÃO", "PROGRAMADO", "CONCLUÍDO", "INATIVO"].map((status) => [status, filteredAlerts.filter((a) => alertStatus(a) === status).length]);
   $("#alertSummary").innerHTML = counts.map(([status,total]) => `<article><small>${status}</small><b>${total}</b></article>`).join("");
-  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>⚙ ${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span><span>Alerta técnico</span></div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta de manutenção encontrado para o veículo selecionado.</p>';
+  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>⚙ ${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span><span>Alerta técnico</span>${a.observations ? `<span>${esc(a.observations)}</span>` : ""}</div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta de manutenção encontrado para o veículo selecionado.</p>';
   const history = technicalHistoryRecords(selectedVehicle?.id);
   $("#technicalHistoryList").innerHTML = history.length
     ? history.map((record) => `<article class="item"><div><b>${esc(record.description)}</b><small>${record.date ? new Date(record.date).toLocaleDateString("pt-BR") : "Data não informada"} · ${intFmt(record.km)} km · ${record.source === "ALERTA" ? "Conclusão de alerta" : "Lançamento de manutenção"}</small><div class="alert-meta"><span>${esc(record.status)}</span><span>${esc(record.supplier)}</span>${record.observation ? `<span>${esc(record.observation)}</span>` : ""}</div></div><div class="amount"><b>${record.value ? money(record.value) : "Histórico"}</b><small>${esc(record.forecast)}</small></div></article>`).join("")
@@ -3047,38 +3057,165 @@ function renderAlerts() {
 }
 function fillAlertItems() {
   const f = $("#alertForm");
+  const currentValue = f.itemId.value;
   f.itemId.innerHTML = alpha(
     registers.filter((r) => r.grupo === "MANUTENÇÃO" && r.ativo !== false),
     "item",
   ).map((r) => `<option value="${r.id}">${esc(r.item)}</option>`).join("");
+  if ([...f.itemId.options].some((option) => option.value === currentValue)) f.itemId.value = currentValue;
+}
+function formatAlertDate(value) {
+  const date = dateOnly(value);
+  return date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString("pt-BR") : "—";
+}
+function alertBaseForItem(vehicle, itemId) {
+  const register = registers.find((r) => r.id === itemId);
+  const related = movements.filter((m) =>
+    (m.veiculo_id === vehicle.id || m.veiculo === vehicle.nome) &&
+    m.grupo === "MANUTENÇÃO" &&
+    ((m.item_id && m.item_id === itemId) || (!m.item_id && normalizeText(m.item) === normalizeText(register?.item))),
+  ).sort(newestFirst)[0];
+  return {
+    date: String(related?.data_hora || new Date().toISOString()).slice(0, 10),
+    km: Number(related?.hodometro_km ?? vehicleSummary(vehicle).last ?? vehicle.kmInicial ?? 0),
+  };
+}
+function deriveAlertBase(item, vehicle) {
+  if (item?.baseDate || Number(item?.baseKm) > 0) {
+    return {
+      date: item.baseDate || new Date().toISOString().slice(0, 10),
+      km: Number(item.baseKm || 0),
+    };
+  }
+  const base = alertBaseForItem(vehicle, item?.itemId || "");
+  if (item?.dueDate && Number(item.recurrenceMonths) > 0) {
+    const due = dateOnly(item.dueDate);
+    if (due) base.date = addMonths(due, -Number(item.recurrenceMonths)).toISOString().slice(0, 10);
+  }
+  if (Number(item?.dueKm) > 0 && Number(item.recurrenceKm) > 0)
+    base.km = Math.max(0, Number(item.dueKm) - Number(item.recurrenceKm));
+  return base;
+}
+function setAlertCriterion(value) {
+  const f = $("#alertForm");
+  const criterion = ["DATE", "KM", "BOTH"].includes(value) ? value : "BOTH";
+  f.criterion.value = criterion;
+  $$("[data-alert-criterion]").forEach((button) => {
+    const selected = button.dataset.alertCriterion === criterion;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+  f.recurrenceMonths.closest("label").classList.toggle("field-muted", criterion === "KM");
+  f.recurrenceKm.closest("label").classList.toggle("field-muted", criterion === "DATE");
+  updateAlertForecastPreview();
+}
+function setAlertStatusMode(value) {
+  const f = $("#alertForm");
+  const mode = value === "DISABLED" ? "DISABLED" : "ACTIVE";
+  f.statusMode.value = mode;
+  updateAlertForecastPreview();
+}
+function updateAlertForecastPreview() {
+  const f = $("#alertForm");
+  if (!f) return;
+  const criterion = f.criterion.value || "BOTH";
+  const baseDate = dateOnly(f.baseDate.value);
+  const baseKm = Number(f.baseKm.value || 0);
+  const months = Number(f.recurrenceMonths.value || 0);
+  const kmLife = Number(f.recurrenceKm.value || 0);
+  const vehicle = vehicles.find((v) => v.id === f.vehicleId.value);
+  const currentKm = vehicle ? vehicleSummary(vehicle).last : baseKm;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const dueDate = criterion !== "KM" && baseDate && months > 0 ? addMonths(baseDate, months) : null;
+  const dueKm = criterion !== "DATE" && kmLife > 0 ? baseKm + kmLife : 0;
+  const days = dueDate ? Math.ceil((dueDate.getTime() - today.getTime()) / 86400000) : null;
+  const kmRemaining = dueKm ? dueKm - currentKm : null;
+  $("#alertForecastDate").textContent = dueDate ? formatAlertDate(dueDate.toISOString().slice(0, 10)) : "—";
+  $("#alertForecastDateRemaining").textContent = days == null ? "Não utilizado" : days >= 0 ? `Em ${days} dia(s)` : `Vencido há ${Math.abs(days)} dia(s)`;
+  $("#alertForecastKm").textContent = dueKm ? intFmt(dueKm) : "—";
+  $("#alertForecastKmRemaining").textContent = kmRemaining == null ? "Não utilizado" : kmRemaining >= 0 ? `Restam ${intFmt(kmRemaining)} km` : `Vencido há ${intFmt(Math.abs(kmRemaining))} km`;
+  $("#alertForecastDateCard").classList.toggle("inactive", criterion === "KM");
+  $("#alertForecastKmCard").classList.toggle("inactive", criterion === "DATE");
+  const expired = f.statusMode.value !== "DISABLED" &&
+    ((criterion !== "KM" && dueDate && days <= 0) || (criterion !== "DATE" && dueKm > 0 && kmRemaining <= 0));
+  $$("[data-alert-status]").forEach((button) => {
+    const status = button.dataset.alertStatus;
+    const selected = status === "EXPIRED" ? expired : !expired && status === f.statusMode.value;
+    button.classList.toggle("selected", selected);
+    button.classList.toggle("expired", status === "EXPIRED" && expired);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+  $("#alertObservationCount").textContent = String(f.observations.value.length);
+}
+function applyAlertItemDefaults({ preserveValues = false } = {}) {
+  const f = $("#alertForm");
+  const vehicle = vehicles.find((v) => v.id === f.vehicleId.value);
+  const register = registers.find((r) => r.id === f.itemId.value);
+  if (!vehicle || !register) return;
+  if (!preserveValues) {
+    const base = alertBaseForItem(vehicle, register.id);
+    f.baseDate.value = base.date;
+    f.baseKm.value = String(base.km || 0);
+    if (register.technicalKey === "OIL") {
+      f.recurrenceMonths.value = "6";
+      f.recurrenceKm.value = "9000";
+      f.leadDays.value = "15";
+      f.leadKm.value = "1000";
+      setAlertCriterion("BOTH");
+    } else if (register.technicalKey === "BATTERY") {
+      f.recurrenceMonths.value = "36";
+      f.recurrenceKm.value = "0";
+      f.leadDays.value = "30";
+      f.leadKm.value = "0";
+      setAlertCriterion("DATE");
+    }
+  }
+  updateAlertForecastPreview();
 }
 function openAlert(id = "") {
   const f = $("#alertForm"), item = alerts.find((a) => a.id === id);
-  f.reset(); f.id.value = id;
-  const selectedVehicle = selectedVehicleObject();
+  f.reset();
+  f.elements.id.value = id;
+  const selectedVehicle = item
+    ? vehicles.find((v) => v.id === item.vehicleId)
+    : selectedVehicleObject();
   if (!item && (!selectedVehicle || selectedVehicle.ativo === false)) {
     alert("Selecione um veículo ativo antes de incluir um alerta técnico.");
     return;
   }
-  f.vehicleId.innerHTML = selectedVehicle ? `<option value="${selectedVehicle.id}">${esc(selectedVehicle.nome)}</option>` : "";
   f.vehicleId.value = item?.vehicleId || selectedVehicle?.id || "";
-  f.vehicleId.disabled = true;
-  f.group.innerHTML = '<option value="MANUTENÇÃO">MANUTENÇÃO</option>';
   f.group.value = "MANUTENÇÃO";
-  f.group.disabled = true;
   fillAlertItems();
-  if (item) Object.entries(item).forEach(([key, value]) => {
-    if (!f.elements[key]) return;
-    if (f.elements[key].type === "checkbox") f.elements[key].checked = Boolean(value);
-    else f.elements[key].value = value ?? "";
-  });
-  if (item) {
-    f.group.value = "MANUTENÇÃO";
-    fillAlertItems();
-    f.itemId.value = item.itemId || "";
+  if (item?.itemId && [...f.itemId.options].some((option) => option.value === item.itemId)) {
+    f.itemId.value = item.itemId;
+  } else if (!item) {
+    const oilRegister = registers.find((register) => register.grupo === "MANUTENÇÃO" && register.technicalKey === "OIL" && register.ativo !== false);
+    const defaultRegister = oilRegister || registers.find((register) => register.grupo === "MANUTENÇÃO" && register.padrao && register.ativo !== false);
+    if (defaultRegister && [...f.itemId.options].some((option) => option.value === defaultRegister.id)) f.itemId.value = defaultRegister.id;
   }
-  $("#alertFormTitle").textContent = item ? "Alterar alerta de manutenção" : "Novo alerta de manutenção";
+  const selectedRegister = registers.find((register) => register.id === f.itemId.value);
+  const base = deriveAlertBase(item, selectedVehicle);
+  const defaultCriterion = selectedRegister?.technicalKey === "BATTERY" ? "DATE" : "BOTH";
+  const criterion = item?.criterion || defaultCriterion;
+  const defaultMonths = selectedRegister?.technicalKey === "BATTERY" ? 36 : 6;
+  const defaultKm = selectedRegister?.technicalKey === "BATTERY" ? 0 : 9000;
+  f.recurrenceMonths.value = String(item?.recurrenceMonths ?? defaultMonths);
+  f.recurrenceKm.value = String(item?.recurrenceKm ?? defaultKm);
+  f.baseDate.value = base.date;
+  f.baseKm.value = String(base.km || 0);
+  f.leadDays.value = String(item?.leadDays ?? (selectedRegister?.technicalKey === "BATTERY" ? 30 : 15));
+  f.leadKm.value = String(item?.leadKm ?? (selectedRegister?.technicalKey === "BATTERY" ? 0 : 1000));
+  f.observations.value = item?.observations || "";
+  f.statusMode.value = item?.active === false ? "DISABLED" : "ACTIVE";
+  $("#alertVehicleName").textContent = selectedVehicle?.nome || "Veículo não localizado";
+  $("#alertVehicleMeta").textContent = `Placa: ${selectedVehicle?.placa || "Não informada"} · KM atual: ${intFmt(selectedVehicle ? vehicleSummary(selectedVehicle).last : 0)}`;
+  $("#alertFormTitle").textContent = item ? "Alterar Alerta Técnico" : "Novo Alerta Técnico";
+  $("#deleteAlertFromForm").disabled = !item;
+  $("#deleteAlertFromForm").classList.toggle("disabled", !item);
   $("#alertFormError").textContent = "";
+  setAlertCriterion(criterion);
+  setAlertStatusMode(f.statusMode.value);
+  updateAlertForecastPreview();
   $("#alertDialog").showModal();
 }
 function completeAlert(id) {
@@ -3096,17 +3233,17 @@ function completeAlert(id) {
   const stateBeforeSave = cloneDataState();
   alertHistory.push({ id: crypto.randomUUID(), alertId: item.id, vehicleId: item.vehicleId,
     technicalKey: item.technicalKey || "", description: item.description, completedAt: date + "T12:00:00", completedKm: km });
-  if (item.recurrence !== "NONE") {
-    if (["MONTHS","BOTH"].includes(item.recurrence) && item.recurrenceMonths)
-      item.dueDate = addMonths(dateOnly(date), item.recurrenceMonths).toISOString().slice(0, 10);
-    if (["KM","BOTH"].includes(item.recurrence) && item.recurrenceKm)
-      item.dueKm = km + Number(item.recurrenceKm);
-    item.completed = false;
-    item.manualSchedule = true;
-  } else item.completed = true;
+  item.baseDate = date;
+  item.baseKm = km;
+  if (item.criterion !== "KM" && Number(item.recurrenceMonths) > 0)
+    item.dueDate = addMonths(dateOnly(date), Number(item.recurrenceMonths)).toISOString().slice(0, 10);
+  if (item.criterion !== "DATE" && Number(item.recurrenceKm) > 0)
+    item.dueKm = km + Number(item.recurrenceKm);
+  item.completed = false;
+  item.manualSchedule = true;
   try {
     save();
-    showToast("Manutenção concluída e histórico técnico atualizado.");
+    showToast("Manutenção concluída e novo ciclo do alerta programado.");
   } catch (error) {
     restoreDataState(stateBeforeSave);
     console.error("Falha ao concluir o alerta:", error);
@@ -3119,6 +3256,7 @@ function toggleAlert(id) {
   if (!item || vehicle?.ativo === false) return alert("Alarmes só podem ser ativados para veículos ativos.");
   const stateBeforeSave = cloneDataState();
   item.active = !item.active;
+  item.statusMode = item.active ? "ACTIVE" : "DISABLED";
   if (item.technicalKey) {
     const p = technicalParameters.find((x) => x.vehicleId === item.vehicleId && x.technicalKey === item.technicalKey);
     if (p) p.active = item.active;
@@ -3135,49 +3273,95 @@ function toggleAlert(id) {
 $("#newAlert").onclick = () => openAlert();
 $("#alertVehicle").onchange = renderAlerts;
 $("#alertStatus").onchange = renderAlerts;
-$$(".alert-cancel").forEach((b) => b.onclick = () => $("#alertDialog").close());
+$$(".alert-cancel").forEach((button) => button.onclick = () => $("#alertDialog").close());
+$$("[data-alert-criterion]").forEach((button) => button.onclick = () => setAlertCriterion(button.dataset.alertCriterion));
+$$("[data-alert-status]").forEach((button) => {
+  button.onclick = () => {
+    if (button.dataset.alertStatus === "EXPIRED") return;
+    setAlertStatusMode(button.dataset.alertStatus);
+  };
+});
+["recurrenceMonths", "recurrenceKm", "baseDate", "baseKm", "leadDays", "leadKm"].forEach((name) => {
+  $("#alertForm").elements[name].addEventListener("input", updateAlertForecastPreview);
+  $("#alertForm").elements[name].addEventListener("change", updateAlertForecastPreview);
+});
+$("#alertForm").itemId.addEventListener("change", () => applyAlertItemDefaults());
+$("#alertForm").observations.addEventListener("input", updateAlertForecastPreview);
+$("#deleteAlertFromForm").onclick = () => {
+  const id = $("#alertForm").elements.id.value;
+  if (id && deleteAlert(id)) $("#alertDialog").close();
+};
 $("#alertForm").onsubmit = (event) => {
   event.preventDefault();
-  const f = event.target, data = Object.fromEntries(new FormData(f));
+  const f = event.target;
+  const data = Object.fromEntries(new FormData(f));
   data.vehicleId = f.vehicleId.value;
   data.group = "MANUTENÇÃO";
   const current = alerts.find((a) => a.id === data.id);
-  if (!data.vehicleId || !data.description || !data.itemId) return ($("#alertFormError").textContent = "Preencha veículo, item de manutenção e descrição.");
   const vehicle = vehicles.find((v) => v.id === data.vehicleId);
+  const register = registers.find((r) => r.id === data.itemId);
   if (!vehicle || vehicle.ativo === false)
     return ($("#alertFormError").textContent = "Alertas somente podem ser gravados para veículos ativos.");
-  const dueKm = Number(data.dueKm || 0);
-  if (["DATE", "BOTH"].includes(data.criterion) && !data.dueDate)
-    return ($("#alertFormError").textContent = "Informe a data prevista para o critério selecionado.");
-  if (["KM", "BOTH"].includes(data.criterion) && !(dueKm > 0))
-    return ($("#alertFormError").textContent = "Informe a quilometragem prevista para o critério selecionado.");
-  const selectedRegister = registers.find((r) => r.id === data.itemId);
+  if (!register)
+    return ($("#alertFormError").textContent = "Selecione o item de manutenção.");
+  const criterion = data.criterion;
+  const months = Number(data.recurrenceMonths || 0);
+  const kmLife = Number(data.recurrenceKm || 0);
+  const baseDate = data.baseDate;
+  const baseKm = Number(data.baseKm || 0);
+  if (criterion !== "KM" && (!baseDate || !(months > 0)))
+    return ($("#alertFormError").textContent = "Informe a data base e a vida útil em meses.");
+  if (criterion !== "DATE" && (!(baseKm >= 0) || !(kmLife > 0)))
+    return ($("#alertFormError").textContent = "Informe o KM base e a vida útil em quilômetros.");
+  const dueDate = criterion !== "KM" ? addMonths(dateOnly(baseDate), months).toISOString().slice(0, 10) : "";
+  const dueKm = criterion !== "DATE" ? baseKm + kmLife : 0;
+  const technicalKey = register.technicalKey || "";
   const oldTechnicalKey = current?.technicalKey || "";
-  const technicalKey = selectedRegister?.technicalKey || "";
   const stateBeforeSave = cloneDataState();
   if (oldTechnicalKey && oldTechnicalKey !== technicalKey) {
     const previousParameter = technicalParameters.find((p) =>
       p.vehicleId === data.vehicleId && p.technicalKey === oldTechnicalKey);
     if (previousParameter) Object.assign(previousParameter, { active: false, deleted: true });
   }
-  const object = { ...current, ...data, id: data.id || crypto.randomUUID(), active: f.active.checked,
-    group: "MANUTENÇÃO", technical: true, technicalKey, manualSchedule: true, completed: false,
-    leadDays: Number(data.leadDays || 0), leadKm: Number(data.leadKm || 0), dueKm: Number(data.dueKm || 0),
-    recurrenceMonths: Number(data.recurrenceMonths || 0), recurrenceKm: Number(data.recurrenceKm || 0) };
+  const active = data.statusMode !== "DISABLED";
+  const object = {
+    ...current,
+    id: data.id || crypto.randomUUID(),
+    vehicleId: data.vehicleId,
+    group: "MANUTENÇÃO",
+    itemId: data.itemId,
+    description: register.item,
+    criterion,
+    recurrence: criterion === "BOTH" ? "BOTH" : criterion === "DATE" ? "MONTHS" : "KM",
+    recurrenceMonths: months,
+    recurrenceKm: kmLife,
+    baseDate,
+    baseKm,
+    dueDate,
+    dueKm,
+    leadDays: Number(data.leadDays || 0),
+    leadKm: Number(data.leadKm || 0),
+    observations: String(data.observations || "").slice(0, 300),
+    statusMode: active ? "ACTIVE" : "DISABLED",
+    active,
+    technical: true,
+    technicalKey,
+    manualSchedule: true,
+    completed: false,
+  };
   if (current) Object.assign(current, object); else alerts.push(object);
-  if (object.technicalKey) {
-    let p = technicalParameters.find((x) => x.vehicleId === object.vehicleId && x.technicalKey === object.technicalKey);
-    if (!p) {
-      p = { id: crypto.randomUUID(), vehicleId: object.vehicleId, technicalKey: object.technicalKey };
-      technicalParameters.push(p);
+  if (technicalKey) {
+    let parameter = technicalParameters.find((p) => p.vehicleId === object.vehicleId && p.technicalKey === technicalKey);
+    if (!parameter) {
+      parameter = { id: crypto.randomUUID(), vehicleId: object.vehicleId, technicalKey };
+      technicalParameters.push(parameter);
     }
-    Object.assign(p, { active: object.active, deleted: false,
-      intervalKm: object.recurrenceKm, intervalMonths: object.recurrenceMonths });
+    Object.assign(parameter, { active, deleted: false, intervalKm: kmLife, intervalMonths: months });
   }
   try {
     save();
     $("#alertDialog").close();
-    showToast("Alerta de manutenção salvo com sucesso.");
+    showToast("Alerta técnico salvo com sucesso.");
   } catch (error) {
     restoreDataState(stateBeforeSave);
     console.error("Falha ao salvar o alerta técnico:", error);
