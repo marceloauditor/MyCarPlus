@@ -28,7 +28,7 @@
 <div>
 <small>Controle automotivo</small>
 <h1>MyCar+</h1>
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.41</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.42</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -237,7 +237,7 @@
 <div class="export">
 <h3>Exportação</h3>
 <p>Exporte os dados em planilha ou gere um relatório pronto para salvar em PDF.</p>
-<button id="exportXlsx">Exportar XLSX</button> <button id="exportPdf">Gerar PDF</button>
+<button id="exportXlsx">Exportar dados XLSX</button> <button id="exportPdf">Relatório Executivo PDF</button>
 </div>
 <div class="intelligence-callout">
 <div><small>MYCAR+ INTELLIGENCE</small><strong>Análise e previsão veicular por IA</strong><p>O veículo selecionado na tela inicial será analisado no período informado.</p></div>
@@ -267,7 +267,7 @@
 <article id="aiResult" class="ai-result" hidden>
 <div class="ai-result-head"><div><small>RELATÓRIO GERADO</small><h3>Relatório Executivo de Gestão Veicular com Inteligência Artificial</h3></div><span id="aiConfidence" class="insight-badge">—</span></div>
 <div id="aiReportContent"></div>
-<div class="export"><button type="button" id="closeAiResult" class="form-cancel">Fechar relatório</button><button type="button" id="viewAiReport">Visualizar relatório</button><button type="button" id="exportAiPdf">Gerar PDF</button><button type="button" id="newAiAnalysis">Gerar nova análise</button></div>
+<div class="export"><button type="button" id="closeAiResult" class="form-cancel">Fechar relatório</button><button type="button" id="viewAiReport">Visualizar relatório</button><button type="button" id="exportAiPdf">Relatório com IA PDF</button><button type="button" id="newAiAnalysis">Gerar nova análise</button></div>
 </article>
 </section>
 <section id="graficos" class="page">
@@ -469,8 +469,12 @@
 <select id="alertStatus"><option value="">Todas as situações</option><option>PROGRAMADO</option><option>ATENÇÃO</option><option>VENCIDO</option><option>CONCLUÍDO</option><option>INATIVO</option></select>
 </div>
 <div id="alertList" class="list alert-list"></div>
+<section class="technical-history-section">
+<div class="technical-history-head"><div><small>Registros preservados</small><h3>Histórico técnico do veículo selecionado</h3></div></div>
+<div id="technicalHistoryList" class="list technical-history-list"></div>
+</section>
 <div class="technical-report-actions">
-<button type="button" id="technicalPdf">Gerar PDF — Histórico técnico de manutenção</button>
+<button type="button" id="technicalPdf">Histórico técnico PDF</button>
 </div>
 </section>
 <section id="configuracoes" class="page">
@@ -564,7 +568,7 @@
 </details>
 <details>
 <summary>10. Exportação XLSX</summary>
-<p>Em Relatórios, toque em Exportar XLSX para baixar o banco completo no formato oficial MyCarPlus.xlsx.</p>
+<p>Em Relatórios, toque em Exportar dados XLSX para baixar o banco completo no formato oficial MyCarPlus.xlsx ou em Relatório Executivo PDF para abrir a versão pronta para impressão e salvamento em PDF.</p>
 </details>
 <details>
 <summary>11. Sincronização e segurança</summary>
@@ -613,7 +617,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.41</p>
+<strong>Versão:</strong> 5.42</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>
@@ -1042,6 +1046,12 @@
 <button type="submit" class="primary" value="default">Salvar</button>
 </div>
 </form>
+</dialog>
+<dialog id="reportViewerDialog" class="report-viewer-dialog">
+<div class="report-viewer-shell">
+<div class="report-viewer-head"><div><small>Visualização interna</small><h2 id="reportViewerTitle">Relatório MyCar+</h2></div><button type="button" id="closeReportViewer" aria-label="Fechar relatório">×</button></div>
+<iframe id="reportViewerFrame" title="Relatório MyCar+" sandbox="allow-scripts allow-modals allow-same-origin"></iframe>
+</div>
 </dialog>
 <script src="jszip.min.js">
 </script>

@@ -49,7 +49,7 @@
     if(!user||!ref){message(manual?'Entre com Google para sincronizar.':'Alterações locais aguardando login.');return false}
     if(!job){if(manual)message('Nenhuma alteração local pendente. Verificando a nuvem…');return true}
     syncing=true;draw();
-    try{await ref.set({...job.state,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),clientUpdatedAt:job.queuedAt,deviceId:job.deviceId,schemaVersion:7});setPending(null);setMeta({lastPush:iso(),message:'Alterações enviadas para a nuvem.',error:false});return true}catch(e){console.error(e);setMeta({message:'Falha ao enviar. Os dados serão reenviados automaticamente.',error:true});return false}finally{syncing=false;draw()}
+    try{await ref.set({...job.state,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),clientUpdatedAt:job.queuedAt,deviceId:job.deviceId,schemaVersion:8});setPending(null);setMeta({lastPush:iso(),message:'Alterações enviadas para a nuvem.',error:false});return true}catch(e){console.error(e);setMeta({message:'Falha ao enviar. Os dados serão reenviados automaticamente.',error:true});return false}finally{syncing=false;draw()}
   }
   async function pullLatest(){
     if(!user||!ref||!navigator.onLine)return false;

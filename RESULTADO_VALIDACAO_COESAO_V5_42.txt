@@ -1,0 +1,22 @@
+MYCAR+ V5.42 — RESULTADO DA VALIDAÇÃO DE COESÃO
+Data: 31/07/2026
+
+APROVADO
+- Versão package/app: 5.42.0 / 5.42
+- Android: versionCode 542 / versionName 5.42.0
+- Cache PWA: mycar-plus-v5-42
+- Esquema de dados/nuvem: 8
+- Sintaxe JavaScript: aprovada na raiz, www e Android
+- HTML: parseável, sem IDs duplicados e sem recursos locais ausentes
+- CSS: estrutura equilibrada
+- Planilha MyCarPlus.xlsx: íntegra e sem planilhas técnicas de teste
+- Cadeia raiz -> www -> Android: 17 arquivos idênticos por SHA-256
+- BAT V5.42: rótulos, destinos e 9 etapas conferidos
+- Colisões de nomes de arquivos: nenhuma
+
+LIMITAÇÕES DO AMBIENTE DE VALIDAÇÃO
+- npm install não pôde baixar yauzl@2.10.0 do repositório interno deste ambiente.
+- Gradle não pôde baixar gradle-8.11.1-all.zip por falta de acesso externo.
+- Por isso, o APK e o teste interativo em dispositivo devem ser executados pelo BAT no computador de desenvolvimento.
+
+O pacote-fonte e os assets Web/Android estão sincronizados e prontos para o teste local final.

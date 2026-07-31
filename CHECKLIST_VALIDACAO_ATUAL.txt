@@ -1,14 +1,26 @@
-MYCARPLUS V5.35 — CHECKLIST DE INSTALAÇÃO E VALIDAÇÃO
+MYCARPLUS V5.42 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
 [ ] Backup do projeto anterior realizado
-[ ] Pacote extraído em pasta nova
+[ ] Pacote MYCAR_PLUS_V5_42_MASTER.zip extraído em pasta nova
 [ ] npm.cmd install executado sem erros
+[ ] npm.cmd run sync:web executado sem erros
 [ ] npm.cmd run sync:android executado sem erros
-[ ] Login Firebase testado
-[ ] Tela inicial e versão 5.35 conferidas
-[ ] Cadastros testados: incluir, alterar, salvar, cancelar e fechar
-[ ] Navegação testada: botão Voltar, botão físico Android e Esc
-[ ] Relatório Inteligente aberto e fechado normalmente
-[ ] Contraste conferido nos temas claro e escuro
-[ ] APK de teste gerado e instalado
+[ ] npm.cmd run validate:cohesion aprovado
+[ ] Tela inicial e versão 5.42 conferidas
+[ ] Cadastros testados: incluir, alterar, salvar, cancelar, fechar, Esc e Voltar
+[ ] Lançamento salvo retorna à tela de origem
+[ ] Falha complementar não desfaz lançamento já persistido
+[ ] Cadastro rápido preserva os dados do lançamento
+[ ] Alertas técnicos testados: incluir, alterar, ativar, desativar e excluir
+[ ] Exclusão de alerta preserva o histórico técnico
+[ ] Alertas e histórico mostram somente o veículo ativo/selecionado
+[ ] Veículo inativo não gera alerta ativo
+[ ] Relatório Executivo: abrir, fechar, imprimir e salvar em PDF
+[ ] Relatório com IA: abrir, fechar, imprimir e salvar em PDF
+[ ] Histórico técnico PDF testado
+[ ] Exportação XLSX inclui Alertas, Histórico_Alertas e Parametros_Tecnicos
+[ ] Importação XLSX restaura as tabelas técnicas quando presentes
+[ ] Contraste conferido nos temas claro, escuro e automático
+[ ] APK de teste gerado e instalado no dispositivo
+[ ] Login e sincronização Firebase testados
 [ ] git status revisado antes do commit

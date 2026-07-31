@@ -1,14 +1,14 @@
-ROTEIRO DE ATUALIZAÇÃO DO APP MEU VEÍCULO
-GITHUB + FIREBASE
-Versão do roteiro: 1.0
-Data: 20/07/2026
+MANUAL DE ATUALIZAÇÃO DO SOFTWARE MYCAR+
+WEB/PWA + ANDROID + GITHUB + FIREBASE
+Versão do manual: 2.0
+Atualizado em: 30/07/2026
 Responsável: Marcelo Ribeiro
 
 ============================================================
 1. OBJETIVO DESTE ROTEIRO
 ============================================================
 
-Este documento deve acompanhar o código-fonte do app Meu Veículo e ser consultado antes de qualquer alteração futura.
+Este documento deve acompanhar o código-fonte do MyCar+ e ser consultado antes de qualquer alteração futura.
 
 Objetivos principais:
 
@@ -159,16 +159,16 @@ git diff
 
 6. Testar localmente antes da publicação.
 
-7. Registrar as alterações:
+8. Registrar as alterações:
 
 git add .
 git commit -m "Atualiza Meu Veículo para v4.5"
 
-8. Enviar a branch:
+9. Enviar a branch:
 
 git push -u origin atualizacao-v4.5
 
-9. Conferir a alteração e só depois incorporar na branch main.
+10. Conferir a alteração e só depois incorporar na branch main.
 
 Quando não for utilizado Pull Request:
 
@@ -208,8 +208,84 @@ para:
 
 meu-veiculo-cache-v45
 
+
 ============================================================
-7. REGRA PARA O DATASET INCLUÍDO NO CÓDIGO-FONTE
+7. AUTOMAÇÃO OBRIGATÓRIA PELO ARQUIVO BAT VERSIONADO
+============================================================
+
+O arquivo de lote de atualização deve permanecer na raiz da fonte, junto deste manual.
+
+Arquivo desta versão:
+
+ATUALIZAR_MYCAR_V5_42_WEB_ANDROID.bat
+
+FINALIDADE DO BAT:
+
+1. Localizar o ZIP da nova versão na pasta Downloads.
+2. Criar backup automático da fonte atualmente instalada.
+3. Descompactar o novo pacote.
+4. Copiar a nova fonte para o repositório local.
+5. Executar npm.cmd install.
+6. Executar a sincronização da versão Web/PWA.
+7. Executar a sincronização do Android pelo Capacitor.
+8. Executar a validação automática de coesão entre raiz, Web e Android.
+9. Gerar o APK de teste.
+10. Criar um arquivo TXT de log com o resultado de todas as etapas.
+11. Oferecer a abertura do Android Studio.
+12. Oferecer, somente ao final, a publicação no GitHub.
+
+REGRA OBRIGATÓRIA PARA TODA NOVA VERSÃO:
+
+Sempre que o MyCar+ for atualizado, a IA ou o desenvolvedor responsável também deverá atualizar o arquivo BAT. Não é permitido entregar uma nova versão do software mantendo o BAT com o número, nomes ou caminhos da versão anterior.
+
+Devem ser atualizados dentro do BAT, no mínimo:
+
+- título exibido na janela;
+- variável VERSAO;
+- nome esperado do ZIP;
+- nome da pasta temporária;
+- nome do arquivo de log;
+- nome da pasta de backup;
+- mensagem de commit;
+- textos de confirmação apresentados ao usuário;
+- qualquer caminho que contenha o número da versão.
+
+O NOME DO PRÓPRIO ARQUIVO BAT TAMBÉM DEVE SER VERSIONADO.
+
+Exemplo:
+
+Versão 5.41:
+ATUALIZAR_MYCAR_V5_41_WEB_ANDROID.bat
+
+Versão 5.42:
+ATUALIZAR_MYCAR_V5_42_WEB_ANDROID.bat
+
+Versão 6.00:
+ATUALIZAR_MYCAR_V6_00_WEB_ANDROID.bat
+
+O BAT atualizado deve ser incluído na raiz do novo ZIP, ao lado deste manual. O BAT anterior poderá permanecer apenas em backups históricos, mas não deve ser o arquivo operacional da nova fonte.
+
+Antes de entregar o ZIP, conferir obrigatoriamente:
+
+[ ] O nome do BAT corresponde à versão do app.
+[ ] A variável VERSAO corresponde à versão do app.
+[ ] O nome do ZIP esperado pelo BAT corresponde ao ZIP entregue.
+[ ] A sincronização Web está incluída.
+[ ] A sincronização Android está incluída.
+[ ] A geração do APK está incluída.
+[ ] O log TXT é criado em Downloads.
+[ ] O BAT está na raiz da fonte, junto deste manual.
+[ ] O BAT foi testado ou revisado antes da entrega.
+
+FORMA PADRÃO DE EXECUÇÃO PELO POWERSHELL:
+
+cd "$env:USERPROFILE\Downloads"
+.\ATUALIZAR_MYCAR_V5_42_WEB_ANDROID.bat
+
+O usuário não deverá precisar executar manualmente toda a sequência de comandos quando o BAT estiver disponível e atualizado.
+
+============================================================
+8. REGRA PARA O DATASET INCLUÍDO NO CÓDIGO-FONTE
 ============================================================
 
 Os arquivos abaixo devem ser tratados como dataset inicial, demonstração, referência ou recuperação:
@@ -240,7 +316,7 @@ NUNCA implementar uma rotina semelhante a:
 - substituir toda a coleção depois de uma atualização do GitHub.
 
 ============================================================
-8. TESTE OBRIGATÓRIO CONTRA SOBRESCRITA
+9. TESTE OBRIGATÓRIO CONTRA SOBRESCRITA
 ============================================================
 
 Antes de publicar uma nova versão, realizar este teste em ambiente de teste ou com uma cópia segura dos dados.
@@ -253,8 +329,8 @@ CENÁRIO A — FIREBASE JÁ POSSUI DADOS
 4. Fazer login com a mesma conta.
 5. Confirmar que o lançamento exclusivo continua existindo.
 6. Confirmar que a quantidade total de registros não diminuiu.
-7. Atualizar a página e repetir a conferência.
-8. Abrir em outro navegador ou aparelho e conferir novamente.
+8. Atualizar a página e repetir a conferência.
+9. Abrir em outro navegador ou aparelho e conferir novamente.
 
 RESULTADO OBRIGATÓRIO:
 
@@ -268,7 +344,7 @@ CENÁRIO B — CONTA SEM BASE NO FIREBASE
 4. Confirmar que a base inicial é criada apenas uma vez.
 5. Inserir um novo lançamento.
 6. Fechar e abrir novamente.
-7. Confirmar que os dados não foram duplicados.
+8. Confirmar que os dados não foram duplicados.
 
 CENÁRIO C — USO SEM LOGIN
 
@@ -282,7 +358,7 @@ CENÁRIO C — USO SEM LOGIN
 Na arquitetura atual, quando o documento online já existe, a base online é carregada.
 
 ============================================================
-9. PUBLICAÇÃO NO GITHUB PAGES
+10. PUBLICAÇÃO NO GITHUB PAGES
 ============================================================
 
 Após os testes:
@@ -298,16 +374,16 @@ No Windows/Chrome:
 
 Ctrl + F5
 
-7. Em um PWA instalado, fechar completamente o app e abrir novamente.
-8. Confirmar a versão exibida.
-9. Confirmar que os novos arquivos foram carregados.
+8. Em um PWA instalado, fechar completamente o app e abrir novamente.
+9. Confirmar a versão exibida.
+10. Confirmar que os novos arquivos foram carregados.
 
 IMPORTANTE:
 
 Não excluir o repositório e não criar outro GitHub Pages sem necessidade. A mudança de domínio pode exigir atualização dos domínios autorizados no Firebase Authentication.
 
 ============================================================
-10. ATUALIZAÇÃO DO FIREBASE
+11. ATUALIZAÇÃO DO FIREBASE
 ============================================================
 
 Em uma atualização comum de telas e funções, normalmente não é necessário alterar os dados no Firebase.
@@ -333,7 +409,7 @@ Somente quando firestore.rules tiver sido alterado:
 Não modificar manualmente o documento users/{uid}/app/state durante uma atualização normal.
 
 ============================================================
-11. ALTERAÇÃO DA ESTRUTURA DOS DADOS
+12. ALTERAÇÃO DA ESTRUTURA DOS DADOS
 ============================================================
 
 Quando for adicionado, removido ou renomeado um campo, criar uma migração.
@@ -356,7 +432,7 @@ Procedimento:
 4. Manter todos os campos antigos necessários.
 5. Validar os totais antes e depois.
 6. Gravar somente após a migração ser concluída.
-7. Impedir que a migração seja executada repetidamente.
+8. Impedir que a migração seja executada repetidamente.
 
 Exemplo conceitual:
 
@@ -366,7 +442,7 @@ schemaVersion novo: 2
 A migração deve ser idempotente: executá-la novamente não pode duplicar, apagar ou alterar indevidamente os dados.
 
 ============================================================
-12. CONFERÊNCIA DEPOIS DA PUBLICAÇÃO
+13. CONFERÊNCIA DEPOIS DA PUBLICAÇÃO
 ============================================================
 
 Após publicar, conferir na versão oficial:
@@ -389,7 +465,7 @@ Após publicar, conferir na versão oficial:
 [ ] Não existem registros duplicados criados pelo dataset inicial.
 
 ============================================================
-13. PROCEDIMENTO DE RETORNO EM CASO DE ERRO
+14. PROCEDIMENTO DE RETORNO EM CASO DE ERRO
 ============================================================
 
 Se a nova versão apresentar erro:
@@ -418,7 +494,7 @@ Depois:
 A reversão do código não deve alterar nem apagar o histórico armazenado no Firestore.
 
 ============================================================
-14. INSTRUÇÃO PARA FUTURAS ALTERAÇÕES FEITAS POR IA OU DESENVOLVEDOR
+15. INSTRUÇÃO PARA FUTURAS ALTERAÇÕES FEITAS POR IA OU DESENVOLVEDOR
 ============================================================
 
 Sempre fornecer esta orientação junto com o código-fonte:
@@ -433,10 +509,10 @@ Também solicitar ao responsável pela alteração:
 4. Informar se firestore.rules foi alterado.
 5. Confirmar expressamente que o Firebase existente não será sobrescrito.
 6. Entregar uma lista de testes realizados.
-7. Entregar a nova versão em ZIP sem substituir a cópia estável anterior.
+8. Entregar a nova versão em ZIP sem substituir a cópia estável anterior.
 
 ============================================================
-15. RESUMO OPERACIONAL
+16. RESUMO OPERACIONAL
 ============================================================
 
 ANTES:
@@ -460,7 +536,7 @@ DEPOIS:
 - manter o backup e registrar a versão.
 
 ============================================================
-16. REGRA FINAL
+17. REGRA FINAL
 ============================================================
 
 O GitHub controla a versão do aplicativo.

@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.41",
+  APP_VERSION = "5.42",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -16,6 +16,9 @@ const intFmt = (n) =>
   new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(
     Number(n) || 0,
   );
+function normalizeText(value) {
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
 const GROUPS = ["COMBUSTÍVEL", "MANUTENÇÃO", "ADMINISTRATIVO", "RECEITA"];
 const alpha = (list, field = "nome") =>
   [...list].sort((a, b) =>
@@ -34,6 +37,7 @@ let movements = [],
   alertHistory = [],
   technicalParameters = [];
 let entryContext = null;
+let entryReturnPage = "movimentos";
 const NI = "NI — Não informado";
 const TECHNICAL_ITEMS = {
   OIL: { key: "OIL", label: "Troca de Óleo", km: 9000, months: 6 },
@@ -70,18 +74,65 @@ const defaults = [
   item: x[1],
   padrao: !!x[2],
 }));
+function showToast(message, tone = "success") {
+  let host = document.getElementById("appToast");
+  if (!host) {
+    host = document.createElement("div");
+    host.id = "appToast";
+    host.className = "app-toast";
+    host.setAttribute("role", "status");
+    host.setAttribute("aria-live", "polite");
+    document.body.appendChild(host);
+  }
+  clearTimeout(showToast.timer);
+  host.textContent = message;
+  host.dataset.tone = tone;
+  host.classList.add("visible");
+  showToast.timer = setTimeout(() => host.classList.remove("visible"), 3600);
+}
+function persistLocalState() {
+  const entries = [
+    ["mycar_movements_v1", movements],
+    ["mycar_registers_v1", registers],
+    ["mycar_drivers_v1", drivers],
+    ["mycar_vehicles_v1", vehicles],
+    ["mycar_suppliers_v1", suppliers],
+    ["mycar_payment_methods_v1", paymentMethods],
+    ["mycar_alerts_v1", alerts],
+    ["mycar_alert_history_v1", alertHistory],
+    ["mycar_technical_parameters_v1", technicalParameters],
+  ];
+  const previous = new Map(entries.map(([key]) => [key, localStorage.getItem(key)]));
+  try {
+    entries.forEach(([key, value]) => localStorage.setItem(key, JSON.stringify(value)));
+  } catch (error) {
+    previous.forEach((value, key) => {
+      if (value == null) localStorage.removeItem(key);
+      else localStorage.setItem(key, value);
+    });
+    throw error;
+  }
+}
 function save(syncCloud = true) {
-  localStorage.setItem("mycar_movements_v1", JSON.stringify(movements));
-  localStorage.setItem("mycar_registers_v1", JSON.stringify(registers));
-  localStorage.setItem("mycar_drivers_v1", JSON.stringify(drivers));
-  localStorage.setItem("mycar_vehicles_v1", JSON.stringify(vehicles));
-  localStorage.setItem("mycar_suppliers_v1", JSON.stringify(suppliers));
-  localStorage.setItem("mycar_payment_methods_v1", JSON.stringify(paymentMethods));
-  localStorage.setItem("mycar_alerts_v1", JSON.stringify(alerts));
-  localStorage.setItem("mycar_alert_history_v1", JSON.stringify(alertHistory));
-  localStorage.setItem("mycar_technical_parameters_v1", JSON.stringify(technicalParameters));
-  renderAll();
-  if (syncCloud) window.cloudSync?.queueSave();
+  ensureTechnicalData();
+  persistLocalState();
+  let renderError = null;
+  try {
+    renderAll();
+  } catch (error) {
+    renderError = error;
+    console.error("Os dados foram salvos, mas a atualização da tela falhou:", error);
+  }
+  let syncError = null;
+  if (syncCloud) {
+    try {
+      window.cloudSync?.queueSave();
+    } catch (error) {
+      syncError = error;
+      console.warn("Os dados foram salvos localmente, mas não entraram na fila de sincronização:", error);
+    }
+  }
+  return { persisted: true, renderError, syncError };
 }
 function parseCSV(t) {
   const a = [];
@@ -136,29 +187,17 @@ function normalizeMovement(o, i = 0) {
   o.preco_unitario = +o.preco_unitario || null;
   o.distancia_km = +o.distancia_km || null;
   const rawVehicle = o.veiculo || o.veiculo_nome || "";
-  const vehicleId = String(o.veiculo_id || "").trim();
-
-  // Mantém o nome do movimento exatamente igual ao cadastro oficial.
-  // Aceita tanto os IDs oficiais (vei_001/vei_002) quanto os IDs antigos.
-  if (
-    vehicleId === "vei_002" ||
-    vehicleId === "v2" ||
-    String(rawVehicle).toUpperCase().includes("SONATA") ||
-    String(rawVehicle).includes("Veículo 2")
-  ) {
-    o.veiculo_id = "vei_002";
-    o.veiculo = "Hyundai Sonata";
-  } else if (
-    vehicleId === "vei_001" ||
-    vehicleId === "v1" ||
-    String(rawVehicle).toUpperCase().includes("HB20") ||
-    !rawVehicle
-  ) {
-    o.veiculo_id = "vei_001";
-    o.veiculo = "Hyundai HB20 1.6";
+  const legacyVehicleId = { v1: "vei_001", v2: "vei_002" }[String(o.veiculo_id || "").trim()];
+  const vehicleId = legacyVehicleId || String(o.veiculo_id || "").trim();
+  const registered = vehicles.find((v) => v.id === vehicleId) ||
+    vehicles.find((v) => normalizeText(v.nome) === normalizeText(rawVehicle));
+  if (registered) {
+    o.veiculo_id = registered.id;
+    o.veiculo = registered.nome;
   } else {
-    const registered = vehicles.find((v) => v.id === vehicleId);
-    o.veiculo = registered?.nome || rawVehicle;
+    const fallback = selectedVehicleObject?.() || vehicles.find((v) => v.padrao) || vehicles[0];
+    o.veiculo_id = vehicleId || fallback?.id || "";
+    o.veiculo = rawVehicle || fallback?.nome || "N.I.";
   }
   o.motorista = o.motorista || drivers[0]?.nome || "N.I.";
   o.fornecedor = o.fornecedor || o.local || NI;
@@ -758,9 +797,17 @@ function deleteMovement(id) {
     )
   )
     return;
-  movements = movements.filter((x) => (x.movimento_id || x.id) !== id);
-  recalculateDistances();
-  save();
+  const stateBeforeSave = cloneDataState();
+  try {
+    movements = movements.filter((x) => (x.movimento_id || x.id) !== id);
+    recalculateDistances();
+    save();
+    showToast("Lançamento excluído com sucesso.");
+  } catch (error) {
+    restoreDataState(stateBeforeSave);
+    console.error("Falha ao excluir o lançamento:", error);
+    alert("Não foi possível excluir o lançamento. Nenhum dado foi alterado.");
+  }
 }
 function viewMovement(id) {
   const rows = movements.filter((x) => (x.movimento_id || x.id) === id);
@@ -1508,6 +1555,7 @@ function openEntry(id = "", presetGroup = "") {
       ? vehicles.find((x) => x.nome === current.veiculo)
       : selectedVehicleObject(),
     err = $("#formError");
+  entryReturnPage = currentPageId || "movimentos";
   f.reset();
   f.movementId.value = id;
   $("#movementItems").innerHTML = "";
@@ -1843,14 +1891,30 @@ $("#entryForm").onsubmit = (e) => {
           : null,
     };
   });
-  if (current) movements = movements.filter((m) => (m.movimento_id || m.id) !== movementId);
-  movements.push(...replacements);
-  recalculateDistances();
+  const stateBeforeSave = cloneDataState();
+  try {
+    if (current) movements = movements.filter((m) => (m.movimento_id || m.id) !== movementId);
+    movements.push(...replacements);
+    recalculateDistances();
+    save();
+  } catch (error) {
+    restoreDataState(stateBeforeSave, false);
+    try { recalculateDistances(); } catch (_) {}
+    console.error("Falha ao salvar o lançamento:", error);
+    err.textContent = "Não foi possível salvar o lançamento. Os dados digitados foram preservados; verifique os campos e tente novamente.";
+    return;
+  }
   err.textContent = "";
-  save();
-  evaluateAlerts(true);
   $("#entryDialog").close();
-  go("consultaMovimentos");
+  const destination = document.getElementById(entryReturnPage) ? entryReturnPage : "consultaMovimentos";
+  go(destination, { replace: true });
+  try {
+    evaluateAlerts(true);
+    showToast("Lançamento salvo com sucesso.");
+  } catch (error) {
+    console.error("O lançamento foi salvo, mas as rotinas complementares falharam:", error);
+    showToast("Lançamento salvo. A atualização complementar dos alertas deverá ser conferida.", "warning");
+  }
 };
 function fillRegisterForm() {
   const f = $("#registerForm");
@@ -1946,9 +2010,22 @@ function openRegister(id = "") {
     : "Incluir cadastro";
   $("#registerDialog").showModal();
 }
+function finishRegisterFlow(savedValue = "") {
+  const context = entryContext;
+  if ($("#registerDialog").open) $("#registerDialog").close();
+  if (context && $("#entryDialog").open) {
+    fillDrivers();
+    fillOperationalLists();
+    refreshMovementItemOptions();
+    if (savedValue && context.target) context.target.value = savedValue;
+    entryContext = null;
+    setTimeout(() => $("#entryDialog").focus(), 0);
+  } else {
+    entryContext = null;
+  }
+}
 function closeRegister() {
-  $("#registerDialog").close();
-  if (entryContext && $("#entryDialog").open) entryContext = null;
+  finishRegisterFlow();
 }
 $$(".register-cancel").forEach((button) => button.onclick = closeRegister);
 $("#registerDialog").addEventListener("cancel", (event) => {
@@ -1960,18 +2037,29 @@ function deleteRegister(id) {
   const target = g === "ITEM" ? registers.find((x) => x.id === id) : null;
   if (target?.technicalKey) {
     if (!confirm(`${target.item} sustenta um alerta técnico. Para excluir, os alertas técnicos deste item serão desativados e os movimentos históricos passarão a usar "${NI}". Deseja continuar?`)) return;
-    technicalParameters.filter((p) => p.technicalKey === target.technicalKey).forEach((p) => p.active = false);
-    alerts.filter((a) => a.technicalKey === target.technicalKey).forEach((a) => a.active = false);
-    movements.filter((m) => m.item_id === id || m.item === target.item).forEach((m) => {
-      m.item_id = "technical-ni"; m.item = NI;
-    });
   } else if (!confirm("Excluir este cadastro?")) return;
-  if (g === "ITEM") registers = registers.filter((x) => x.id !== id);
-  if (g === "MOTORISTA") drivers = drivers.filter((x) => x.id !== id);
-  if (g === "VEICULO") vehicles = vehicles.filter((x) => x.id !== id);
-  if (g === "FORNECEDOR") suppliers = suppliers.filter((x) => x.id !== id);
-  if (g === "FORMA_PAGAMENTO") paymentMethods = paymentMethods.filter((x) => x.id !== id);
-  save();
+  const stateBeforeSave = cloneDataState();
+  try {
+    if (target?.technicalKey) {
+      technicalParameters.filter((p) => p.technicalKey === target.technicalKey).forEach((p) => p.active = false);
+      alerts.filter((a) => a.technicalKey === target.technicalKey).forEach((a) => a.active = false);
+      movements.filter((m) => m.item_id === id || m.item === target.item).forEach((m) => {
+        m.item_id = "technical-ni";
+        m.item = NI;
+      });
+    }
+    if (g === "ITEM") registers = registers.filter((x) => x.id !== id);
+    if (g === "MOTORISTA") drivers = drivers.filter((x) => x.id !== id);
+    if (g === "VEICULO") vehicles = vehicles.filter((x) => x.id !== id);
+    if (g === "FORNECEDOR") suppliers = suppliers.filter((x) => x.id !== id);
+    if (g === "FORMA_PAGAMENTO") paymentMethods = paymentMethods.filter((x) => x.id !== id);
+    save();
+    showToast("Cadastro excluído com sucesso.");
+  } catch (error) {
+    restoreDataState(stateBeforeSave);
+    console.error("Falha ao excluir o cadastro:", error);
+    alert("Não foi possível excluir o cadastro. Nenhum dado foi alterado.");
+  }
 }
 $("#registerForm [name=kmInicial]").oninput = (e) =>
   (e.target.value = intFmt(String(e.target.value).replace(/\D/g, "")));
@@ -2026,6 +2114,7 @@ $("#registerForm").onsubmit = (e) => {
   const f = e.target,
     g = f.grupoCadastro.value,
     id = f.id.value;
+  const stateBeforeSave = cloneDataState();
   let savedContextValue = "";
   if (g === "ITEM") {
     const obj = {
@@ -2120,16 +2209,21 @@ $("#registerForm").onsubmit = (e) => {
       if (first) first.padrao = true;
     }
   }
-  recalculateDistances();
-  save();
-  $("#registerDialog").close();
-  if (entryContext && ["ITEM", "MOTORISTA", "FORNECEDOR"].includes(g)) {
-    fillDrivers();
-    fillOperationalLists();
-    refreshMovementItemOptions();
-    entryContext.target.value = savedContextValue;
-    entryContext = null;
+  try {
+    recalculateDistances();
+    save();
+  } catch (error) {
+    restoreDataState(stateBeforeSave);
+    console.error("Falha ao salvar o cadastro:", error);
+    alert("Não foi possível salvar o cadastro. Verifique os dados e tente novamente.");
+    return;
   }
+  finishRegisterFlow(
+    entryContext && ["ITEM", "MOTORISTA", "FORNECEDOR"].includes(g)
+      ? savedContextValue
+      : "",
+  );
+  showToast("Cadastro salvo com sucesso.");
 };
 // O veículo dos movimentos é controlado exclusivamente pela seleção da tela inicial.
 $("#typeFilter").innerHTML =
@@ -2265,6 +2359,46 @@ window.addEventListener("appinstalled", () => {
 });
 refreshInstallControls();
 
+function closeReportViewer() {
+  const dialog = $("#reportViewerDialog");
+  const frame = $("#reportViewerFrame");
+  if (dialog?.open) dialog.close();
+  if (frame) frame.srcdoc = "";
+}
+$("#closeReportViewer").onclick = closeReportViewer;
+$("#reportViewerDialog").addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeReportViewer();
+});
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "mycar-close-report") closeReportViewer();
+});
+function openReportDocument(content, { title = "Relatório MyCar+", autoPrint = false,
+  popupMessage = "Permita janelas pop-up para abrir o relatório." } = {}) {
+  if (isNativeApp()) {
+    const dialog = $("#reportViewerDialog"), frame = $("#reportViewerFrame");
+    $("#reportViewerTitle").textContent = title;
+    frame.onload = () => {
+      if (autoPrint) setTimeout(() => {
+        try { frame.contentWindow?.focus(); frame.contentWindow?.print(); }
+        catch (error) { console.warn("Impressão interna indisponível:", error); }
+      }, 350);
+    };
+    frame.srcdoc = content;
+    dialog.showModal();
+    return frame.contentWindow;
+  }
+  const win = window.open("", "_blank");
+  if (!win) {
+    alert(popupMessage);
+    return null;
+  }
+  win.document.open();
+  win.document.write(content);
+  win.document.close();
+  if (autoPrint) win.addEventListener("load", () => setTimeout(() => win.print(), 350));
+  return win;
+}
 
 function exportPdfReport() {
   const selectedVehicle = selectedVehicleName();
@@ -2358,7 +2492,7 @@ function exportPdfReport() {
   const biggest = expenseGroups.slice().sort((a,b)=>b[1]-a[1])[0];
   const content = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório Executivo MyCar+</title><style>
   :root{--navy:#12395b;--blue:#246b9e;--surface:#eaf4fb;--border:#8a5a35;--text:#111;--muted:#5c6872;--number:#e87519;--green:#1f8a70;--red:#b3261e}*{box-sizing:border-box}body{margin:0;background:#e9edf0;color:var(--text);font-family:Arial,Helvetica,sans-serif}.actions{position:sticky;top:0;z-index:10;display:flex;justify-content:center;gap:8px;padding:10px;background:#12395b}.actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer}.actions .primary{background:#0788e8;color:#fff}.actions .danger{background:#b3261e;color:#fff}.page{width:210mm;min-height:297mm;margin:8px auto;background:#fff;padding:10mm 11mm 9mm;box-shadow:0 4px 18px #0002;display:flex;flex-direction:column}.header{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;border-bottom:3px solid var(--navy);padding-bottom:7px;margin-bottom:8px}.header h1{margin:0;font-size:18px;color:var(--navy)}.brand{font-size:10px;font-weight:800;color:var(--blue)}.meta{font-size:8.5px;line-height:1.5;text-align:right;color:var(--muted)}.section{margin-top:8px;break-inside:avoid}.section-title{margin:0 0 5px;font-size:10px;text-transform:uppercase;letter-spacing:.45px;color:var(--navy)}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.kpi,.card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px}.kpi small{display:block;font-size:7px;color:var(--muted)}.kpi strong{display:block;margin-top:3px;font-size:13px;color:var(--number)}.kpi span{font-size:6.8px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.card h3{margin:0 0 4px;font-size:9px;color:var(--navy)}table{width:100%;border-collapse:collapse;font-size:7.4px;background:#fff;border:1px solid var(--border)}thead{display:table-header-group}tr{break-inside:avoid}th{background:var(--surface);color:var(--navy);text-align:left}th,td{padding:4px 5px;border-bottom:1px solid #d9c6b6;vertical-align:middle}.num{text-align:right;color:var(--number);font-weight:700}.note{background:#fff8f0;border:1px solid var(--border);border-left:4px solid var(--number);border-radius:6px;padding:8px;font-size:8px;line-height:1.45}.svg-chart{width:100%;height:105px;display:block}.svg-chart.monthly{height:150px}.svg-chart .grid line,.axis{stroke:#d6dde3}.svg-chart .line{fill:none;stroke:var(--blue);stroke-width:3}.svg-chart .bars rect{fill:var(--number)}.svg-chart text{font-size:8px;fill:#5c6872;font-weight:700}.empty{height:112px;display:grid;place-items:center;font-size:8px;color:var(--muted)}.tag,.status{display:inline-block;border-radius:999px;padding:2px 6px;font-size:6.6px;font-weight:800;white-space:nowrap}.tag.combustivel{background:#e5f5ee;color:#176b50}.tag.manutencao{background:#fff0d9;color:#8a4c00}.tag.administrativo{background:#edf0ff;color:#3949ab}.tag.receita{background:#e4f5e7;color:#206b31}.status.programado,.status.em-dia{background:#e5f5ee;color:#176b50}.status.atencao{background:#fff0d9;color:#8a4c00}.status.vencido{background:#fde5e5;color:#9e2525}.status.inativo,.status.sem-registro{background:#eceff1;color:#59636b}.footer{margin-top:auto;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;font-size:7px;color:var(--muted)}@page{size:A4;margin:0}@media print{body{background:#fff}.actions{display:none!important}.page{margin:0;box-shadow:none;page-break-after:always}.page:last-child{page-break-after:auto}}@media(max-width:760px){.page{width:100%;min-height:auto;margin:0;padding:14px;box-shadow:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.actions{flex-wrap:wrap}}
-  </style></head><body><div class="actions"><button type="button" id="reportPrintButton">Imprimir</button><button type="button" id="reportPdfButton" class="primary">Salvar PDF</button><button type="button" id="reportCloseButton" class="danger">Fechar</button></div>
+  </style></head><body><div class="actions"><button type="button" id="reportPrintButton">Imprimir</button><button type="button" id="reportPdfButton" class="primary">Relatório Executivo PDF</button><button type="button" id="reportCloseButton" class="danger">Fechar</button></div>
   <main class="page"><div class="header"><div><div class="brand">MyCar+</div><h1>Relatório Executivo Veicular</h1></div><div class="meta"><b>Veículo:</b> ${e(vehicleLabel)}<br><b>Período:</b> ${e(period)}<br><b>Emissão:</b> ${e(emitted)} · <b>Versão:</b> ${e(APP_VERSION)}</div></div>
   <section class="section"><h2 class="section-title">Indicadores principais</h2><div class="kpis">
   <div class="kpi"><small>Distância percorrida</small><strong>${intFmt(s.km)} km</strong><span>${num(s.days?s.km/s.days:0,1)} km/dia</span></div><div class="kpi"><small>Consumo médio geral</small><strong>${num(fuelConsumption,2)} km/L</strong><span>combustíveis consolidados</span></div><div class="kpi"><small>Custo bruto</small><strong>${money(gross)}</strong><span>despesas do período</span></div><div class="kpi"><small>Custo líquido</small><strong>${money(net)}</strong><span>receitas: ${money(income)}</span></div><div class="kpi"><small>Custo por km</small><strong>${money(costKm)}</strong><span>líquido ÷ distância</span></div><div class="kpi"><small>Custo diário</small><strong>${money(costDay)}</strong><span>${intFmt(s.days)} dias</span></div><div class="kpi"><small>Combustível</small><strong>${money(fuelTotal.cost)}</strong><span>${pct(fuelTotal.cost,gross)} do custo bruto</span></div><div class="kpi"><small>Manutenção</small><strong>${money(+groups.Manutenção||0)}</strong><span>${pct(+groups.Manutenção||0,gross)} do custo bruto</span></div></div></section>
@@ -2378,6 +2512,12 @@ function exportPdfReport() {
     try{window.focus();window.print()}catch(e){alert('Não foi possível abrir a impressão neste dispositivo.')}
   }
   function closeReport(){
+    try{
+      if(window.parent&&window.parent!==window){
+        window.parent.postMessage({type:'mycar-close-report'},'*');
+        return;
+      }
+    }catch(e){}
     try{window.close()}catch(e){}
     setTimeout(function(){
       if(!window.closed){
@@ -2391,9 +2531,10 @@ function exportPdfReport() {
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeReport()});
   window.closeReport=closeReport;
 })();<\/script></body></html>`;
-  const win = window.open("", "_blank");
-  if (!win) return alert("Permita janelas pop-up para gerar o relatório.");
-  win.document.open(); win.document.write(content); win.document.close();
+  openReportDocument(content, {
+    title: "Relatório Executivo Veicular",
+    popupMessage: "Permita janelas pop-up para gerar o relatório.",
+  });
 }
 
 const pdfButton = $("#exportPdf"); if (pdfButton) pdfButton.onclick = exportPdfReport;
@@ -2411,6 +2552,23 @@ const DATA_TABLES = {
 function dataState() {
   return { movements, registers, vehicles, drivers, suppliers, paymentMethods, alerts, alertHistory, technicalParameters };
 }
+function cloneDataState() {
+  return JSON.parse(JSON.stringify(dataState()));
+}
+function restoreDataState(state, rerender = true) {
+  movements = state.movements || [];
+  registers = state.registers || [];
+  vehicles = state.vehicles || [];
+  drivers = state.drivers || [];
+  suppliers = state.suppliers || [];
+  paymentMethods = state.paymentMethods || [];
+  alerts = state.alerts || [];
+  alertHistory = state.alertHistory || [];
+  technicalParameters = state.technicalParameters || [];
+  if (rerender) {
+    try { renderAll(); } catch (_) {}
+  }
+}
 function downloadBackup(keys) {
   const tables = {};
   const state = dataState();
@@ -2418,7 +2576,7 @@ function downloadBackup(keys) {
   const payload = {
     app: APP_NAME,
     version: APP_VERSION,
-    schemaVersion: 6,
+    schemaVersion: 8,
     createdAt: new Date().toISOString(),
     tables,
   };
@@ -2451,11 +2609,13 @@ function openDataSelector(mode) {
     if (mode === "restore") {
       const file = dialog.querySelector(".backup-file").files[0];
       if (!file) return (error.textContent = "Selecione o arquivo de backup.");
+      let stateBeforeRestore = null;
       try {
         const backup = JSON.parse(await file.text());
         if (backup.app !== APP_NAME || !backup.tables) throw new Error("Arquivo incompatível.");
         if (keys.some((key) => !Array.isArray(backup.tables[key]))) throw new Error("O backup não contém todas as bases selecionadas.");
         if (!confirm(`Substituir integralmente: ${keys.map((k) => DATA_TABLES[k]).join(", ")}?`)) return;
+        stateBeforeRestore = cloneDataState();
         keys.forEach((key) => {
           if (key === "movements") movements = backup.tables[key].map(normalizeMovement);
           if (key === "registers") registers = backup.tables[key].map(normalizeRegister);
@@ -2475,7 +2635,9 @@ function openDataSelector(mode) {
         dialog.close();
         alert("Restauração concluída. As bases selecionadas foram substituídas.");
       } catch (e) {
-        error.textContent = e.message || "Não foi possível restaurar este backup.";
+        if (stateBeforeRestore) restoreDataState(stateBeforeRestore);
+        console.error("Falha na restauração de dados:", e);
+        error.textContent = e.message || "Não foi possível restaurar este backup. Nenhuma base foi alterada.";
       }
       return;
     }
@@ -2487,6 +2649,7 @@ function openDataSelector(mode) {
     else if (!confirm("Continuar sem fazer backup?")) return;
     if (!confirm(`Primeira confirmação:\n\nExcluir ${keys.map((k) => DATA_TABLES[k]).join(", ")}?`)) return;
     if (prompt('Segunda confirmação: digite EXCLUIR') !== "EXCLUIR") return (error.textContent = "Confirmação inválida. Nada foi excluído.");
+    const stateBeforeDelete = cloneDataState();
     keys.forEach((key) => {
       if (key === "movements") movements = [];
       if (key === "registers") registers = [];
@@ -2498,9 +2661,15 @@ function openDataSelector(mode) {
       if (key === "alertHistory") alertHistory = [];
       if (key === "technicalParameters") technicalParameters = [];
     });
-    save();
-    dialog.close();
-    alert("As bases selecionadas foram excluídas.");
+    try {
+      save();
+      dialog.close();
+      alert("As bases selecionadas foram excluídas.");
+    } catch (e) {
+      restoreDataState(stateBeforeDelete);
+      console.error("Falha na exclusão das bases:", e);
+      error.textContent = "Não foi possível excluir as bases. Nenhum dado foi alterado.";
+    }
   };
   dialog.showModal();
 }
@@ -2540,36 +2709,45 @@ function ensureTechnicalData() {
     registers.push({ id: "technical-ni", grupo: "MANUTENÇÃO", item: NI, padrao: false, ativo: true });
   alerts.forEach((item) => {
     const vehicle = vehicles.find((v) => v.id === item.vehicleId);
-    if (vehicle?.ativo === false) item.active = false;
+    if (vehicle?.ativo === false) {
+      if (item.active) item.activeBeforeVehicleInactive = true;
+      item.active = false;
+    } else if (item.activeBeforeVehicleInactive) {
+      item.active = true;
+      delete item.activeBeforeVehicleInactive;
+    }
   });
   vehicles.filter((v) => v.ativo !== false).forEach((vehicle) => {
     Object.values(TECHNICAL_ITEMS).forEach((spec) => {
       let parameter = technicalParameters.find((p) => p.vehicleId === vehicle.id && p.technicalKey === spec.key);
       if (!parameter) {
         parameter = { id: crypto.randomUUID(), vehicleId: vehicle.id, technicalKey: spec.key,
-          intervalKm: spec.km, intervalMonths: spec.months, active: true };
+          intervalKm: spec.km, intervalMonths: spec.months, active: true, deleted: false };
         technicalParameters.push(parameter);
       }
+      if (parameter.deleted === true) return;
       let item = alerts.find((a) => a.vehicleId === vehicle.id && a.technicalKey === spec.key && !a.archived);
       if (!item) {
         item = { id: crypto.randomUUID(), vehicleId: vehicle.id, group: "MANUTENÇÃO",
           itemId: registers.find((r) => r.technicalKey === spec.key)?.id || "",
           description: spec.label, technicalKey: spec.key, active: parameter.active,
+          technical: true, manualSchedule: false,
           recurrence: spec.key === "OIL" ? "BOTH" : "MONTHS", leadDays: 30, leadKm: spec.key === "OIL" ? 500 : 0 };
         alerts.push(item);
       }
       Object.assign(item, {
+        technical: true,
         active: parameter.active,
-        leadDays: 30,
-        leadKm: spec.key === "OIL" ? 500 : 0,
-        criterion: parameter.intervalKm > 0 && parameter.intervalMonths > 0 ? "BOTH" :
-          parameter.intervalKm > 0 ? "KM" : "DATE",
         recurrenceKm: Number(parameter.intervalKm || 0),
         recurrenceMonths: Number(parameter.intervalMonths || 0),
       });
-      const base = technicalBase(vehicle, spec.key);
-      item.dueKm = parameter.intervalKm ? base.km + Number(parameter.intervalKm) : 0;
-      item.dueDate = parameter.intervalMonths ? addMonths(dateOnly(base.date), parameter.intervalMonths).toISOString().slice(0, 10) : "";
+      if (!item.manualSchedule) {
+        item.criterion = parameter.intervalKm > 0 && parameter.intervalMonths > 0 ? "BOTH" :
+          parameter.intervalKm > 0 ? "KM" : "DATE";
+        const base = technicalBase(vehicle, spec.key);
+        item.dueKm = parameter.intervalKm ? base.km + Number(parameter.intervalKm) : 0;
+        item.dueDate = parameter.intervalMonths ? addMonths(dateOnly(base.date), parameter.intervalMonths).toISOString().slice(0, 10) : "";
+      }
     });
   });
 }
@@ -2596,9 +2774,92 @@ function alertForecast(item) {
 }
 function evaluateAlerts(notify = false) {
   ensureTechnicalData();
-  const due = alerts.filter((a) => ["ATENÇÃO", "VENCIDO"].includes(alertStatus(a)));
+  const selected = selectedVehicleObject();
+  const due = selected?.ativo === false ? [] : alerts.filter((a) =>
+    a.vehicleId === selected?.id && ["ATENÇÃO", "VENCIDO"].includes(alertStatus(a)));
   renderAlerts();
-  if (notify && due.length) alert(`${due.length} alerta(s) técnico(s) ou operacional(is) requer(em) atenção.`);
+  if (notify && due.length) alert(`${due.length} alerta(s) técnico(s) requer(em) atenção para o veículo selecionado.`);
+}
+function deleteAlert(id) {
+  const item = alerts.find((a) => a.id === id);
+  if (!item) return;
+  const vehicle = vehicles.find((v) => v.id === item.vehicleId);
+  if (vehicle?.ativo === false)
+    return alert("Veículo inativo: os alertas estão disponíveis somente para consulta.");
+  if (!confirm(
+    "Excluir alerta técnico?\n\n" +
+    "Os alertas são utilizados na programação das manutenções do veículo. " +
+    "A exclusão removerá somente este alerta e sua programação futura; " +
+    "os registros do histórico técnico serão preservados.\n\n" +
+    "Tem certeza de que deseja excluir?",
+  )) return;
+  const stateBeforeSave = cloneDataState();
+  if (item.technicalKey) {
+    let parameter = technicalParameters.find((p) =>
+      p.vehicleId === item.vehicleId && p.technicalKey === item.technicalKey);
+    if (!parameter) {
+      parameter = { id: crypto.randomUUID(), vehicleId: item.vehicleId,
+        technicalKey: item.technicalKey, intervalKm: 0, intervalMonths: 0 };
+      technicalParameters.push(parameter);
+    }
+    parameter.active = false;
+    parameter.deleted = true;
+  }
+  alerts = alerts.filter((a) => a.id !== id);
+  try {
+    save();
+    showToast("Alerta excluído. O histórico técnico foi preservado.");
+  } catch (error) {
+    restoreDataState(stateBeforeSave);
+    console.error("Falha ao excluir o alerta técnico:", error);
+    alert("Não foi possível excluir o alerta. Nenhum dado foi alterado.");
+  }
+}
+function technicalHistoryRecords(vehicleId) {
+  if (!vehicleId) return [];
+  const vehicle = vehicles.find((v) => v.id === vehicleId);
+  const completed = alertHistory
+    .filter((h) => h.vehicleId === vehicleId)
+    .map((h) => ({
+      id: `history-${h.id}`,
+      date: h.completedAt,
+      km: Number(h.completedKm || 0),
+      description: h.description || "Manutenção concluída",
+      supplier: NI,
+      observation: "Conclusão registrada no histórico técnico",
+      value: 0,
+      status: "CONCLUÍDO",
+      forecast: "Histórico preservado",
+      source: "ALERTA",
+    }));
+  const maintenance = movements
+    .filter((m) => m.grupo === "MANUTENÇÃO" &&
+      (m.veiculo_id === vehicleId || m.veiculo === vehicle?.nome))
+    .map((m) => {
+      const related = alerts.find((a) => a.vehicleId === vehicleId &&
+        (a.itemId === m.item_id || a.description === m.item));
+      return {
+        id: `movement-${m.id}`,
+        date: m.data_hora,
+        km: Number(m.hodometro_km || 0),
+        description: m.item || "Manutenção",
+        supplier: m.fornecedor || NI,
+        observation: m.observacao || "",
+        value: Number(m.valor || 0),
+        status: related ? alertStatus(related) : "REGISTRADO",
+        forecast: related ? alertForecast(related) : "—",
+        source: "MOVIMENTO",
+      };
+    });
+  const seen = new Set();
+  return [...completed, ...maintenance]
+    .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0) || b.km - a.km)
+    .filter((record) => {
+      const key = `${String(record.date || "").slice(0, 10)}|${record.km}|${normalizeText(record.description)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 }
 function renderAlerts() {
   if (!$("#alertList")) return;
@@ -2607,12 +2868,20 @@ function renderAlerts() {
   const vehicleSelect = $("#alertVehicle");
   vehicleSelect.innerHTML = selectedVehicle ? `<option value="${selectedVehicle.id}">${esc(selectedVehicle.nome)}${selectedVehicle.ativo === false ? " (Inativo)" : ""}</option>` : '<option value="">Nenhum veículo selecionado</option>';
   vehicleSelect.value = selectedVehicle?.id || ""; vehicleSelect.disabled = true;
+  $("#newAlert").disabled = !selectedVehicle || selectedVehicle.ativo === false;
+  $("#newAlert").title = selectedVehicle?.ativo === false
+    ? "Veículos inativos não podem receber novos alertas."
+    : "Novo alerta técnico";
   const filteredAlerts = alerts.filter((a) => a.vehicleId === selectedVehicle?.id);
   const rows = filteredAlerts.filter((a) => !$("#alertStatus").value || alertStatus(a) === $("#alertStatus").value);
   const counts = ["VENCIDO", "ATENÇÃO", "PROGRAMADO", "CONCLUÍDO"].map((status) => [status, filteredAlerts.filter((a) => alertStatus(a) === status).length]);
   $("#alertSummary").innerHTML = counts.map(([status,total]) => `<article><small>${status}</small><b>${total}</b></article>`).join("");
-  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>${a.technicalKey ? "⚙ " : "⚠ "}${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span>${a.technicalKey ? "<span>Alerta técnico</span>" : ""}</div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate && !a.technicalKey ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta encontrado para o veículo selecionado.</p>';
-  $$("[data-alert-edit]").forEach((b)=>b.onclick=()=>openAlert(b.dataset.alertEdit)); $$("[data-alert-complete]").forEach((b)=>b.onclick=()=>completeAlert(b.dataset.alertComplete)); $$("[data-alert-toggle]").forEach((b)=>b.onclick=()=>toggleAlert(b.dataset.alertToggle)); $$("[data-alert-delete]").forEach((b)=>b.onclick=()=>{if(confirm("Excluir este alerta? O histórico concluído será preservado.")){alerts=alerts.filter((a)=>a.id!==b.dataset.alertDelete);save();}});
+  $("#alertList").innerHTML = rows.map((a) => { const status=alertStatus(a), vehicle=vehicles.find((v)=>v.id===a.vehicleId), canOperate=vehicle?.ativo!==false; return `<article class="item alert-card" data-status="${status}"><div><b>⚙ ${esc(a.description)}</b><small>${esc(vehicle?.nome || "Veículo não localizado")} · ${esc(a.group || "")}</small><div class="alert-meta"><span>${status}</span><span>Previsão: ${alertForecast(a)}</span><span>Alerta técnico</span></div></div><div class="movement-actions">${canOperate ? `<button type="button" data-alert-edit="${a.id}">Alterar</button>` : ""}${canOperate && !["CONCLUÍDO","INATIVO"].includes(status) ? `<button type="button" data-alert-complete="${a.id}">Concluir</button>` : ""}${canOperate ? `<button type="button" data-alert-toggle="${a.id}">${a.active ? "Desativar" : "Ativar"}</button>` : ""}${canOperate ? `<button type="button" data-alert-delete="${a.id}">Excluir</button>` : ""}</div></article>`; }).join("") || '<p class="muted">Nenhum alerta encontrado para o veículo selecionado.</p>';
+  const history = technicalHistoryRecords(selectedVehicle?.id);
+  $("#technicalHistoryList").innerHTML = history.length
+    ? history.map((record) => `<article class="item"><div><b>${esc(record.description)}</b><small>${record.date ? new Date(record.date).toLocaleDateString("pt-BR") : "Data não informada"} · ${intFmt(record.km)} km · ${record.source === "ALERTA" ? "Conclusão de alerta" : "Lançamento de manutenção"}</small><div class="alert-meta"><span>${esc(record.status)}</span><span>${esc(record.supplier)}</span>${record.observation ? `<span>${esc(record.observation)}</span>` : ""}</div></div><div class="amount"><b>${record.value ? money(record.value) : "Histórico"}</b><small>${esc(record.forecast)}</small></div></article>`).join("")
+    : '<div class="technical-history-empty">Nenhum registro técnico para o veículo selecionado.</div>';
+  $$("[data-alert-edit]").forEach((b)=>b.onclick=()=>openAlert(b.dataset.alertEdit)); $$("[data-alert-complete]").forEach((b)=>b.onclick=()=>completeAlert(b.dataset.alertComplete)); $$("[data-alert-toggle]").forEach((b)=>b.onclick=()=>toggleAlert(b.dataset.alertToggle)); $$("[data-alert-delete]").forEach((b)=>b.onclick=()=>deleteAlert(b.dataset.alertDelete));
 }
 function fillAlertItems() {
   const f = $("#alertForm");
@@ -2623,6 +2892,10 @@ function openAlert(id = "") {
   const f = $("#alertForm"), item = alerts.find((a) => a.id === id);
   f.reset(); f.id.value = id;
   const selectedVehicle = selectedVehicleObject();
+  if (!item && (!selectedVehicle || selectedVehicle.ativo === false)) {
+    alert("Selecione um veículo ativo antes de incluir um alerta técnico.");
+    return;
+  }
   f.vehicleId.innerHTML = selectedVehicle ? `<option value="${selectedVehicle.id}">${esc(selectedVehicle.nome)}</option>` : "";
   f.vehicleId.value = item?.vehicleId || selectedVehicle?.id || "";
   f.vehicleId.disabled = true;
@@ -2638,7 +2911,7 @@ function openAlert(id = "") {
     fillAlertItems();
     f.itemId.value = item.itemId || "";
   }
-  $("#alertFormTitle").textContent = item ? "Alterar alerta" : "Novo alerta";
+  $("#alertFormTitle").textContent = item ? "Alterar alerta técnico" : "Novo alerta técnico";
   $("#alertFormError").textContent = "";
   $("#alertDialog").showModal();
 }
@@ -2648,29 +2921,50 @@ function completeAlert(id) {
   const vehicle = vehicles.find((v) => v.id === item.vehicleId);
   const date = prompt("Data da conclusão (AAAA-MM-DD):", new Date().toISOString().slice(0, 10));
   if (!date) return;
-  const km = Number(prompt("Hodômetro da conclusão:", String(vehicle ? vehicleSummary(vehicle).last : 0)).replace(/\D/g, ""));
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(dateOnly(date)?.getTime()))
+    return alert("Informe uma data válida no formato AAAA-MM-DD.");
+  const kmAnswer = prompt("Hodômetro da conclusão:", String(vehicle ? vehicleSummary(vehicle).last : 0));
+  if (kmAnswer == null) return;
+  const km = Number(String(kmAnswer).replace(/\D/g, ""));
+  if (!(km >= 0)) return alert("Informe um hodômetro válido.");
+  const stateBeforeSave = cloneDataState();
   alertHistory.push({ id: crypto.randomUUID(), alertId: item.id, vehicleId: item.vehicleId,
     technicalKey: item.technicalKey || "", description: item.description, completedAt: date + "T12:00:00", completedKm: km });
-  if (item.technicalKey) {
-    ensureTechnicalData();
-  } else if (item.recurrence !== "NONE") {
+  if (item.recurrence !== "NONE") {
     if (["MONTHS","BOTH"].includes(item.recurrence) && item.recurrenceMonths)
       item.dueDate = addMonths(dateOnly(date), item.recurrenceMonths).toISOString().slice(0, 10);
     if (["KM","BOTH"].includes(item.recurrence) && item.recurrenceKm)
       item.dueKm = km + Number(item.recurrenceKm);
+    item.completed = false;
+    item.manualSchedule = true;
   } else item.completed = true;
-  save();
+  try {
+    save();
+    showToast("Manutenção concluída e histórico técnico atualizado.");
+  } catch (error) {
+    restoreDataState(stateBeforeSave);
+    console.error("Falha ao concluir o alerta:", error);
+    alert("Não foi possível registrar a conclusão. Nenhum histórico foi alterado.");
+  }
 }
 function toggleAlert(id) {
   const item = alerts.find((a) => a.id === id);
   const vehicle = vehicles.find((v) => v.id === item?.vehicleId);
   if (!item || vehicle?.ativo === false) return alert("Alarmes só podem ser ativados para veículos ativos.");
+  const stateBeforeSave = cloneDataState();
   item.active = !item.active;
   if (item.technicalKey) {
     const p = technicalParameters.find((x) => x.vehicleId === item.vehicleId && x.technicalKey === item.technicalKey);
     if (p) p.active = item.active;
   }
-  save();
+  try {
+    save();
+    showToast(item.active ? "Alerta técnico ativado." : "Alerta técnico desativado.");
+  } catch (error) {
+    restoreDataState(stateBeforeSave);
+    console.error("Falha ao alterar a situação do alerta:", error);
+    alert("Não foi possível alterar a situação do alerta. Nenhum dado foi alterado.");
+  }
 }
 $("#newAlert").onclick = () => openAlert();
 $("#alertVehicle").onchange = renderAlerts;
@@ -2680,32 +2974,61 @@ $$(".alert-cancel").forEach((b) => b.onclick = () => $("#alertDialog").close());
 $("#alertForm").onsubmit = (event) => {
   event.preventDefault();
   const f = event.target, data = Object.fromEntries(new FormData(f));
+  data.vehicleId = f.vehicleId.value;
   const current = alerts.find((a) => a.id === data.id);
   if (!data.vehicleId || !data.description || !data.itemId) return ($("#alertFormError").textContent = "Preencha veículo, item e descrição.");
+  const vehicle = vehicles.find((v) => v.id === data.vehicleId);
+  if (!vehicle || vehicle.ativo === false)
+    return ($("#alertFormError").textContent = "Alertas somente podem ser gravados para veículos ativos.");
+  const dueKm = Number(data.dueKm || 0);
+  if (["DATE", "BOTH"].includes(data.criterion) && !data.dueDate)
+    return ($("#alertFormError").textContent = "Informe a data prevista para o critério selecionado.");
+  if (["KM", "BOTH"].includes(data.criterion) && !(dueKm > 0))
+    return ($("#alertFormError").textContent = "Informe a quilometragem prevista para o critério selecionado.");
+  const selectedRegister = registers.find((r) => r.id === data.itemId);
+  const oldTechnicalKey = current?.technicalKey || "";
+  const technicalKey = selectedRegister?.technicalKey || "";
+  const stateBeforeSave = cloneDataState();
+  if (oldTechnicalKey && oldTechnicalKey !== technicalKey) {
+    const previousParameter = technicalParameters.find((p) =>
+      p.vehicleId === data.vehicleId && p.technicalKey === oldTechnicalKey);
+    if (previousParameter) Object.assign(previousParameter, { active: false, deleted: true });
+  }
   const object = { ...current, ...data, id: data.id || crypto.randomUUID(), active: f.active.checked,
+    technical: true, technicalKey, manualSchedule: true, completed: false,
     leadDays: Number(data.leadDays || 0), leadKm: Number(data.leadKm || 0), dueKm: Number(data.dueKm || 0),
     recurrenceMonths: Number(data.recurrenceMonths || 0), recurrenceKm: Number(data.recurrenceKm || 0) };
   if (current) Object.assign(current, object); else alerts.push(object);
   if (object.technicalKey) {
-    const p = technicalParameters.find((x) => x.vehicleId === object.vehicleId && x.technicalKey === object.technicalKey);
-    if (p) Object.assign(p, { active: object.active, intervalKm: object.recurrenceKm, intervalMonths: object.recurrenceMonths });
+    let p = technicalParameters.find((x) => x.vehicleId === object.vehicleId && x.technicalKey === object.technicalKey);
+    if (!p) {
+      p = { id: crypto.randomUUID(), vehicleId: object.vehicleId, technicalKey: object.technicalKey };
+      technicalParameters.push(p);
+    }
+    Object.assign(p, { active: object.active, deleted: false,
+      intervalKm: object.recurrenceKm, intervalMonths: object.recurrenceMonths });
   }
-  $("#alertDialog").close(); save();
+  try {
+    save();
+    $("#alertDialog").close();
+    showToast("Alerta técnico salvo com sucesso.");
+  } catch (error) {
+    restoreDataState(stateBeforeSave);
+    console.error("Falha ao salvar o alerta técnico:", error);
+    $("#alertFormError").textContent = "Não foi possível salvar o alerta. Verifique os dados e tente novamente.";
+  }
 };
 function exportTechnicalPdf() {
-  const vehicleId = selectedVehicleObject()?.id || "";
-  const names = new Map(vehicles.map((v) => [v.id, v.nome]));
-  const ms = movements.filter((m) => m.grupo === "MANUTENÇÃO" &&
-    (m.veiculo_id === vehicleId || m.veiculo === names.get(vehicleId))).sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora));
-  const rows = ms.map((m) => {
-    const related = alerts.find((a) => a.vehicleId === (m.veiculo_id || vehicles.find((v) => v.nome === m.veiculo)?.id) &&
-      (a.itemId === m.item_id || a.description === m.item));
-    return `<tr><td>${new Date(m.data_hora).toLocaleDateString("pt-BR")}</td><td>${intFmt(m.hodometro_km)}</td><td>${esc(m.item)}</td><td>${esc(m.fornecedor || NI)}</td><td>${esc(m.observacao || "")}</td><td>${money(m.valor)}</td><td>${related ? alertStatus(related) : "—"}</td><td>${related ? alertForecast(related) : "—"}</td></tr>`;
-  }).join("");
-  const win = window.open("", "_blank");
-  if (!win) return alert("Permita janelas pop-up para gerar o PDF.");
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Histórico técnico</title><style>@page{size:A4 landscape;margin:12mm}body{font:12px Arial;color:#203040}h1{color:#0f3f66}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccd8e0;padding:6px;text-align:left}th{background:#eaf1f6}</style></head><body><h1>Histórico técnico de manutenção</h1><p>Veículo: ${esc(names.get(vehicleId) || "Nenhum veículo selecionado")} · Emissão: ${new Date().toLocaleDateString("pt-BR")}</p><table><thead><tr><th>Data</th><th>Hodômetro</th><th>Serviço/item</th><th>Fornecedor/oficina</th><th>Descrição</th><th>Valor</th><th>Alerta</th><th>Próxima previsão</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Sem manutenções.</td></tr>'}</tbody></table><script>onload=()=>setTimeout(()=>print(),300)<\/script></body></html>`);
-  win.document.close();
+  const vehicle = selectedVehicleObject();
+  const records = technicalHistoryRecords(vehicle?.id || "");
+  const rows = records.map((record) =>
+    `<tr><td>${record.date ? new Date(record.date).toLocaleDateString("pt-BR") : "—"}</td><td>${intFmt(record.km)}</td><td>${esc(record.description)}</td><td>${esc(record.supplier || NI)}</td><td>${esc(record.observation || "")}</td><td>${record.value ? money(record.value) : "—"}</td><td>${esc(record.status)}</td><td>${esc(record.forecast)}</td></tr>`,
+  ).join("");
+  const content = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Histórico técnico</title><style>@page{size:A4 landscape;margin:12mm}body{font:12px Arial;color:#203040;margin:0;padding:12px}h1{color:#0f3f66}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccd8e0;padding:6px;text-align:left}th{background:#eaf1f6}.actions{display:flex;gap:8px;margin-bottom:14px}.actions button{border:0;border-radius:8px;padding:10px 13px;font-weight:800}.actions .primary{background:#0788e8;color:#fff}.actions .danger{background:#b3261e;color:#fff}@media print{.actions{display:none}}</style></head><body><div class="actions"><button type="button" id="technicalClose" class="danger">Fechar</button><button type="button" id="technicalPrint">Imprimir</button><button type="button" id="technicalSave" class="primary">Histórico técnico PDF</button></div><h1>Histórico técnico de manutenção</h1><p>Veículo: ${esc(vehicle?.nome || "Nenhum veículo selecionado")} · Emissão: ${new Date().toLocaleDateString("pt-BR")}</p><table><thead><tr><th>Data</th><th>Hodômetro</th><th>Serviço/item</th><th>Fornecedor/oficina</th><th>Descrição</th><th>Valor</th><th>Situação</th><th>Próxima previsão</th></tr></thead><tbody>${rows || '<tr><td colspan="8">Sem registros técnicos para o veículo selecionado.</td></tr>'}</tbody></table><script>(function(){function closeMe(){try{if(window.parent&&window.parent!==window){window.parent.postMessage({type:'mycar-close-report'},'*');return}}catch(e){}try{window.close()}catch(e){}}function printMe(){try{window.focus();window.print()}catch(e){alert('Não foi possível abrir a impressão neste dispositivo.')}}document.getElementById('technicalClose').onclick=closeMe;document.getElementById('technicalPrint').onclick=printMe;document.getElementById('technicalSave').onclick=printMe;document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMe()});})();<\/script></body></html>`;
+  openReportDocument(content, {
+    title: "Histórico técnico de manutenção",
+    popupMessage: "Permita janelas pop-up para gerar o histórico técnico.",
+  });
 }
 $("#technicalPdf").onclick = exportTechnicalPdf;
 
@@ -2818,7 +3141,7 @@ function buildAiIndicators(vehicleId, start, end, analysisType) {
     description: item.description,
     status: alertStatus(item),
     forecast: alertForecast(item),
-    technical: Boolean(item.technicalKey),
+    technical: true,
     active: Boolean(item.active),
   }));
   return {
@@ -2900,12 +3223,13 @@ function renderAiReport(report) {
 
 function openAiPrintableReport(autoPrint = false) {
   if (!lastAiReport) return;
-  const content = renderAiReport(lastAiReport);
-  const win = window.open("", "_blank");
-  if (!win) return alert("Permita janelas pop-up para visualizar ou gerar o PDF.");
-  win.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório MyCar+ Intelligence</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#243746;line-height:1.45;max-width:185mm;margin:auto}h1,h2,h4{color:#12395b}.header{border-bottom:3px solid #0788e8;margin-bottom:16px}.ai-meta{color:#607080}.ai-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ai-kpis div{background:#f1f7fb;padding:10px;border-radius:8px}.ai-kpis small{display:block;color:#607080}.ai-report-section{break-inside:avoid;margin:18px 0}.footer{margin-top:25px;border-top:1px solid #ccd9e2;padding-top:8px;color:#607080;font-size:11px}.report-actions{display:flex;gap:10px;margin:24px 0}.report-actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.report-actions button:last-child{background:#0788e8;color:#fff}@media print{button{display:none}}</style></head><body><div class="header"><h1>Relatório Executivo de Gestão Veicular</h1><p><strong>Gerado com Inteligência Artificial</strong> · MyCar+ Intelligence · emissão ${new Date().toLocaleString("pt-BR")}</p></div>${content}<div class="footer">Relatório gerado a partir dos dados informados no MyCar+. Os indicadores são calculados pelo MyCar+. A Inteligência Artificial interpreta os resultados e gera diagnósticos, tendências e recomendações. A qualidade das conclusões depende da consistência dos dados registrados.</div><div class="report-actions"><button type="button" id="aiReportClose">Fechar relatório</button><button type="button" id="aiReportPrint">Imprimir</button><button type="button" id="aiReportPdf">Salvar PDF</button></div><script>(function(){function bridge(){try{return window.MyCarNative||(window.opener&&window.opener.MyCarNative)||null}catch(e){return null}}function doPrint(){var b=bridge();if(b&&typeof b.printDocument==='function'){try{b.printDocument('Relatorio_Inteligencia_MyCarPlus');return}catch(e){}}try{window.focus();window.print()}catch(e){alert('Não foi possível abrir a impressão neste dispositivo.')}}function closeMe(){try{window.close()}catch(e){}setTimeout(function(){if(!window.closed){try{history.length>1?history.back():location.replace('about:blank')}catch(e){}}},150)}document.getElementById('aiReportClose').addEventListener('click',closeMe);document.getElementById('aiReportPrint').addEventListener('click',doPrint);document.getElementById('aiReportPdf').addEventListener('click',doPrint);document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMe()});})();<\/script></body></html>`);
-  win.document.close();
-  if (autoPrint) win.addEventListener("load", () => setTimeout(() => win.print(), 300));
+  const reportBody = renderAiReport(lastAiReport);
+  const documentHtml = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório MyCar+ Intelligence</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#243746;line-height:1.45;max-width:185mm;margin:auto;padding:0 10px}h1,h2,h4{color:#12395b}.header{border-bottom:3px solid #0788e8;margin-bottom:16px}.ai-meta{color:#607080}.ai-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ai-kpis div{background:#f1f7fb;padding:10px;border-radius:8px}.ai-kpis small{display:block;color:#607080}.ai-report-section{break-inside:avoid;margin:18px 0}.footer{margin-top:25px;border-top:1px solid #ccd9e2;padding-top:8px;color:#607080;font-size:11px}.report-actions{display:flex;gap:10px;margin:24px 0}.report-actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.report-actions .primary{background:#0788e8;color:#fff}.report-actions .danger{background:#b3261e;color:#fff}@media print{.report-actions{display:none}}@media(max-width:680px){.ai-kpis{grid-template-columns:1fr 1fr}.report-actions{flex-wrap:wrap}}</style></head><body><div class="header"><h1>Relatório Executivo de Gestão Veicular</h1><p><strong>Gerado com Inteligência Artificial</strong> · MyCar+ Intelligence · emissão ${new Date().toLocaleString("pt-BR")}</p></div>${reportBody}<div class="footer">Relatório gerado a partir dos dados informados no MyCar+. Os indicadores são calculados pelo MyCar+. A Inteligência Artificial interpreta os resultados e gera diagnósticos, tendências e recomendações. A qualidade das conclusões depende da consistência dos dados registrados.</div><div class="report-actions"><button type="button" id="aiReportClose" class="danger">Fechar relatório</button><button type="button" id="aiReportPrint">Imprimir</button><button type="button" id="aiReportPdf" class="primary">Relatório com IA PDF</button></div><script>(function(){function bridge(){try{return window.MyCarNative||(window.opener&&window.opener.MyCarNative)||null}catch(e){return null}}function doPrint(){var b=bridge();if(b&&typeof b.printDocument==='function'){try{b.printDocument('Relatorio_Inteligencia_MyCarPlus');return}catch(e){}}try{window.focus();window.print()}catch(e){alert('Não foi possível abrir a impressão neste dispositivo.')}}function closeMe(){try{if(window.parent&&window.parent!==window){window.parent.postMessage({type:'mycar-close-report'},'*');return}}catch(e){}try{window.close()}catch(e){}setTimeout(function(){if(!window.closed){try{history.length>1?history.back():location.replace('about:blank')}catch(e){}}},150)}document.getElementById('aiReportClose').addEventListener('click',closeMe);document.getElementById('aiReportPrint').addEventListener('click',doPrint);document.getElementById('aiReportPdf').addEventListener('click',doPrint);document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMe()});})();<\/script></body></html>`;
+  openReportDocument(documentHtml, {
+    title: "Relatório com Inteligência Artificial",
+    autoPrint,
+    popupMessage: "Permita janelas pop-up para visualizar ou gerar o PDF.",
+  });
 }
 
 function initializeAiModule() {

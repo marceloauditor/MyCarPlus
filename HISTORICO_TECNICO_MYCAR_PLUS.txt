@@ -1,5 +1,5 @@
 MYCAR+ — HISTÓRICO TÉCNICO CONSOLIDADO
-Atualizado em 26/07/2026
+Atualizado em 31/07/2026
 
 V4 — Estrutura de dados e relatórios
 - Tratamento do dataset veicular, relatório executivo em PDF e gráficos dinâmicos.
@@ -79,3 +79,27 @@ V5.35 — CONSOLIDAÇÃO FINAL
 - IA com segunda tentativa automática e relatório local de contingência.
 - Atalho PWA Novo lançamento abre diretamente a seleção do grupo de lançamento.
 - Documentos anteriores permanecem apenas como histórico de evolução.
+
+============================================================
+VERSÃO 5.42 — IMPLANTAÇÃO DOS AJUSTES CONSOLIDADOS DA V5.41
+Data: 31/07/2026
+============================================================
+
+1. Persistência local transacional e restauração integral em caso de falha.
+2. Lançamentos passam a salvar primeiro e executar alertas/atualizações complementares depois.
+3. Retorno do lançamento à tela de origem, com mensagem clara de sucesso ou erro.
+4. Cadastros rápidos preservam o lançamento e retornam pelo mesmo fluxo em Salvar, Cancelar, Fechar, Esc e Voltar.
+5. Cadastro de alerta coleta explicitamente o vehicleId bloqueado.
+6. Todos os alertas são técnicos e permitem inclusão, alteração, ativação, desativação e exclusão.
+7. Exclusão de alerta remove somente a programação futura e preserva o histórico técnico.
+8. Parâmetros excluídos recebem marca lógica para impedir recriação automática involuntária.
+9. Histórico técnico filtrado pelo veículo selecionado, sem mistura entre veículos.
+10. Veículos inativos não geram alertas ativos.
+11. Relatórios Executivo, Inteligente e Histórico Técnico usam visualizador interno no Android.
+12. Botões de relatório e exportação receberam nomes claros e padronizados.
+13. Exportação/importação XLSX ampliada para alertas, histórico e parâmetros técnicos.
+14. Remoção definitiva de validation.css e mycar-plus-identidade.png, já não utilizados.
+15. Versões alinhadas: app 5.42.0, Android versionCode 542, versionName 5.42.0 e cache mycar-plus-v5-42.
+16. BAT atualizado para V5.42 com validação automática de coesão antes do build.
+17. Validador scripts/validate-cohesion.js implantado para comparar raiz, www e Android.
+
