@@ -4,10 +4,10 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 const expected = {
-  semver: '5.55.0',
-  app: '5.55',
-  versionCode: '555',
-  cache: 'mycar-plus-v5-55',
+  semver: '5.57.0',
+  app: '5.57',
+  versionCode: '557',
+  cache: 'mycar-plus-v5-57',
 };
 const failures = [];
 
@@ -33,7 +33,7 @@ const html = read('index.html');
 const styles = read('styles.css');
 const sw = read('sw.js');
 const gradle = read('android/app/build.gradle');
-const batch = read('ATUALIZAR_MYCAR_V5_55_WEB_ANDROID.bat');
+const batch = read('ATUALIZAR_MYCAR_V5_57_WEB_ANDROID.bat');
 
 assert(pkg.version === expected.semver, `package.json deve estar em ${expected.semver}.`);
 assert(new RegExp(`APP_VERSION\\s*=\\s*["']${expected.app.replace('.', '\\.')}`).test(app), `APP_VERSION deve ser ${expected.app}.`);
@@ -67,6 +67,9 @@ assert(/function\s+setAlertFormMode\s*\(/.test(app), 'Modo consulta somente leit
 assert(html.includes('technical-alert-dialog'), 'Tela do novo alerta técnico ausente.');
 assert(styles.includes('alert-panel-card'), 'Estilos do painel de alertas ausentes.');
 assert(!html.includes('technicalHistoryList'), 'Histórico antigo ainda está visível na tela.');
+assert(!html.includes('id="netTotal"'), 'Resumo azul repetido ainda está na tela inicial.');
+assert(!html.includes('id="costKm"') && !html.includes('id="dailyKm"') && !html.includes('id="avgConsumption"') && !html.includes('id="dailyCost"'), 'Cards repetidos ainda estão na tela inicial.');
+assert(html.includes('id="lastConsumption"') && html.includes('id="lastDistance"'), 'Indicadores exclusivos da tela inicial devem permanecer.');
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');
@@ -83,8 +86,8 @@ assert(/setType\("text\/html"\)/.test(mainActivity), 'Compartilhamento Android n
 assert(/public void onDestroy\(\)/.test(mainActivity), 'onDestroy deve ser público.');
 
 // BAT.
-assert(batch.includes('set "VERSAO=5.55"'), 'BAT não está configurado para 5.55.');
-assert(batch.includes('MYCAR_PLUS_V5_55_MASTER.zip'), 'BAT não procura o ZIP V5.55.');
+assert(batch.includes('set "VERSAO=5.57"'), 'BAT não está configurado para 5.57.');
+assert(batch.includes('MYCAR_PLUS_V5_57_MASTER.zip'), 'BAT não procura o ZIP V5.57.');
 assert(batch.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
 assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 externo.');
 for (const oldVersion of ['41','42','43','44','45','46','47','48','49','50','51','52','53','54']) {

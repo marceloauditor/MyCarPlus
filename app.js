@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.55",
+  APP_VERSION = "5.57",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -779,14 +779,6 @@ function renderHome() {
           new Date(b.data_hora) - new Date(a.data_hora) ||
           +b.hodometro_km - +a.hodometro_km,
       )[0];
-  $("#selectedVehicleLabel").textContent = `Veículo selecionado · ${v || "Nenhum veículo"}`;
-  $("#vehicleOdo").textContent = last
-    ? intFmt(last.hodometro_km) + " km"
-    : "— km";
-  $("#netTotal").textContent = money(s.net);
-  $("#costKm").textContent = s.km ? money(s.net / s.km) : money(0);
-  $("#dailyKm").textContent = num(s.km / s.days) + " km";
-  $("#avgConsumption").textContent = num(s.cons) + " km/L";
   $("#lastConsumption").textContent = lastFuel?.consumo_km_l
     ? num(lastFuel.consumo_km_l) + " km/L"
     : "—";
@@ -794,8 +786,6 @@ function renderHome() {
     lastFuel?.distancia_abastecimento_km != null
       ? intFmt(lastFuel.distancia_abastecimento_km) + " km"
       : "—";
-  $("#dailyCost").textContent = money(s.net / s.days);
-  $("#periodLabel").textContent = `${ms.length} lançamentos`;
   $("#smartInsights").innerHTML = renderSmartDashboard(ms, s);
   $("#vehicleCards").innerHTML = alpha(vehicles)
     .map((x) => {
@@ -961,11 +951,11 @@ function reportScopedState() {
     vehicle,
     movements: scopedMovements,
     registers,
-    vehicles: vehicle ? [vehicle] : vehicles,
+    vehicles,
     drivers,
     suppliers,
     paymentMethods,
-    alerts: vehicle ? alerts.filter((a) => a.vehicleId === vehicle.id) : alerts,
+    alerts,
   };
 }
 async function exportReportXlsx() {
@@ -974,7 +964,24 @@ async function exportReportXlsx() {
   if (!periodIsValid("report")) return alert("Corrija o período antes de gerar o relatório XLSX.");
   const state = reportScopedState();
   if (!state.movements.length) return alert("Não existem movimentos no veículo e período selecionados.");
-  await MyCarPlusDB.exportDatabase(state);
+  const button = $("#exportXlsx");
+  const originalText = button?.textContent || "Gerar Relatório XLSX";
+  try {
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Gerando XLSX...";
+    }
+    await MyCarPlusDB.exportDatabase(state);
+    showToast("Relatório XLSX gerado com sucesso.", "success");
+  } catch (error) {
+    console.error("Falha ao gerar o relatório XLSX:", error);
+    alert("Não foi possível gerar o relatório XLSX. Tente novamente.");
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
 }
 function setupReportGuideControls() {
   const start = $("#reportStart"), end = $("#reportEnd"), clear = $("#clearReportPeriod");

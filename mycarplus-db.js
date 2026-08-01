@@ -5,7 +5,7 @@
  * Este módulo lê e exporta diretamente a estrutura do arquivo MyCarPlus.xlsx.
  */
 window.MyCarPlusDB = (() => {
-  const FILE = "data/MyCarPlus.xlsx?v=555";
+  const FILE = "data/MyCarPlus.xlsx?v=556";
   const NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
   const REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
@@ -214,6 +214,37 @@ window.MyCarPlusDB = (() => {
   const yes = v => v ? "SIM" : "NAO";
   const findId = (arr, name) => arr.find(x => x.nome === name)?.id || "";
 
+  async function blobToBase64(blob) {
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    let binary = "";
+    const chunkSize = 0x8000;
+    for (let index = 0; index < bytes.length; index += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+    }
+    return btoa(binary);
+  }
+
+  async function deliverXlsx(blob) {
+    const bridge = window.MyCarNative;
+    if (bridge && typeof bridge.shareBase64File === "function") {
+      bridge.shareBase64File(
+        "MyCarPlus",
+        "MyCarPlus.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        await blobToBase64(blob)
+      );
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "MyCarPlus.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
   async function exportDatabase(state) {
     const zip = await openTemplate();
     const map = await workbookMap(zip);
@@ -312,11 +343,7 @@ window.MyCarPlusDB = (() => {
       type:"blob",
       mimeType:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "MyCarPlus.xlsx";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    await deliverXlsx(blob);
   }
 
   return { load, exportDatabase };

@@ -1,6 +1,6 @@
-# MyCar+ V5.55
+# MyCar+ V5.57
 
-> A V5.55 utiliza exclusivamente o novo modelo de alertas. O modelo automático antigo, seus parâmetros e registros de teste foram eliminados do código e do dataset.
+> A V5.57 utiliza exclusivamente o novo modelo de alertas. O modelo automático antigo, seus parâmetros e registros de teste foram eliminados do código e do dataset.
 
 
 Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas técnicos e análises veiculares com IA.

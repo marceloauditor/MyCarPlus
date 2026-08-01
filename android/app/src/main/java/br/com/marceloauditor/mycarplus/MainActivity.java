@@ -12,6 +12,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import android.util.Base64;
 
 import androidx.core.content.FileProvider;
 
@@ -70,6 +71,12 @@ public class MainActivity extends BridgeActivity {
         @JavascriptInterface
         public void shareHtml(String jobName, String html) {
             runOnUiThread(() -> writeAndShareHtml(jobName, html));
+        }
+
+        /** Recebe arquivos binários gerados no JavaScript e abre o compartilhamento nativo. */
+        @JavascriptInterface
+        public void shareBase64File(String jobName, String fileName, String mimeType, String base64Data) {
+            runOnUiThread(() -> writeAndShareBase64File(jobName, fileName, mimeType, base64Data));
         }
     }
 
@@ -237,6 +244,53 @@ public class MainActivity extends BridgeActivity {
             startActivity(chooser);
         } catch (Exception error) {
             showMessage("Não foi possível abrir os aplicativos de compartilhamento.");
+        }
+    }
+
+    private void writeAndShareBase64File(
+            String jobName,
+            String fileName,
+            String mimeType,
+            String base64Data
+    ) {
+        if (base64Data == null || base64Data.trim().isEmpty()) {
+            showMessage("Arquivo vazio. Não foi possível compartilhar.");
+            return;
+        }
+        File shareDirectory = new File(getCacheDir(), "shared_reports");
+        if (!shareDirectory.exists() && !shareDirectory.mkdirs()) {
+            showMessage("Não foi possível preparar a pasta de compartilhamento.");
+            return;
+        }
+        deleteOldSharedReports(shareDirectory);
+        String safeName = fileName == null ? "MyCarPlus.xlsx" : fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+        File outputFile = new File(shareDirectory, safeName);
+        try (FileOutputStream output = new FileOutputStream(outputFile)) {
+            output.write(Base64.decode(base64Data, Base64.DEFAULT));
+            output.flush();
+        } catch (Exception error) {
+            if (outputFile.exists()) outputFile.delete();
+            showMessage("Não foi possível criar o arquivo XLSX.");
+            return;
+        }
+        shareBinaryFile(outputFile, jobName, mimeType);
+    }
+
+    private void shareBinaryFile(File file, String jobName, String mimeType) {
+        try {
+            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType(mimeType == null || mimeType.isEmpty() ? "application/octet-stream" : mimeType);
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.putExtra(Intent.EXTRA_SUBJECT, safeJobName(jobName).replace('_', ' '));
+            intent.setClipData(ClipData.newRawUri("Arquivo MyCar+", uri));
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Intent chooser = Intent.createChooser(intent, "Salvar ou compartilhar arquivo XLSX");
+            chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            chooser.setClipData(ClipData.newRawUri("Arquivo MyCar+", uri));
+            startActivity(chooser);
+        } catch (Exception error) {
+            showMessage("Não foi possível abrir os aplicativos para salvar o XLSX.");
         }
     }
 
