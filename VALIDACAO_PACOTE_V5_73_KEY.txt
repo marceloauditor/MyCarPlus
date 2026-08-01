@@ -1,0 +1,17 @@
+MYCAR+ V5.73 KEY — VALIDAÇÃO DO PACOTE
+
+Base: MYCAR_PLUS_V5_72_KEY
+Data: 01/08/2026
+
+Validações executadas:
+- versão 5.73.0 conferida;
+- Android versionCode 573 e versionName 5.73.0 conferidos;
+- cache PWA mycar-plus-v5-73 conferido;
+- sintaxe do app.js aprovada pelo Node.js;
+- validação de coesão aprovada em 27 arquivos;
+- regras do período efetivo testadas;
+- escala adaptativa do hodômetro testada;
+- BAT conferido sem dependência de arquivo PS1 externo;
+- Firebase, dataset e estrutura dos cadastros preservados.
+
+Após a compactação, o ZIP deverá ser testado por descompactação integral e hash SHA-256.

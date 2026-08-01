@@ -1,4 +1,4 @@
-# MyCar+ V5.72
+# MyCar+ V5.73
 
 > A V5.58 utiliza exclusivamente o novo modelo de alertas. O modelo automático antigo, seus parâmetros e registros de teste foram eliminados do código e do dataset.
 
@@ -22,15 +22,15 @@ npm.cmd run validate:cohesion
 
 ## Identificação
 
-- versão: **5.72.0**
-- Android: `versionCode 572` / `versionName 5.72.0`
+- versão: **5.73.0**
+- Android: `versionCode 572` / `versionName 5.73.0`
 - pacote: `br.com.marceloauditor.mycarplus`
 - Firebase: `mycarplus-3180a`
 - cache PWA: `mycar-plus-v5-72`
 
 ## Atualização automatizada
 
-A fonte inclui `ATUALIZAR_MYCAR_V5_72_KEY.bat`. Em toda nova versão, o nome e o conteúdo do BAT devem ser atualizados junto com o software. Consulte `ROTEIRO_ATUALIZACAO_GITHUB_FIREBASE.txt`.
+A fonte inclui `ATUALIZAR_MYCAR_V5_73_KEY.bat`. Em toda nova versão, o nome e o conteúdo do BAT devem ser atualizados junto com o software. Consulte `ROTEIRO_ATUALIZACAO_GITHUB_FIREBASE.txt`.
 
 ## Relatórios e compartilhamento
 

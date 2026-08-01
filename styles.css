@@ -829,9 +829,35 @@ html[data-theme="dark"] .report-guide-action-confirm{background:#8fd19e!importan
 @media(max-width:560px){.report-menu-title{font-size:1.02rem;margin-bottom:12px}}
 
 
-/* V5.72 — identificação compacta e gráficos consolidados */
+/* V5.73 — período efetivo, escala adaptativa e tela Sobre compacta */
 .vehicle-static-summary{width:100%;min-height:50px;border:1px solid var(--line);background:var(--card,#fff);color:var(--ink);border-radius:12px;padding:9px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:0 0 12px;box-shadow:0 8px 22px rgba(16,42,67,.08)}
 .vehicle-static-summary b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}.vehicle-static-summary .vehicle-status{justify-self:end}
 html[data-theme="dark"] .vehicle-static-summary{background:#0b2539!important;color:#eef6ff!important;border-color:#24445d!important}
 html[data-theme="light"] .vehicle-static-summary{background:#fff!important;color:#12395b!important}
 @media(max-width:560px){.vehicle-static-summary{min-height:48px;padding:8px 10px}}
+
+
+/* V5.73 — período efetivo, escala adaptativa e tela Sobre */
+.chart-period-instruction{
+  margin:4px 0 8px!important;
+  padding:6px 8px!important;
+  border-left-width:3px!important;
+  border-radius:7px!important;
+  font-size:.75rem!important;
+  line-height:1.25!important;
+  font-weight:650!important;
+}
+.about-page-title{margin-bottom:10px}
+.about-title-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.about-title-icon{width:40px;height:40px;object-fit:contain;border-radius:10px;flex:0 0 auto;box-shadow:0 5px 14px rgba(16,42,67,.18)}
+.about-title-brand h2{margin:0;line-height:1.1}
+.about-info-stack{display:flex;flex-direction:column;align-items:center;gap:3px;margin:13px 0}
+.about-info-stack strong{display:block;line-height:1.2}
+.about-info-stack span{display:block;line-height:1.25}
+.about-contact-link{display:block!important;max-width:100%;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;font-size:clamp(10.5px,3.2vw,13px)!important;letter-spacing:-.01em;line-height:1.25}
+@media(max-width:390px){
+  .about-title-icon{width:36px;height:36px;border-radius:9px}
+  .about-title-brand{gap:8px}
+  .about-title-brand h2{font-size:1.22rem}
+  .chart-period-instruction{font-size:.7rem!important}
+}

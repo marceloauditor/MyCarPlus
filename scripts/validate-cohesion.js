@@ -82,13 +82,21 @@ assert(!html.includes('id="netTotal"'), 'Resumo azul repetido ainda está na tel
 assert(!html.includes('id="costKm"') && !html.includes('id="dailyKm"') && !html.includes('id="avgConsumption"') && !html.includes('id="dailyCost"'), 'Cards repetidos ainda estão na tela inicial.');
 assert(html.includes('id="lastConsumption"') && html.includes('id="lastDistance"'), 'Indicadores exclusivos da tela inicial devem permanecer.');
 
-// Gráficos e identificação compacta — V5.72.
+// Gráficos, período efetivo e tela Sobre — V5.73.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
 assert(/slice\(0,5\)/.test(app) && html.includes('5 itens com maior valor acumulado'), 'Ranking não foi limitado aos 5 maiores itens.');
 assert(/perKmLabels:\s*\[\.\.\.labels,\s*"Total dos custos"\]/.test(app), 'Barra consolidada Total dos custos ausente.');
 assert(/perKmColors:\s*\["#246b9e",\s*"#246b9e",\s*"#246b9e",\s*"#f28b0c"\]/.test(app), 'Barra consolidada não está configurada em laranja.');
+assert(/function\s+resolveEffectivePeriod\s*\(/.test(app) && /function\s+applyEffectivePeriodToFields\s*\(/.test(app), 'Tratamento centralizado do período efetivo ausente.');
+assert(/effectivePeriodMessage\(effective\)/.test(app) && /Período ajustado aos registros disponíveis/.test(app), 'Mensagem de ajuste do período aos registros ausente.');
+assert(/function\s+calculateNiceAxis\s*\(/.test(app) && /measureText\(label\)/.test(app), 'Escala adaptativa ou margem dinâmica do eixo Y ausente.');
+assert(/niceAxis:true/.test(app), 'Gráfico do hodômetro não ativou a escala adaptativa.');
+assert(html.includes('Altere o período no final da página.'), 'Instrução compacta da tela de gráficos ausente.');
+assert(html.includes('class="about-title-icon"') && html.includes('<h2>Informações</h2>'), 'Novo cabeçalho da tela Sobre ausente.');
+assert(html.includes('class="about-info-stack"') && html.includes('class="about-contact-link"'), 'Desenvolvedor e contato não foram reorganizados na tela Sobre.');
+assert(/white-space:\s*nowrap!important/.test(styles) && /font-size:clamp\(10\.5px,3\.2vw,13px\)/.test(styles), 'E-mail da tela Sobre ainda pode quebrar ou não possui fonte responsiva.');
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');

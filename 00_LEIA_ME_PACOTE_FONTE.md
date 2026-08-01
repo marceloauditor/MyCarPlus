@@ -1,4 +1,4 @@
-# MyCar+ V5.72 — pacote-fonte
+# MyCar+ V5.73 — pacote-fonte
 
 ## Regra vigente dos alertas
 
@@ -28,15 +28,15 @@ Não altere manualmente `www/` ou os assets Android. Edite a raiz e execute a si
 
 ## Atualização automatizada
 
-Na pasta Downloads, mantenha o arquivo `MYCAR_PLUS_V5_72_KEY.zip` e execute:
+Na pasta Downloads, mantenha o arquivo `MYCAR_PLUS_V5_73_KEY.zip` e execute:
 
 ```powershell
-.\ATUALIZAR_MYCAR_V5_72_KEY.bat
+.\ATUALIZAR_MYCAR_V5_73_KEY.bat
 ```
 
 O BAT cria backup, instala dependências, sincroniza Web e Android, valida a coesão e gera o APK de teste.
 
-Se o navegador salvar o ZIP com sufixo como `(1)`, o BAT V5.72 localiza automaticamente o arquivo mais recente compatível na pasta Downloads.
+Se o navegador salvar o ZIP com sufixo como `(1)`, o BAT V5.73 localiza automaticamente o arquivo mais recente compatível na pasta Downloads.
 
 ## Relatórios V5.52
 

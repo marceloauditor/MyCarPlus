@@ -1,0 +1,18 @@
+MYCAR+ V5.73 — RESULTADO DA VALIDAÇÃO DE COESÃO
+
+Data: 01/08/2026
+
+[OK] Versão da aplicação: 5.73.0
+[OK] Android versionCode: 573
+[OK] Android versionName: 5.73.0
+[OK] Cache PWA: mycar-plus-v5-73
+[OK] Sintaxe JavaScript de app.js aprovada
+[OK] Sintaxe JavaScript de scripts/validate-cohesion.js aprovada
+[OK] 27 arquivos conferidos na cadeia raiz → www → Android
+[OK] Período parcialmente excedente ajustado à primeira e à última movimentação
+[OK] Período totalmente fora do histórico identificado sem ajuste indevido
+[OK] Escala Y adaptativa validada em variação curta e longa de hodômetro
+[OK] Margem esquerda dinâmica calculada pela largura dos rótulos
+[OK] Tela Sobre reorganizada e e-mail protegido contra quebra
+
+RESULTADO FINAL: APROVADO
