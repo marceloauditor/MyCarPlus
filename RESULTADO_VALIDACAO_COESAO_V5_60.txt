@@ -1,3 +1,0 @@
-VALIDAÇÃO DE COESÃO: APROVADA
-Versão: 5.60.0 | Android code: 560 | Cache: mycar-plus-v5-60
-17 arquivos conferidos na cadeia raiz → www → Android.

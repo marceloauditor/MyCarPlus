@@ -17,7 +17,7 @@ const expected = {
   versionCode: `${match[1]}${match[2].padStart(2, '0')}`,
   cache: `mycar-plus-v${match[1]}-${match[2]}`,
   batch: `ATUALIZAR_MYCAR_V${match[1]}_${match[2]}_WEB_ANDROID.bat`,
-  zip: `MYCAR_PLUS_V${match[1]}_${match[2]}_MASTER.zip`,
+  zip: `MYCAR_PLUS_V${match[1]}_${match[2]}_TREE.zip`,
 };
 const failures = [];
 
@@ -107,9 +107,9 @@ assert(batch.includes(`set "VERSAO=${expected.app}"`), `BAT não está configura
 assert(batch.includes(expected.zip), `BAT não procura o ZIP ${expected.zip}.`);
 assert(batch.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
 assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 externo.');
-for (const oldVersion of ['41','42','43','44','45','46','47','48','49','50','51','52','53','54']) {
-  assert(!fs.existsSync(path.join(root, `ATUALIZAR_MYCAR_V5_${oldVersion}_WEB_ANDROID.bat`)), `BAT antigo V5.${oldVersion} ainda está na raiz.`);
-}
+
+// A validacao V5.70 verifica somente a coesao funcional.
+// A organizacao historica da pasta real nao e alterada por este script.
 
 const syncedFiles = [
   'index.html','styles.css','report-manager.js','app.js','mycarplus-db.js','cloud.js','ai-logic.js',

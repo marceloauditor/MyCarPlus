@@ -1,8 +1,0 @@
-VALIDACAO COESAO V5.53
-- index.html atualizado na raiz, www e android assets
-- styles.css atualizado na raiz, www e android assets
-- app.js atualizado na raiz, www e android assets
-- package.json sincronizado
-- package-lock.json sincronizado
-- versionCode Android: 553
-- versionName Android: 5.53.0

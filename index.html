@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.69</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.70</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -155,42 +155,36 @@
 <section id="relatorios" class="page">
 <select id="reportVehicle" hidden aria-hidden="true"></select>
 <div class="report-guide-screen">
-  <section class="report-guide-card report-guide-vehicle-card selected-vehicle-context">
-    <small>Veículo selecionado</small>
-    <strong id="reportVehicleName">—</strong>
-    <span id="reportVehicleMeta" class="report-guide-meta">—</span>
-  </section>
-
-  <section class="report-guide-card report-guide-period-card">
-    <div class="report-guide-card-title">Período</div>
-    <div class="report-guide-period-grid">
-      <label class="report-guide-field">
-        <span>Data inicial</span>
-        <input id="reportStart" type="date">
-      </label>
-      <label class="report-guide-field">
-        <span>Data final</span>
-        <input id="reportEnd" type="date">
-      </label>
-    </div>
-    <div class="report-guide-period-foot">
-      <small id="reportDefaultHint">Padrão: últimos 6 meses. Altere as datas para consultar outro período.</small>
-    </div>
-    <p id="reportPeriodError" class="period-error"></p>
-  </section>
-
-  <section class="report-guide-card report-guide-actions-card">
-    <div class="report-guide-card-title">Ações</div>
+  <section id="reportMenuView" class="report-guide-card report-guide-actions-card report-menu-only">
     <div class="report-guide-actions">
       <button id="exportPdf" type="button" class="report-guide-action report-guide-action-blue">GERAR RELATÓRIO EXECUTIVO</button>
       <button id="reportAiButton" type="button" class="report-guide-action report-guide-action-orange">GERAR RELATÓRIO POR I.A.</button>
-      <button id="exportXlsx" type="button" class="report-guide-action report-guide-action-red">Gerar Relatório XLSX</button>
+      <button id="exportXlsx" type="button" class="report-guide-action report-guide-action-red">GERAR RELATÓRIO XLSX</button>
     </div>
+    <button type="button" id="reportBackButton" class="report-guide-back" data-back>Voltar</button>
   </section>
 
-  <button type="button" id="reportBackButton" class="report-guide-back" data-back>Voltar</button>
-
-  <p id="reportPeriodLabel" class="report-guide-note">Os relatórios serão gerados conforme o período informado.</p>
+  <section id="reportPeriodView" class="report-period-step" hidden>
+    <section class="report-guide-card report-guide-vehicle-card selected-vehicle-context">
+      <small>Veículo selecionado</small>
+      <strong id="reportVehicleName">—</strong>
+      <span id="reportVehicleMeta" class="report-guide-meta">—</span>
+    </section>
+    <section class="report-guide-card report-guide-period-card">
+      <div id="reportSelectedTypeTitle" class="report-guide-card-title">Período do relatório</div>
+      <div class="report-guide-period-grid">
+        <label class="report-guide-field"><span>Data inicial</span><input id="reportStart" type="date"></label>
+        <label class="report-guide-field"><span>Data final</span><input id="reportEnd" type="date"></label>
+      </div>
+      <div class="report-guide-period-foot">
+        <small id="reportDefaultHint">Padrão: últimos 12 meses. Altere as datas para consultar outro período.</small>
+      </div>
+      <p id="reportPeriodError" class="period-error"></p>
+    </section>
+    <button id="reportGenerateSelected" type="button" class="report-guide-action report-guide-action-blue">GERAR RELATÓRIO</button>
+    <button id="reportPeriodBack" type="button" class="report-guide-back">Voltar</button>
+    <p id="reportPeriodLabel" class="report-guide-note">O relatório será gerado conforme o período informado.</p>
+  </section>
 </div>
 </section>
 <section id="intelligence" class="page">
@@ -208,13 +202,13 @@
     <span id="aiVehicleStatus" class="ai-guide-meta"></span>
   </section>
 
-  <section class="ai-guide-card ai-guide-period-card">
+  <section class="ai-guide-card ai-guide-period-card ai-period-inherited" hidden>
     <div class="ai-guide-card-title">Período da análise</div>
     <div class="ai-guide-period-grid">
       <label class="ai-guide-field">Data inicial *<input id="aiStart" type="date" required></label>
       <label class="ai-guide-field">Data final *<input id="aiEnd" type="date" required></label>
     </div>
-    <small class="ai-guide-help">O período informado na Guia de Relatórios é mantido aqui.</small>
+    <small class="ai-guide-help">Período definido na etapa anterior.</small>
   </section>
 
   <section class="ai-guide-card ai-guide-type-card">
@@ -256,23 +250,8 @@
 <small>Veículo definido na tela inicial</small>
 <strong id="chartVehicleName">—</strong>
 </div>
-<section class="report-guide-card report-guide-period-card chart-period-card" data-period="chart">
-<div class="report-guide-card-title">Período</div>
-<div class="report-guide-period-grid chart-period-grid">
-<label class="report-guide-field">
-<span>Data inicial</span>
-<input id="chartStart" type="date">
-</label>
-<label class="report-guide-field">
-<span>Data final</span>
-<input id="chartEnd" type="date">
-</label>
-</div>
-<div class="report-guide-period-foot">
-<small id="chartPeriodLabel">Padrão: últimos 6 meses. Altere as datas para consultar outro período.</small>
-</div>
-<p id="chartPeriodError" class="period-error"></p>
-</section>
+<p class="chart-period-instruction">Para alterar o período de análise, role até o final da página.</p>
+
 <div id="chartEmpty" class="empty-state" hidden>Nenhum lançamento encontrado no período selecionado.</div>
 <div id="chartContent">
 <h3 class="chart-section-title">Desempenho do veículo</h3>
@@ -327,6 +306,23 @@
 </canvas>
 </div>
 </div>
+<section class="report-guide-card report-guide-period-card chart-period-card" data-period="chart">
+<div class="report-guide-card-title">Alterar período de análise</div>
+<div class="report-guide-period-grid chart-period-grid">
+<label class="report-guide-field">
+<span>Data inicial</span>
+<input id="chartStart" type="date">
+</label>
+<label class="report-guide-field">
+<span>Data final</span>
+<input id="chartEnd" type="date">
+</label>
+</div>
+<div class="report-guide-period-foot">
+<small id="chartPeriodLabel">Padrão: últimos 6 meses. Altere as datas para consultar outro período.</small>
+</div>
+<p id="chartPeriodError" class="period-error"></p>
+</section>
 </section>
 <section id="cadastros" class="page">
 <input type="hidden" id="registerGroup" value="ITEM">
@@ -500,7 +496,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V5.69</h3>
+<h3>Manual de utilização — MyCar+ V5.70</h3>
 <p>Controle de abastecimentos, manutenções, despesas administrativas, receitas, relatórios, gráficos, alertas técnicos e sincronização entre Android e Web.</p>
 <details open><summary>1. Visão geral</summary><p>O MyCar+ organiza os dados por veículo. A seleção feita na tela inicial controla lançamentos, indicadores, relatórios, gráficos, alertas e análise inteligente. Use a mesma Conta Google no Android e na Web para manter os dados sincronizados pelo Firebase.</p></details>
 <details><summary>2. Seleção do veículo</summary><p>A tela inicial mostra somente o veículo selecionado em uma barra compacta. Toque na barra para abrir a lista com rolagem, localize o veículo e toque nele. São exibidos apenas o nome e o status Ativo ou Inativo.</p></details>
@@ -538,7 +534,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.69</p>
+<strong>Versão:</strong> 5.70</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>

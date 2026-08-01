@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
@@ -16,7 +13,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 import android.widget.FrameLayout;
-import android.view.View;
 import android.view.ViewGroup;
 import android.util.Base64;
 
@@ -29,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MainActivity extends BridgeActivity {
 
@@ -86,12 +81,6 @@ public class MainActivity extends BridgeActivity {
         @JavascriptInterface
         public void shareHtmlWithCover(String jobName, String html, String coverFileName, String coverBase64) {
             runOnUiThread(() -> writeAndShareHtmlWithCover(jobName, html, coverFileName, coverBase64));
-        }
-
-        /** Converte o relatório HTML em duas páginas JPEG e abre o compartilhamento nativo. */
-        @JavascriptInterface
-        public void shareHtmlAsImages(String jobName, String html) {
-            runOnUiThread(() -> renderAndShareHtmlAsImages(jobName, html));
         }
 
         /** Recebe arquivos binários gerados no JavaScript e abre o compartilhamento nativo. */
@@ -202,115 +191,6 @@ public class MainActivity extends BridgeActivity {
                 "UTF-8",
                 null
         );
-    }
-
-
-    private void renderAndShareHtmlAsImages(String jobName, String html) {
-        if (html == null || html.trim().isEmpty()) {
-            showMessage("Relatório vazio. Não foi possível gerar as imagens.");
-            return;
-        }
-
-        destroyPrintWebView();
-        final String safeName = safeFileName(jobName);
-        final int targetWidth = 1240;
-
-        printWebView = new WebView(this);
-        printWebView.setBackgroundColor(Color.WHITE);
-        printWebView.getSettings().setJavaScriptEnabled(true);
-        printWebView.getSettings().setDefaultTextEncodingName("UTF-8");
-        printWebView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
-
-        printContainer = new FrameLayout(this);
-        printContainer.setAlpha(0.01f);
-        addContentView(printContainer, new FrameLayout.LayoutParams(2, 2));
-        printContainer.addView(printWebView, new FrameLayout.LayoutParams(targetWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        printWebView.setWebViewClient(new WebViewClient() {
-            private boolean captureStarted = false;
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                if (captureStarted) return;
-                captureStarted = true;
-                view.postDelayed(() -> {
-                    try {
-                        int contentHeight = Math.max(1, Math.round(view.getContentHeight() * view.getScale()));
-                        view.measure(
-                                View.MeasureSpec.makeMeasureSpec(targetWidth, View.MeasureSpec.EXACTLY),
-                                View.MeasureSpec.makeMeasureSpec(contentHeight, View.MeasureSpec.EXACTLY)
-                        );
-                        view.layout(0, 0, targetWidth, contentHeight);
-                        shareWebViewAsTwoJpegs(view, safeName, contentHeight, targetWidth);
-                    } catch (Exception error) {
-                        showMessage("Não foi possível converter o relatório em imagens.");
-                        destroyPrintWebView();
-                    }
-                }, 900L);
-            }
-        });
-
-        printWebView.loadDataWithBaseURL(
-                "https://appassets.androidplatform.net/",
-                html,
-                "text/html",
-                "UTF-8",
-                null
-        );
-    }
-
-    private void shareWebViewAsTwoJpegs(WebView webView, String safeName, int totalHeight, int width) throws IOException {
-        File shareDirectory = new File(getCacheDir(), "shared_reports");
-        if (!shareDirectory.exists() && !shareDirectory.mkdirs()) {
-            throw new IOException("Pasta de compartilhamento indisponível");
-        }
-        deleteOldSharedReports(shareDirectory);
-
-        int pageHeight = Math.max(1, (int) Math.ceil(totalHeight / 2.0));
-        ArrayList<Uri> pageUris = new ArrayList<>();
-
-        for (int page = 0; page < 2; page++) {
-            Bitmap bitmap = Bitmap.createBitmap(width, pageHeight, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            canvas.drawColor(Color.WHITE);
-            canvas.save();
-            canvas.translate(0, -page * pageHeight);
-            webView.draw(canvas);
-            canvas.restore();
-
-            File pageFile = new File(
-                    shareDirectory,
-                    String.format(Locale.US, "%s_PAGINA_%02d.jpg", safeName, page + 1)
-            );
-            try (FileOutputStream output = new FileOutputStream(pageFile)) {
-                if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 94, output)) {
-                    throw new IOException("Falha ao compactar a página");
-                }
-                output.flush();
-            } finally {
-                bitmap.recycle();
-            }
-            pageUris.add(FileProvider.getUriForFile(
-                    this,
-                    getPackageName() + ".fileprovider",
-                    pageFile
-            ));
-        }
-
-        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        intent.setType("image/jpeg");
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, pageUris);
-        intent.putExtra(Intent.EXTRA_SUBJECT, safeName.replace('_', ' '));
-        ClipData clipData = ClipData.newRawUri("Página 1 MyCar+", pageUris.get(0));
-        clipData.addItem(new ClipData.Item(pageUris.get(1)));
-        intent.setClipData(clipData);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        Intent chooser = Intent.createChooser(intent, "Compartilhar relatório como imagens");
-        chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        chooser.setClipData(clipData);
-        startActivity(chooser);
-        destroyPrintWebView();
     }
 
     private void writeAndShareHtml(String jobName, String html) {

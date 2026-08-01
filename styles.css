@@ -816,26 +816,5 @@ body.report-viewer-open>nav{display:none!important}
 .report-viewer-shell{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;background:#fff!important}
 .report-viewer-frame{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;min-height:0!important;border:0!important;overflow:auto!important;background:#fff!important}
 
-/* V5.69 — escolha do formato de compartilhamento dos relatórios */
-.report-share-choice-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 12000;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: rgba(3, 15, 31, 0.72);
-}
-.report-share-choice {
-  width: min(100%, 390px);
-  display: grid;
-  gap: 12px;
-  padding: 22px;
-  border-radius: 18px;
-  background: var(--surface, #fff);
-  color: var(--text, #10263b);
-  box-shadow: 0 24px 60px rgba(0,0,0,.28);
-}
-.report-share-choice h3,
-.report-share-choice p { margin: 0; }
-.report-share-choice button { width: 100%; min-height: 48px; }
+/* V5.70 — fluxo de períodos */
+.report-menu-only{margin-top:8px}.report-period-step[hidden]{display:none!important}.report-period-step{display:grid;gap:12px}.chart-period-instruction{margin:8px 0 14px;padding:10px 12px;border-left:4px solid var(--primary,#246b9e);border-radius:8px;background:rgba(36,107,158,.10);font-weight:700}.chart-period-card{margin-top:18px;margin-bottom:22px}.report-guide-actions-card.report-menu-only .report-guide-actions{gap:14px}.report-guide-actions-card.report-menu-only .report-guide-action{min-height:52px}
