@@ -172,4 +172,4 @@ Data: 31/07/2026
 
 V5.59 - Indicador permanente de alertas, log técnico e painel de sincronização ampliado.
 
-V5.60 - Período completo automático nos gráficos; relatório executivo com Valor e Fornecedor; destaque da próxima referência; telas e seletor de veículo compactados.
+V5.61 - Período completo automático nos gráficos; relatório executivo com Valor e Fornecedor; destaque da próxima referência; telas e seletor de veículo compactados.

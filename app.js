@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.60",
+  APP_VERSION = "5.61",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -789,13 +789,38 @@ function renderHome() {
       ? intFmt(lastFuel.distancia_abastecimento_km) + " km"
       : "—";
   $("#smartInsights").innerHTML = renderSmartDashboard(ms, s);
-  $("#vehicleCards").innerHTML = alpha(vehicles)
-    .map((x) => {
-      const selected = x.nome === v;
-      const status = x.ativo === false ? "Inativo" : "Ativo";
-      return `<button type="button" class="vehicle-card vehicle-card-compact ${x.padrao ? "default" : ""} ${x.ativo === false ? "inactive" : ""} ${selected ? "selected" : ""}" data-select-vehicle="${x.nome}" aria-pressed="${selected}"><b>${x.nome}</b><span class="vehicle-status ${x.ativo === false ? "inactive" : "active"}">${status}</span>${x.padrao ? '<em>PADRÃO</em>' : ""}</button>`;
-    })
-    .join("");
+  const selectedVehicle = vehicles.find((x) => x.nome === v) || vehicles[0] || null;
+  const orderedVehicles = [...vehicles].sort((a, b) => {
+    if (a.nome === v) return -1;
+    if (b.nome === v) return 1;
+    const activeDifference = Number(a.ativo === false) - Number(b.ativo === false);
+    return activeDifference || a.nome.localeCompare(b.nome, "pt-BR");
+  });
+  const selectedStatus = selectedVehicle?.ativo === false ? "Inativo" : "Ativo";
+  $("#vehicleCards").innerHTML = selectedVehicle
+    ? `<div class="vehicle-select-shell">
+        <button type="button" id="vehicleSelectToggle" class="vehicle-select-toggle" aria-expanded="false" aria-haspopup="listbox">
+          <b>${selectedVehicle.nome}</b>
+          <span class="vehicle-status ${selectedVehicle.ativo === false ? "inactive" : "active"}">${selectedStatus}</span>
+          <span class="vehicle-select-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div id="vehicleSelectMenu" class="vehicle-select-menu" role="listbox" hidden>
+          ${orderedVehicles.map((x) => `<button type="button" class="vehicle-select-option ${x.nome === v ? "selected" : ""}" data-select-vehicle="${x.nome}" role="option" aria-selected="${x.nome === v}"><b>${x.nome}</b><span class="vehicle-status ${x.ativo === false ? "inactive" : "active"}">${x.ativo === false ? "Inativo" : "Ativo"}</span></button>`).join("")}
+        </div>
+      </div>`
+    : `<button type="button" class="vehicle-select-toggle empty" data-go-register-vehicles><b>Nenhum veículo cadastrado</b><span class="vehicle-select-arrow">▼</span></button>`;
+  const toggle = $("#vehicleSelectToggle");
+  const menu = $("#vehicleSelectMenu");
+  if (toggle && menu) {
+    toggle.onclick = (event) => {
+      event.stopPropagation();
+      const open = menu.hidden;
+      menu.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.querySelector(".vehicle-select-arrow").textContent = open ? "▲" : "▼";
+    };
+    menu.onclick = (event) => event.stopPropagation();
+  }
   $$("[data-select-vehicle]").forEach((button) => {
     button.onclick = () => selectVehicle(button.dataset.selectVehicle);
   });
@@ -3551,6 +3576,59 @@ function openAiPrintableReport() {
     popupMessage: "Permita janelas pop-up para visualizar o relatório.",
   });
 }
+
+
+function helpManualHtml() {
+  const source = document.getElementById("helpManualContent");
+  if (!source) return "";
+  const clone = source.cloneNode(true);
+  clone.querySelectorAll("button,.help-share-actions").forEach((node) => node.remove());
+  clone.querySelectorAll("details").forEach((detail) => detail.open = true);
+  const generatedAt = new Date().toLocaleString("pt-BR");
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Manual de Ajuda — MyCar+ V${APP_VERSION}</title><style>
+  :root{font-family:Arial,sans-serif;color:#16324a;background:#f4f7f9}body{margin:0;padding:24px}.manual{max-width:900px;margin:auto;background:#fff;border:1px solid #d7e1e8;border-radius:16px;padding:28px;box-shadow:0 10px 28px rgba(15,50,75,.08)}h1{margin:0;color:#12395b}header{border-bottom:3px solid #1769aa;padding-bottom:16px;margin-bottom:20px}header p{margin:6px 0;color:#5f7180}details{border:1px solid #d7e1e8;border-radius:10px;margin:9px 0;padding:10px 12px;break-inside:avoid}summary{font-weight:800;color:#12395b}p{line-height:1.55}.footer{margin-top:24px;padding-top:12px;border-top:1px solid #d7e1e8;color:#667884;font-size:12px}.actions{display:flex;gap:10px;justify-content:center;margin-top:20px}.actions button{border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer}.actions .primary{background:#1769aa;color:#fff}.actions .secondary{background:#eef3f6;color:#12395b}@media(max-width:600px){body{padding:10px}.manual{padding:16px;border-radius:12px}}@media print{body{padding:0;background:#fff}.manual{box-shadow:none;border:0;max-width:none}.actions{display:none}}
+  </style></head><body><main class="manual"><header><h1>Manual de Ajuda — MyCar+</h1><p>Versão ${APP_VERSION} · Gerado em ${generatedAt}</p></header>${clone.innerHTML}<div class="actions"><button class="primary" onclick="window.print()">Imprimir</button><button class="secondary" onclick="window.print()">Salvar como PDF</button></div><div class="footer">MyCar+ · Manual de Ajuda · V${APP_VERSION}</div></main></body></html>`;
+}
+
+async function shareHelpManual() {
+  const html = helpManualHtml();
+  if (!html) return alert("Não foi possível preparar o manual de ajuda.");
+  const fileName = `MANUAL_AJUDA_MYCAR_PLUS_V${APP_VERSION.replace(".", "_")}.html`;
+  try {
+    const bridge = window.MyCarNative;
+    if (isNativeApp() && bridge && typeof bridge.shareHtml === "function") {
+      bridge.shareHtml(fileName.replace(/\.html$/i, ""), html);
+      return;
+    }
+  } catch (error) { console.warn("Compartilhamento Android indisponível:", error); }
+  const file = new File([html], fileName, { type: "text/html;charset=utf-8" });
+  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    try { await navigator.share({ title: `Manual MyCar+ V${APP_VERSION}`, files: [file] }); return; }
+    catch (error) { if (error?.name === "AbortError") return; }
+  }
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  showToast("Manual HTML preparado para download.");
+}
+
+document.addEventListener("click", (event) => {
+  const menu = document.getElementById("vehicleSelectMenu");
+  const toggle = document.getElementById("vehicleSelectToggle");
+  if (menu && toggle && !menu.hidden && !event.target.closest(".vehicle-select-shell")) {
+    menu.hidden = true; toggle.setAttribute("aria-expanded", "false");
+    const arrow = toggle.querySelector(".vehicle-select-arrow"); if (arrow) arrow.textContent = "▼";
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  const menu = document.getElementById("vehicleSelectMenu");
+  const toggle = document.getElementById("vehicleSelectToggle");
+  if (menu && toggle && !menu.hidden) { menu.hidden = true; toggle.setAttribute("aria-expanded", "false"); toggle.focus(); }
+});
+const shareHelpButton = document.getElementById("shareHelpManual");
+if (shareHelpButton) shareHelpButton.addEventListener("click", shareHelpManual);
 
 function initializeAiModule() {
   const form=$("#aiAnalysisForm"); if(!form)return;
