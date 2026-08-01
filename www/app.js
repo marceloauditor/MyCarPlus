@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.58",
+  APP_VERSION = "5.60",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -400,6 +400,7 @@ function selectedVehicleObject() {
 function selectVehicle(name) {
   if (!vehicles.some((v) => v.nome === name)) return;
   localStorage.setItem("mycar_selected_vehicle_v1", name);
+  if (document.getElementById("chartStart")) ensureChartPeriodDefaults(true);
   renderAll();
 }
 function fillVehicleSelects() {
@@ -790,9 +791,9 @@ function renderHome() {
   $("#smartInsights").innerHTML = renderSmartDashboard(ms, s);
   $("#vehicleCards").innerHTML = alpha(vehicles)
     .map((x) => {
-      const z = vehicleSummary(x);
       const selected = x.nome === v;
-      return `<button type="button" class="vehicle-card ${x.padrao ? "default" : ""} ${x.ativo === false ? "inactive" : ""} ${selected ? "selected" : ""}" data-select-vehicle="${x.nome}" aria-pressed="${selected}"><div><b>${x.nome}</b><small>${x.ativo === false ? "Inativo · somente consultas" : "Ativo"}${x.padrao ? " · Padrão" : ""}</small></div><strong>${intFmt(z.last)} km</strong><span>Inicial ${intFmt(z.initial)} · Rodados ${intFmt(z.driven)} km · ${z.driven ? money(z.stats.net / z.driven) : money(0)}/km</span>${x.padrao ? '<em>PADRÃO</em>' : ""}${selected ? '<i>SELECIONADO</i>' : ""}</button>`;
+      const status = x.ativo === false ? "Inativo" : "Ativo";
+      return `<button type="button" class="vehicle-card vehicle-card-compact ${x.padrao ? "default" : ""} ${x.ativo === false ? "inactive" : ""} ${selected ? "selected" : ""}" data-select-vehicle="${x.nome}" aria-pressed="${selected}"><b>${x.nome}</b><span class="vehicle-status ${x.ativo === false ? "inactive" : "active"}">${status}</span>${x.padrao ? '<em>PADRÃO</em>' : ""}</button>`;
     })
     .join("");
   $$("[data-select-vehicle]").forEach((button) => {
@@ -1294,11 +1295,28 @@ function renderNewCharts(ms) {
   drawChart($("#chartCategoryTotal"), composition.labels, composition.totals, "money");
   drawChart($("#chartTopSubcategories"), composition.topLabels, composition.topValues, "money");
 }
+function ensureChartPeriodDefaults(force = false) {
+  const vehicleName = $("#chartVehicle").value || $("#homeVehicle").value;
+  const start = $("#chartStart");
+  const end = $("#chartEnd");
+  if (!start || !end) return;
+  const dates = movements
+    .filter((movement) => movement.veiculo === vehicleName && !movement.deletedAt && movement.data_hora)
+    .map((movement) => String(movement.data_hora).slice(0, 10))
+    .filter(Boolean)
+    .sort();
+  if (force || !start.value) start.value = dates[0] || "";
+  if (force || !end.value) end.value = new Date().toISOString().slice(0, 10);
+}
 function renderCharts() {
+  ensureChartPeriodDefaults(false);
   const selected = $("#chartVehicle").value,
     allVisible = filterByPeriod(filtered(selected), "chart"),
     validPeriod = periodIsValid("chart");
-  $("#chartPeriodLabel").textContent = `Período: ${periodText("chart")}`;
+  const firstDate = movements.filter((movement) => movement.veiculo === selected && !movement.deletedAt && movement.data_hora).map((movement) => String(movement.data_hora).slice(0,10)).sort()[0] || "";
+  const today = new Date().toISOString().slice(0,10);
+  const complete = $("#chartStart").value === firstDate && $("#chartEnd").value === today;
+  $("#chartPeriodLabel").textContent = complete ? "Período completo do veículo" : `Período personalizado: ${periodText("chart")}`;
   $("#chartEmpty").hidden = !validPeriod || allVisible.length > 0;
   $("#chartContent").hidden = !validPeriod || allVisible.length === 0;
   if (!validPeriod || !allVisible.length) return;
@@ -1403,6 +1421,7 @@ function renderAll() {
   renderReports();
   renderRegisters();
   renderAlerts();
+  updateHomeAlertIndicator();
   setTimeout(renderCharts, 50);
 }
 let currentPageId = "inicio";
@@ -1450,6 +1469,12 @@ function navigateBack() {
 $$("[data-page]").forEach((b) => (b.onclick = () => go(b.dataset.page)));
 $$("[data-go]").forEach((b) => (b.onclick = () => go(b.dataset.go)));
 $$("[data-back]").forEach((b) => (b.onclick = navigateBack));
+const homeAlertIndicator = $("#homeAlertIndicator");
+if (homeAlertIndicator) homeAlertIndicator.onclick = () => {
+  const vehicle = selectedVehicleObject();
+  if (!vehicle || vehicle.ativo === false) return showToast("Selecione um veículo ativo para consultar os alertas.");
+  go("alertas");
+};
 
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
@@ -2347,8 +2372,12 @@ $("#search").oninput = renderMovements;
     $("#" + prefix + suffix).onchange = render;
   });
   $("#clear" + prefix[0].toUpperCase() + prefix.slice(1) + "Period").onclick = () => {
-    $("#" + prefix + "Start").value = "";
-    $("#" + prefix + "End").value = "";
+    if (prefix === "chart") {
+      ensureChartPeriodDefaults(true);
+    } else {
+      $("#" + prefix + "Start").value = "";
+      $("#" + prefix + "End").value = "";
+    }
     render();
   };
 });
@@ -2655,18 +2684,20 @@ function exportPdfReport() {
       name: register.item,
       lastDate: movement?.data_hora || "",
       lastKm: movement?.hodometro_km || 0,
+      value: movement?.valor ?? null,
+      supplier: movement?.fornecedor || movement?.local || "Não informado",
       forecast: alertForecast(alertItem),
       status: alertStatus(alertItem),
       active: alertItem.active,
     };
   });
   const maintenanceHtml = maintenanceRows.length
-    ? maintenanceRows.map((row) => `<tr><td data-label="Serviço">${e(row.name)}</td><td data-label="Último registro">${row.lastDate ? dateBR(row.lastDate) : "Sem registro"}</td><td data-label="Hodômetro" class="num">${row.lastKm ? intFmt(row.lastKm)+" km" : "—"}</td><td data-label="Próxima referência">${e(row.forecast)}</td><td data-label="Situação técnica"><span class="status ${String(row.status).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(row.status === "INATIVO" ? "Monitoramento inativo" : row.status)}</span></td><td data-label="Alerta">${row.active ? "Ativo" : "Desativado"}</td></tr>`).join("")
-    : '<tr><td colspan="6">Nenhum item do cadastro possui alerta do novo modelo para este veículo.</td></tr>';
+    ? maintenanceRows.map((row) => `<tr><td data-label="Serviço">${e(row.name)}</td><td data-label="Último registro">${row.lastDate ? dateBR(row.lastDate) : "Sem registro"}</td><td data-label="Valor" class="num">${row.lastDate && row.value != null ? money(row.value) : "—"}</td><td data-label="Fornecedor">${row.lastDate ? e(row.supplier) : "—"}</td><td data-label="Km">${row.lastKm ? intFmt(row.lastKm)+" km" : "—"}</td><td data-label="Próxima referência" class="next-reference ${String(row.status).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(row.forecast)}</td><td data-label="Situação técnica"><span class="status ${String(row.status).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(row.status === "INATIVO" ? "Monitoramento inativo" : row.status)}</span></td><td data-label="Alerta">${row.active ? "Ativo" : "Desativado"}</td></tr>`).join("")
+    : '<tr><td colspan="8">Nenhum item do cadastro possui alerta do novo modelo para este veículo.</td></tr>';
 
   const biggest = expenseGroups.slice().sort((a,b)=>b[1]-a[1])[0];
   const content = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Relatório Executivo MyCar+</title><style>
-  :root{--navy:#12395b;--blue:#246b9e;--surface:#eaf4fb;--border:#8a5a35;--text:#111;--muted:#5c6872;--number:#e87519;--green:#1f8a70;--red:#b3261e}*{box-sizing:border-box}body{margin:0;background:#e9edf0;color:var(--text);font-family:Arial,Helvetica,sans-serif}.actions{display:flex;justify-content:center;gap:10px;padding:14px 12px calc(14px + env(safe-area-inset-bottom));background:#12395b}.actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer}.actions .primary{background:#0788e8;color:#fff}.actions .danger{background:#b3261e;color:#fff}.page{width:210mm;min-height:297mm;margin:8px auto;background:#fff;padding:10mm 11mm 9mm;box-shadow:0 4px 18px #0002;display:flex;flex-direction:column}.header{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;border-bottom:3px solid var(--navy);padding-bottom:7px;margin-bottom:8px}.header h1{margin:0;font-size:18px;color:var(--navy)}.brand{font-size:10px;font-weight:800;color:var(--blue)}.meta{font-size:8.5px;line-height:1.5;text-align:right;color:var(--muted)}.section{margin-top:8px;break-inside:avoid}.section-title{margin:0 0 5px;font-size:10px;text-transform:uppercase;letter-spacing:.45px;color:var(--navy)}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.kpi,.card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px}.kpi small{display:block;font-size:7px;color:var(--muted)}.kpi strong{display:block;margin-top:3px;font-size:13px;color:var(--number)}.kpi span{font-size:6.8px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.card h3{margin:0 0 4px;font-size:9px;color:var(--navy)}table{width:100%;border-collapse:collapse;font-size:7.4px;background:#fff;border:1px solid var(--border)}thead{display:table-header-group}tr{break-inside:avoid}th{background:var(--surface);color:var(--navy);text-align:left}th,td{padding:4px 5px;border-bottom:1px solid #d9c6b6;vertical-align:middle}.num{text-align:right;color:var(--number);font-weight:700}.note{background:#fff8f0;border:1px solid var(--border);border-left:4px solid var(--number);border-radius:6px;padding:8px;font-size:8px;line-height:1.45}.svg-chart{width:100%;height:105px;display:block}.svg-chart.monthly{height:150px}.svg-chart .grid line,.axis{stroke:#d6dde3}.svg-chart .line{fill:none;stroke:var(--blue);stroke-width:3}.svg-chart .bars rect{fill:var(--number)}.svg-chart text{font-size:8px;fill:#5c6872;font-weight:700}.empty{height:112px;display:grid;place-items:center;font-size:8px;color:var(--muted)}.tag,.status{display:inline-block;border-radius:999px;padding:2px 6px;font-size:6.6px;font-weight:800;white-space:nowrap}.tag.combustivel{background:#e5f5ee;color:#176b50}.tag.manutencao{background:#fff0d9;color:#8a4c00}.tag.administrativo{background:#edf0ff;color:#3949ab}.tag.receita{background:#e4f5e7;color:#206b31}.status.programado,.status.em-dia{background:#e5f5ee;color:#176b50}.status.atencao{background:#fff0d9;color:#8a4c00}.status.vencido{background:#fde5e5;color:#9e2525}.status.inativo,.status.sem-registro{background:#eceff1;color:#59636b}.footer{margin-top:auto;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;font-size:7px;color:var(--muted)}@page{size:A4 portrait;margin:0}@media print{html,body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;background:#fff!important}.actions{display:none!important}.page{width:210mm;min-height:297mm;margin:0!important;padding:10mm 11mm 9mm!important;box-shadow:none!important;page-break-after:always;break-after:page}.page:last-child{page-break-after:auto;break-after:auto}}@media screen and (max-width:760px){html,body{width:100%;max-width:100%;overflow-x:hidden}body{background:#f4f7f9}.actions{position:sticky;bottom:0;z-index:20;flex-wrap:wrap;padding:10px}.actions button{flex:1 1 145px;min-height:44px}.page{width:100%;max-width:100%;min-height:0;margin:0 0 10px;padding:14px 10px;box-shadow:none;overflow:hidden}.header{grid-template-columns:1fr;align-items:start;gap:7px}.header h1{font-size:20px;line-height:1.15;overflow-wrap:anywhere}.brand{font-size:12px}.meta{text-align:left;font-size:11px;overflow-wrap:anywhere}.section{margin-top:14px;max-width:100%}.section-title{font-size:13px;margin-bottom:8px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi,.card{min-width:0;padding:10px;overflow:hidden}.kpi small{font-size:10px}.kpi strong{font-size:15px;overflow-wrap:anywhere}.kpi span{font-size:9px}.grid2{grid-template-columns:minmax(0,1fr);gap:10px}.card h3{font-size:12px}.responsive-table{display:block;width:100%;max-width:100%;border:0;background:transparent}.responsive-table thead{display:none}.responsive-table tbody{display:block;width:100%}.responsive-table tr{display:block;width:100%;margin:0 0 10px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff}.responsive-table td{display:grid;grid-template-columns:minmax(104px,40%) minmax(0,1fr);gap:8px;align-items:start;width:100%;padding:7px 8px;border-bottom:1px solid #e6d9cf;white-space:normal;overflow-wrap:anywhere;word-break:normal;text-align:left!important;font-size:10px}.responsive-table td:last-child{border-bottom:0}.responsive-table td::before{content:attr(data-label);font-weight:800;color:var(--navy);font-size:9px}.responsive-table td[colspan]{display:block;text-align:center!important}.responsive-table td[colspan]::before{content:none}.num{text-align:left!important}.note{font-size:11px;padding:10px;overflow-wrap:anywhere}.svg-chart{width:100%;max-width:100%;height:auto;min-height:145px}.svg-chart.monthly{height:auto;min-height:180px}.svg-chart text{font-size:10px}.tag,.status{max-width:100%;font-size:8.5px;white-space:normal}.footer{gap:8px;font-size:9px;padding-top:7px}.footer span{min-width:0;overflow-wrap:anywhere}}@media screen and (max-width:390px){.kpis{grid-template-columns:1fr}.header h1{font-size:18px}.actions button{flex-basis:100%}.responsive-table td{grid-template-columns:minmax(92px,38%) minmax(0,1fr)}}
+  :root{--navy:#12395b;--blue:#246b9e;--surface:#eaf4fb;--border:#8a5a35;--text:#111;--muted:#5c6872;--number:#e87519;--green:#1f8a70;--red:#b3261e}*{box-sizing:border-box}body{margin:0;background:#e9edf0;color:var(--text);font-family:Arial,Helvetica,sans-serif}.actions{display:flex;justify-content:center;gap:10px;padding:14px 12px calc(14px + env(safe-area-inset-bottom));background:#12395b}.actions button{border:0;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer}.actions .primary{background:#0788e8;color:#fff}.actions .danger{background:#b3261e;color:#fff}.page{width:210mm;min-height:297mm;margin:8px auto;background:#fff;padding:10mm 11mm 9mm;box-shadow:0 4px 18px #0002;display:flex;flex-direction:column}.header{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;border-bottom:3px solid var(--navy);padding-bottom:7px;margin-bottom:8px}.header h1{margin:0;font-size:18px;color:var(--navy)}.brand{font-size:10px;font-weight:800;color:var(--blue)}.meta{font-size:8.5px;line-height:1.5;text-align:right;color:var(--muted)}.section{margin-top:8px;break-inside:avoid}.section-title{margin:0 0 5px;font-size:10px;text-transform:uppercase;letter-spacing:.45px;color:var(--navy)}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.kpi,.card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px}.kpi small{display:block;font-size:7px;color:var(--muted)}.kpi strong{display:block;margin-top:3px;font-size:13px;color:var(--number)}.kpi span{font-size:6.8px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.card h3{margin:0 0 4px;font-size:9px;color:var(--navy)}table{width:100%;border-collapse:collapse;font-size:7.4px;background:#fff;border:1px solid var(--border)}thead{display:table-header-group}tr{break-inside:avoid}th{background:var(--surface);color:var(--navy);text-align:left}th,td{padding:4px 5px;border-bottom:1px solid #d9c6b6;vertical-align:middle}.num{text-align:right;color:var(--number);font-weight:700}.next-reference{font-weight:900;color:var(--blue);font-size:1.06em}.next-reference.vencido{color:var(--red)}.next-reference.atencao{color:#a95b00}.next-reference.inativo{color:var(--muted)}.note{background:#fff8f0;border:1px solid var(--border);border-left:4px solid var(--number);border-radius:6px;padding:8px;font-size:8px;line-height:1.45}.svg-chart{width:100%;height:105px;display:block}.svg-chart.monthly{height:150px}.svg-chart .grid line,.axis{stroke:#d6dde3}.svg-chart .line{fill:none;stroke:var(--blue);stroke-width:3}.svg-chart .bars rect{fill:var(--number)}.svg-chart text{font-size:8px;fill:#5c6872;font-weight:700}.empty{height:112px;display:grid;place-items:center;font-size:8px;color:var(--muted)}.tag,.status{display:inline-block;border-radius:999px;padding:2px 6px;font-size:6.6px;font-weight:800;white-space:nowrap}.tag.combustivel{background:#e5f5ee;color:#176b50}.tag.manutencao{background:#fff0d9;color:#8a4c00}.tag.administrativo{background:#edf0ff;color:#3949ab}.tag.receita{background:#e4f5e7;color:#206b31}.status.programado,.status.em-dia{background:#e5f5ee;color:#176b50}.status.atencao{background:#fff0d9;color:#8a4c00}.status.vencido{background:#fde5e5;color:#9e2525}.status.inativo,.status.sem-registro{background:#eceff1;color:#59636b}.footer{margin-top:auto;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;font-size:7px;color:var(--muted)}@page{size:A4 portrait;margin:0}@media print{html,body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;background:#fff!important}.actions{display:none!important}.page{width:210mm;min-height:297mm;margin:0!important;padding:10mm 11mm 9mm!important;box-shadow:none!important;page-break-after:always;break-after:page}.page:last-child{page-break-after:auto;break-after:auto}}@media screen and (max-width:760px){html,body{width:100%;max-width:100%;overflow-x:hidden}body{background:#f4f7f9}.actions{position:sticky;bottom:0;z-index:20;flex-wrap:wrap;padding:10px}.actions button{flex:1 1 145px;min-height:44px}.page{width:100%;max-width:100%;min-height:0;margin:0 0 10px;padding:14px 10px;box-shadow:none;overflow:hidden}.header{grid-template-columns:1fr;align-items:start;gap:7px}.header h1{font-size:20px;line-height:1.15;overflow-wrap:anywhere}.brand{font-size:12px}.meta{text-align:left;font-size:11px;overflow-wrap:anywhere}.section{margin-top:14px;max-width:100%}.section-title{font-size:13px;margin-bottom:8px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi,.card{min-width:0;padding:10px;overflow:hidden}.kpi small{font-size:10px}.kpi strong{font-size:15px;overflow-wrap:anywhere}.kpi span{font-size:9px}.grid2{grid-template-columns:minmax(0,1fr);gap:10px}.card h3{font-size:12px}.responsive-table{display:block;width:100%;max-width:100%;border:0;background:transparent}.responsive-table thead{display:none}.responsive-table tbody{display:block;width:100%}.responsive-table tr{display:block;width:100%;margin:0 0 10px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff}.responsive-table td{display:grid;grid-template-columns:minmax(104px,40%) minmax(0,1fr);gap:8px;align-items:start;width:100%;padding:7px 8px;border-bottom:1px solid #e6d9cf;white-space:normal;overflow-wrap:anywhere;word-break:normal;text-align:left!important;font-size:10px}.responsive-table td:last-child{border-bottom:0}.responsive-table td::before{content:attr(data-label);font-weight:800;color:var(--navy);font-size:9px}.responsive-table td[colspan]{display:block;text-align:center!important}.responsive-table td[colspan]::before{content:none}.num{text-align:left!important}.note{font-size:11px;padding:10px;overflow-wrap:anywhere}.svg-chart{width:100%;max-width:100%;height:auto;min-height:145px}.svg-chart.monthly{height:auto;min-height:180px}.svg-chart text{font-size:10px}.tag,.status{max-width:100%;font-size:8.5px;white-space:normal}.footer{gap:8px;font-size:9px;padding-top:7px}.footer span{min-width:0;overflow-wrap:anywhere}}@media screen and (max-width:390px){.kpis{grid-template-columns:1fr}.header h1{font-size:18px}.actions button{flex-basis:100%}.responsive-table td{grid-template-columns:minmax(92px,38%) minmax(0,1fr)}}
   </style></head><body><main class="page"><div class="header"><div><div class="brand">MyCar+</div><h1>Relatório Executivo Veicular</h1></div><div class="meta"><b>Veículo:</b> ${e(vehicleLabel)}<br><b>Período:</b> ${e(period)}<br><b>Emissão:</b> ${e(emitted)} · <b>Versão:</b> ${e(APP_VERSION)}</div></div>
   <section class="section"><h2 class="section-title">Indicadores principais</h2><div class="kpis">
   <div class="kpi"><small>Distância percorrida</small><strong>${intFmt(s.km)} km</strong><span>${num(s.days?s.km/s.days:0,1)} km/dia</span></div><div class="kpi"><small>Consumo médio geral</small><strong>${num(fuelConsumption,2)} km/L</strong><span>combustíveis consolidados</span></div><div class="kpi"><small>Custo bruto</small><strong>${money(gross)}</strong><span>despesas do período</span></div><div class="kpi"><small>Custo líquido</small><strong>${money(net)}</strong><span>receitas: ${money(income)}</span></div><div class="kpi"><small>Custo por km</small><strong>${money(costKm)}</strong><span>líquido ÷ distância</span></div><div class="kpi"><small>Custo diário</small><strong>${money(costDay)}</strong><span>${intFmt(s.days)} dias</span></div><div class="kpi"><small>Combustível</small><strong>${money(fuelTotal.cost)}</strong><span>${pct(fuelTotal.cost,gross)} do custo bruto</span></div><div class="kpi"><small>Manutenção</small><strong>${money(+groups.Manutenção||0)}</strong><span>${pct(+groups.Manutenção||0,gross)} do custo bruto</span></div></div></section>
@@ -2675,7 +2706,7 @@ function exportPdfReport() {
   <section class="section"><h2 class="section-title">Leitura executiva</h2><div class="note">O maior grupo de gastos foi <b>${e(biggest[0])}</b>, com <b>${pct(biggest[1],gross)}</b> do custo bruto. O consumo médio geral foi de <b>${num(fuelConsumption,2)} km/L</b> e o custo líquido por quilômetro foi de <b>${money(costKm)}</b>. Foram consolidados <b>${ms.length}</b> lançamentos.</div></section><div class="footer"><span>MyCar+ · Relatório Executivo</span><span>Página 1 de 2 · v${e(APP_VERSION)}</span></div></main>
   <main class="page"><div class="header"><div><div class="brand">MyCar+</div><h1>Movimentações e manutenção</h1></div><div class="meta"><b>Veículo:</b> ${e(vehicleLabel)}<br><b>Período:</b> ${e(period)}</div></div>
   <section class="section"><h2 class="section-title">Últimos lançamentos por grupo</h2><table class="responsive-table"><thead><tr><th>Grupo</th><th>Item</th><th>Data</th><th class="num">Km</th><th class="num">Valor</th></tr></thead><tbody>${latestHtml}</tbody></table></section>
-  <section class="section"><h2 class="section-title">Manutenções com alertas cadastrados</h2><table class="responsive-table"><thead><tr><th>Serviço</th><th>Último registro</th><th class="num">Km</th><th>Próxima referência</th><th>Situação técnica</th><th>Alerta</th></tr></thead><tbody>${maintenanceHtml}</tbody></table><div class="note" style="margin-top:7px"><b>Regra:</b> esta relação contém somente itens existentes no Cadastro de Itens e que possuem alerta do novo modelo cadastrado para o veículo selecionado.</div></section>
+  <section class="section"><h2 class="section-title">Manutenções com alertas cadastrados</h2><table class="responsive-table"><thead><tr><th>Serviço</th><th>Último registro</th><th class="num">Valor</th><th>Fornecedor</th><th>Km</th><th>Próxima referência</th><th>Situação técnica</th><th>Alerta</th></tr></thead><tbody>${maintenanceHtml}</tbody></table><div class="note" style="margin-top:7px"><b>Regra:</b> esta relação contém somente itens existentes no Cadastro de Itens e que possuem alerta do novo modelo cadastrado para o veículo selecionado.</div></section>
   <div class="footer"><span>MyCar+ · Relatório Executivo</span><span>Página 2 de 2 · v${e(APP_VERSION)}</span></div></main><div class="actions"><button type="button" id="reportCloseButton" class="danger">Fechar</button><button type="button" id="reportShareButton" class="primary">Compartilhar</button></div><script>(function(){
   function printableDocument(){
     var clone=document.documentElement.cloneNode(true);
@@ -2760,6 +2791,8 @@ function downloadBackup(keys) {
     version: APP_VERSION,
     schemaVersion: 9,
     createdAt: new Date().toISOString(),
+    deviceId: localStorage.getItem("mycar_device_id") || "dispositivo-local",
+    recordCounts: Object.fromEntries(Object.entries(tables).map(([key, rows]) => [key, rows.length])),
     tables,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -2914,13 +2947,26 @@ function alertForecast(item) {
   if (item.criterion !== "DATE" && Number(item.dueKm)) parts.push(`${intFmt(item.dueKm)} km`);
   return parts.join(" ou ") || "Sem previsão";
 }
+function updateHomeAlertIndicator() {
+  const button = $("#homeAlertIndicator");
+  const counter = $("#homeAlertCount");
+  if (!button || !counter) return;
+  const selected = selectedVehicleObject();
+  const expired = !selected || selected.ativo === false ? [] : alerts.filter((item) => item.vehicleId === selected.id && alertStatus(item) === "VENCIDO");
+  const neutral = !selected || selected.ativo === false;
+  button.classList.toggle("safe", !neutral && expired.length === 0);
+  button.classList.toggle("danger", expired.length > 0);
+  button.classList.toggle("neutral", neutral);
+  counter.textContent = String(expired.length);
+  counter.hidden = expired.length === 0;
+  const label = neutral ? "Selecione um veículo ativo para consultar os alertas" : expired.length ? `${expired.length} alerta(s) técnico(s) vencido(s)` : "Alertas técnicos em dia";
+  button.title = label;
+  button.setAttribute("aria-label", label);
+}
 function evaluateAlerts(notify = false) {
   ensureAlertData();
-  const selected = selectedVehicleObject();
-  const due = selected?.ativo === false ? [] : alerts.filter((a) =>
-    a.vehicleId === selected?.id && ["ATENÇÃO", "VENCIDO"].includes(alertStatus(a)));
   renderAlerts();
-  if (notify && due.length) alert(`${due.length} alerta(s) técnico(s) requer(em) atenção para o veículo selecionado.`);
+  updateHomeAlertIndicator();
 }
 function deleteAlert(id) {
   const item = alerts.find((a) => a.id === id);
@@ -3037,7 +3083,7 @@ function renderAlerts() {
         <button type="button" class="danger" data-alert-delete="${item.id}" ${selectedVehicle?.ativo === false ? "disabled" : ""}>${alertPanelSvg("trash")}<span>Excluir</span></button>
       </div>
     </article>`;
-  }).join("") || '<div class="alert-panel-empty"><b>Nenhum alerta técnico cadastrado.</b><span>Use o botão “Novo alerta técnico” para iniciar a programação.</span></div>';
+  }).join("") || '<div class="alert-panel-empty"><b>Nenhum alerta técnico cadastrado.</b><span>Use o botão “Incluir Alerta” para cadastrar a programação de manutenção.</span></div>';
 
   $$('[data-alert-view]').forEach((button) => button.onclick = () => openAlert(button.dataset.alertView, "view"));
   $$('[data-alert-edit]').forEach((button) => button.onclick = () => openAlert(button.dataset.alertEdit, "edit"));

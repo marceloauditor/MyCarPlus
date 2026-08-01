@@ -5,6 +5,7 @@
   const QUEUE = 'mycar_cloud_pending_v2';
   const BASELINE = 'mycar_cloud_baseline_v2';
   const META = 'mycar_cloud_meta_v2';
+  const LOG = 'mycar_cloud_log_v1';
   const LEGACY_QUEUE = 'mycar_cloud_pending_v1';
   const INTERVAL = 30000;
   const SCHEMA_VERSION = 9;
@@ -23,6 +24,8 @@
   const pending = () => json(QUEUE, {});
   const baseline = () => json(BASELINE, Object.fromEntries(TABLES.map(t => [t, []])));
   const metadata = () => json(META, {});
+  const logs = () => json(LOG, []);
+  const addLog = (operation, details = {}) => { const rows=[{at:iso(),operation,...details},...logs()].slice(0,100); put(LOG,rows); renderLog(); };
   const setPending = v => { Object.keys(v || {}).length ? put(QUEUE, v) : localStorage.removeItem(QUEUE); draw(); };
   const setBaseline = v => put(BASELINE, v);
   const setMeta = p => { put(META, { ...metadata(), ...p }); draw(); };
@@ -53,15 +56,21 @@
   function panel() {
     const host = document.querySelector('#sobre .about-card');
     if (!host || document.querySelector('#cloudPanel')) return;
-    host.insertAdjacentHTML('beforeend', `<div id="cloudPanel" class="cloud-panel"><h3>Conexão e sincronização</h3><div class="cloud-status-row"><span id="cloudDot" class="cloud-dot"></span><strong id="cloudHeadline">Inicializando…</strong></div><p id="cloudStatus">Verificando sessão e conexão…</p><dl class="cloud-diagnostics"><div><dt>Conta</dt><dd id="cloudAccount">Não conectada</dd></div><div><dt>Internet</dt><dd id="cloudNetwork">Verificando</dd></div><div><dt>Pendências</dt><dd id="cloudPending">0</dd></div><div><dt>Última sincronização</dt><dd id="cloudLastSync">Nunca</dd></div><div><dt>Último recebimento</dt><dd id="cloudLastPull">Nunca</dd></div></dl><div class="cloud-actions"><button id="cloudLogin" type="button" ${configured ? '' : 'disabled'}>Entrar com Google</button><button id="cloudSyncNow" type="button" ${configured ? '' : 'disabled'}>Sincronizar agora</button><button id="cloudLogout" type="button" hidden>Sair</button></div><p class="cloud-note">Sincronização por registro: movimentos, itens, motoristas, veículos, fornecedores, formas de pagamento e alertas.</p></div>`);
+    host.insertAdjacentHTML('beforeend', `<div id="cloudPanel" class="cloud-panel"><h3>Conexão e sincronização</h3><div class="cloud-status-row"><span id="cloudDot" class="cloud-dot"></span><strong id="cloudHeadline">Inicializando…</strong></div><p id="cloudStatus">Verificando sessão e conexão…</p><dl class="cloud-diagnostics"><div><dt>Conta</dt><dd id="cloudAccount">Não conectada</dd></div><div><dt>Internet</dt><dd id="cloudNetwork">Verificando</dd></div><div><dt>Pendências</dt><dd id="cloudPending">0</dd></div><div><dt>Última sincronização</dt><dd id="cloudLastSync">Nunca</dd></div><div><dt>Último recebimento</dt><dd id="cloudLastPull">Nunca</dd></div><div><dt>Último envio</dt><dd id="cloudSent">0 registro(s)</dd></div><div><dt>Último recebimento</dt><dd id="cloudReceived">0 registro(s)</dd></div><div><dt>Dispositivo</dt><dd id="cloudDevice">—</dd></div></dl><div class="cloud-actions"><button id="cloudLogin" type="button" ${configured ? '' : 'disabled'}>Entrar com Google</button><button id="cloudSyncNow" type="button" ${configured ? '' : 'disabled'}>Sincronizar agora</button><button id="cloudLogout" type="button" hidden>Sair</button><button id="cloudToggleLog" type="button">Log técnico</button></div><div id="cloudTechnicalLog" class="cloud-technical-log" hidden></div><p class="cloud-note">Sincronização por registro: movimentos, itens, motoristas, veículos, fornecedores, formas de pagamento e alertas.</p></div>`);
     document.querySelector('#cloudLogin').onclick = login;
     document.querySelector('#cloudSyncNow').onclick = manualSync;
     document.querySelector('#cloudLogout').onclick = logout;
+    document.querySelector('#cloudToggleLog').onclick = () => { const box=document.querySelector('#cloudTechnicalLog'); box.hidden=!box.hidden; renderLog(); };
     const homeStatus = document.querySelector('#homeCloudStatus');
     if (homeStatus) homeStatus.onclick = () => { document.querySelector('[data-menu-page="sobre"]')?.click(); setTimeout(() => document.querySelector('#cloudPanel')?.scrollIntoView({ behavior:'smooth', block:'center' }), 120); };
     draw();
   }
-  function message(text, error = false) { setMeta({ message:text, error }); }
+
+  function renderLog(){
+    const box=document.querySelector('#cloudTechnicalLog'); if(!box)return;
+    const rows=logs(); box.innerHTML=rows.length?rows.map(r=>`<article><b>${r.operation}</b><span>${when(r.at)}</span><small>${r.table||'sistema'}${r.count!=null?` · ${r.count} registro(s)`:''}${r.result?` · ${r.result}`:''}</small></article>`).join(''):'<p>Nenhum evento técnico registrado.</p>';
+  }
+  function message(text, error = false) { setMeta({ message:text, error }); if(error)addLog("erro",{result:text}); }
   function draw() {
     const m = metadata(), q = Object.values(pending()).reduce((n, x) => n + Object.keys(x || {}).length, 0), on = navigator.onLine;
     const status = document.querySelector('#cloudStatus'); if (status) { status.textContent = m.message || 'Aguardando…'; status.classList.toggle('cloud-error', !!m.error); }
@@ -74,7 +83,7 @@
     else { title='Online e sincronizado'; cls='online'; }
     const h=document.querySelector('#cloudHeadline'), d=document.querySelector('#cloudDot'), hd=document.querySelector('#homeCloudStatus .cloud-dot'), hb=document.querySelector('#homeCloudStatus');
     if (h) h.textContent=title; if (d) d.className=`cloud-dot ${cls}`; if (hd) hd.className=`cloud-dot ${cls}`; if (hb) { hb.title=title; hb.setAttribute('aria-label',title); }
-    const vals={cloudAccount:user?.email||'Não conectada',cloudNetwork:on?'Online':'Offline',cloudPending:String(q),cloudLastSync:when(m.lastPush),cloudLastPull:when(m.lastPull)};
+    const vals={cloudAccount:user?.email||'Não conectada',cloudNetwork:on?'Online':'Offline',cloudPending:String(q),cloudLastSync:when(m.lastPush),cloudLastPull:when(m.lastPull),cloudSent:`${Number(m.lastSent||0)} registro(s)`,cloudReceived:`${Number(m.lastReceived||0)} registro(s)`,cloudDevice:device().slice(0,18)};
     Object.entries(vals).forEach(([id,v]) => { const e=document.getElementById(id); if(e)e.textContent=v; });
     const li=document.querySelector('#cloudLogin'), lo=document.querySelector('#cloudLogout'), sy=document.querySelector('#cloudSyncNow');
     if(li)li.hidden=!!user; if(lo)lo.hidden=!user; if(sy){sy.disabled=!configured||syncing||!on; sy.textContent=syncing?'Sincronizando…':(!user?'Entrar para sincronizar':'Sincronizar agora'); sy.setAttribute('aria-busy',syncing?'true':'false');}
@@ -216,6 +225,7 @@
       message('Consultando o Firebase antes de enviar alterações…');
       await migrateLegacyIfNeeded();
       const remote=await readRemote();
+      const received=TABLES.reduce((n,t)=>n+(remote[t]||[]).length,0);
       const local=tableState(window.vehicleAppBridge.getState());
       const changes=pending();
       const {merged,winnersToPush}=mergeStates(remote,local,changes);
@@ -224,7 +234,8 @@
       const active=tableState(Object.fromEntries(TABLES.map(t=>[t,(finalRemote[t]||[]).filter(r=>!r.deletedAt).map(r=>({...r,syncStatus:'sincronizado'}))])));
       applying=true; window.vehicleAppBridge.applyState(active); applying=false;
       setBaseline(active); setPending({});
-      setMeta({lastPush:sent?iso():metadata().lastPush,lastPull:iso(),message:sent?`${sent} registro(s) sincronizado(s) com segurança.`:'Dados conferidos. Nenhuma alteração pendente.',error:false});
+      setMeta({lastPush:sent?iso():metadata().lastPush,lastPull:iso(),lastSent:sent,lastReceived:received,message:sent?`${sent} registro(s) sincronizado(s) com segurança.`:'Dados conferidos. Nenhuma alteração pendente.',error:false});
+      addLog('sincronização',{count:sent,result:`${received} recebido(s)`});
       return true;
     } catch(e) {
       console.error(e); setMeta({message:'Falha na sincronização. Nenhum dado local foi descartado; a tentativa será repetida.',error:true}); return false;

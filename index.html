@@ -28,9 +28,9 @@
 <div>
 <small>Controle automotivo</small>
 <h1>MyCar+</h1>
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.58</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.60</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
-<div class="header-menu-wrap">
+<div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
 <div id="headerMenu" class="header-menu" hidden>
 <small class="menu-group-title">OPERAÇÃO</small>
@@ -49,18 +49,14 @@
 <button data-menu-page="ajuda">? Central de ajuda</button>
 <button data-menu-page="sobre">ⓘ Sobre o MyCar+</button>
 </div>
-</div>
+</div></div>
 </header>
 <main>
 <section id="inicio" class="page active">
 <select id="homeVehicle" hidden aria-hidden="true">
 </select>
-<div class="home-vehicle-head">
-<div>
-<small>PAINEL DO VEÍCULO</small>
-<h2>Selecione o veículo</h2>
-</div>
-<span>Ativos e inativos</span>
+<div class="home-vehicle-head compact">
+<small>Veículo</small>
 </div>
 <div id="vehicleCards" class="vehicle-cards home-vehicle-selector">
 </div>
@@ -78,11 +74,6 @@
 </div>
 </section>
 <section id="movimentos" class="page launch-hub">
-<div class="launch-hub-head">
-<small>Lançamentos</small>
-<h2>Novo lançamento</h2>
-<p>Escolha o Grupo que deseja registrar.</p>
-</div>
 <div class="launch-group-list">
 <button type="button" data-entry-group="COMBUSTÍVEL">
 <span class="entry-group-icon fuel">⛽</span>
@@ -163,12 +154,6 @@
 </div>
 </section>
 <section id="relatorios" class="page">
-<div class="page-title report-guide-header">
-<div>
-<small>Relatórios do veículo</small>
-<h2>Guia de Relatórios</h2>
-</div>
-</div>
 <select id="reportVehicle" hidden aria-hidden="true"></select>
 <div class="report-guide-screen">
   <section class="report-guide-card report-guide-vehicle-card selected-vehicle-context">
@@ -267,12 +252,6 @@
 </article>
 </section>
 <section id="graficos" class="page">
-<div class="page-title">
-<div>
-<small>Visão gráfica</small>
-<h2>Gráficos</h2>
-</div>
-</div>
 <select id="chartVehicle" hidden aria-hidden="true">
 </select>
 <div class="selected-vehicle-context">
@@ -288,11 +267,11 @@
 <small>Data final</small>
 <input id="chartEnd" type="date">
 </div>
-<button type="button" id="clearChartPeriod">Limpar período</button>
+<button type="button" id="clearChartPeriod">Período completo</button>
 </div>
 <p id="chartPeriodError" class="period-error">
 </p>
-<p id="chartPeriodLabel" class="period-label">Período: Geral</p>
+<p id="chartPeriodLabel" class="period-label">Período completo do veículo</p>
 <div id="chartEmpty" class="empty-state" hidden>Nenhum lançamento encontrado no período selecionado.</div>
 <div id="chartContent">
 <h3 class="chart-section-title">Desempenho do veículo</h3>
@@ -464,7 +443,7 @@
 <span class="alert-selected-vehicle-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17v2m14-2v2M4 13l1.5-5A2 2 0 0 1 7.4 6h9.2a2 2 0 0 1 1.9 2L20 13M4 13h16v4H4zM7 14.5h.01M17 14.5h.01"/></svg></span>
 <div><small>Veículo selecionado</small><strong id="alertPanelVehicleName">—</strong><span id="alertPanelVehicleMeta">Placa: — · KM atual: 0</span></div>
 </article>
-<button type="button" id="newAlert" class="alert-new-button" aria-label="Novo alerta técnico"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><b>Novo alerta técnico</b></button>
+<button type="button" id="newAlert" class="alert-new-button" aria-label="Incluir Alerta"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><b>Incluir Alerta</b></button>
 <div id="alertList" class="alert-panel-list"></div>
 <div class="alert-panel-note"><span>i</span><p>Os alertas são utilizados para programar e monitorar as manutenções do veículo selecionado.</p></div>
 </section>
@@ -608,7 +587,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.58</p>
+<strong>Versão:</strong> 5.60</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>
