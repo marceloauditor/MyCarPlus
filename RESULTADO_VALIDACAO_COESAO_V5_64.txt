@@ -1,0 +1,16 @@
+MYCAR+ V5.64 — VALIDAÇÃO DE COESÃO
+
+APROVADO
+- 26 arquivos conferidos na cadeia raiz → www → Android.
+- package.json: 5.64.0.
+- APP_VERSION: 5.64.
+- Android versionCode: 564.
+- Android versionName: 5.64.0.
+- Cache PWA: mycar-plus-v5-64.
+- Períodos de Relatórios e Gráficos padronizados em 6 meses.
+- Botões Limpar período e Período completo removidos.
+- Compartilhamento de capa PNG + HTML implantado para Relatório Executivo e Relatório de IA.
+- JavaScript validado por node --check.
+
+OBSERVAÇÃO
+A compilação Gradle não pôde ser executada neste ambiente porque o wrapper tentou baixar a distribuição do Gradle e a rede externa estava indisponível. O projeto deve ser compilado normalmente no Android Studio do usuário.

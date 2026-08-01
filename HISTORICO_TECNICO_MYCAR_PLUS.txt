@@ -180,3 +180,6 @@ V5.63 — Nova identidade visual oficial
 - Relatórios e gráficos migrados para paleta azul predominante.
 - Filtros de data ajustados para telas pequenas.
 - Manual HTML passa a incorporar o ícone em Base64.
+
+
+V5.64 - Período padrão de 6 meses nas guias Relatórios e Gráficos; retirada dos botões de limpeza/restauração; compartilhamento de capa PNG + HTML para relatórios Executivo e IA.

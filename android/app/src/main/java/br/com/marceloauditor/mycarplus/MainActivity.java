@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class MainActivity extends BridgeActivity {
 
@@ -71,6 +72,12 @@ public class MainActivity extends BridgeActivity {
         @JavascriptInterface
         public void shareHtml(String jobName, String html) {
             runOnUiThread(() -> writeAndShareHtml(jobName, html));
+        }
+
+        /** Compartilha uma capa PNG e o relatório HTML no mesmo envio. */
+        @JavascriptInterface
+        public void shareHtmlWithCover(String jobName, String html, String coverFileName, String coverBase64) {
+            runOnUiThread(() -> writeAndShareHtmlWithCover(jobName, html, coverFileName, coverBase64));
         }
 
         /** Recebe arquivos binários gerados no JavaScript e abre o compartilhamento nativo. */
@@ -200,6 +207,46 @@ public class MainActivity extends BridgeActivity {
         }
 
         shareHtmlFile(htmlFile, jobName);
+    }
+
+    private void writeAndShareHtmlWithCover(String jobName, String html, String coverFileName, String coverBase64) {
+        if (html == null || html.trim().isEmpty() || coverBase64 == null || coverBase64.trim().isEmpty()) {
+            writeAndShareHtml(jobName, html);
+            return;
+        }
+        File shareDirectory = new File(getCacheDir(), "shared_reports");
+        if (!shareDirectory.exists() && !shareDirectory.mkdirs()) {
+            showMessage("Não foi possível preparar a pasta de compartilhamento."); return;
+        }
+        deleteOldSharedReports(shareDirectory);
+        File htmlFile = new File(shareDirectory, safeFileName(jobName) + ".html");
+        String safeCoverName = coverFileName == null ? "CAPA_RELATORIO_MYCAR_PLUS.png" : coverFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+        File coverFile = new File(shareDirectory, safeCoverName);
+        try (FileOutputStream htmlOutput = new FileOutputStream(htmlFile); FileOutputStream coverOutput = new FileOutputStream(coverFile)) {
+            htmlOutput.write(html.getBytes(StandardCharsets.UTF_8)); htmlOutput.flush();
+            coverOutput.write(Base64.decode(coverBase64, Base64.DEFAULT)); coverOutput.flush();
+        } catch (Exception error) {
+            if (htmlFile.exists()) htmlFile.delete(); if (coverFile.exists()) coverFile.delete();
+            showMessage("Não foi possível preparar os arquivos para compartilhar."); return;
+        }
+        shareHtmlAndCover(htmlFile, coverFile, jobName);
+    }
+
+    private void shareHtmlAndCover(File htmlFile, File coverFile, String jobName) {
+        try {
+            Uri htmlUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", htmlFile);
+            Uri coverUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", coverFile);
+            ArrayList<Uri> uris = new ArrayList<>(); uris.add(coverUri); uris.add(htmlUri);
+            Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+            intent.setType("*/*"); intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+            intent.putExtra(Intent.EXTRA_SUBJECT, safeJobName(jobName).replace('_', ' '));
+            ClipData clipData = ClipData.newRawUri("Capa MyCar+", coverUri); clipData.addItem(new ClipData.Item(htmlUri));
+            intent.setClipData(clipData); intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Intent chooser = Intent.createChooser(intent, "Compartilhar relatório");
+            chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); chooser.setClipData(clipData);
+            if (chooser.resolveActivity(getPackageManager()) == null) { showMessage("Nenhum aplicativo disponível para compartilhar o relatório."); return; }
+            startActivity(chooser);
+        } catch (Exception error) { showMessage("Não foi possível abrir os aplicativos de compartilhamento."); }
     }
 
     private void shareHtmlFile(File htmlFile, String jobName) {
