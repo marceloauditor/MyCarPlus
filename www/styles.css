@@ -943,3 +943,31 @@ html[data-theme="light"] .smart-dashboard-compact .insight-status,
 html[data-theme="light"] .smart-dashboard-compact .insight-status em,
 html[data-theme="light"] .smart-dashboard-compact .insight-list dd,
 html[data-theme="light"] .smart-dashboard-compact .score-box strong{color:#152c3f!important}
+
+
+/* V5.78 — inversão entre MyCar Score e Composição dos custos */
+.insight-grid-score-first .insight-score-card{
+  margin-top:0;
+  min-height:100%;
+  box-sizing:border-box;
+}
+.insight-grid-composition-wide{
+  grid-template-columns:1fr!important;
+  margin-top:12px;
+}
+.insight-grid-composition-wide section{
+  width:100%;
+  box-sizing:border-box;
+}
+@media(max-width:640px){
+  .insight-grid-score-first{grid-template-columns:1fr}
+  .insight-grid-composition-wide{margin-top:10px}
+}
+html[data-theme="light"] .smart-dashboard-compact .insight-grid-composition-wide section{
+  background:#fff!important;
+  border-color:#c6d6e1!important;
+  color:#152c3f!important;
+}
+html[data-theme="light"] .smart-dashboard-compact .insight-grid-composition-wide h3{
+  color:#5c7080!important;
+}

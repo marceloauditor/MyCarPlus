@@ -1,0 +1,12 @@
+PACOTE MYCAR_PLUS_V5_78_KEY
+
+VALIDAÇÃO PLANEJADA
+1. APP_VERSION 5.78 conferido.
+2. package.json e package-lock.json em 5.78.0.
+3. Android versionCode 578 e versionName 5.78.0.
+4. Cache PWA mycar-plus-v5-78.
+5. MyCar Score antes da Composição dos custos.
+6. Utilização preservada.
+7. Composição dos custos em largura total abaixo.
+8. Coesão raiz, www e Android conferida.
+9. BAT V5.78 aprovado.

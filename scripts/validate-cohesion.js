@@ -86,9 +86,11 @@ assert(/Custo por km[\s\S]*Custo por dia[\s\S]*Custo mensal[\s\S]*Custo total l�
 assert(/class="insight-trends-primary"/.test(app) && app.indexOf('insight-trends-primary') < app.indexOf('insight-grid-secondary'), 'Tendências devem aparecer antes das seções complementares.');
 assert(!/<h3>Destaques<\/h3>/.test(app), 'O cartão Destaques ainda está presente.');
 assert(/<h3>Composição dos custos<\/h3>/.test(app) && /<h3>Utilização<\/h3>/.test(app) && /MyCar Score/.test(app), 'Composição, Utilização e MyCar Score devem permanecer abaixo de Tendências.');
+assert(/insight-grid-score-first/.test(app) && /insight-score-card/.test(app) && /insight-grid-composition-wide/.test(app + styles), 'Estrutura da inversão Score/Composição ausente.');
+assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição dos custos</h3>') && app.indexOf('<h3>Utilização</h3>') < app.indexOf('<h3>Composição dos custos</h3>'), 'MyCar Score e Utilização devem aparecer antes da Composição dos custos.');
 assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
-// Gráficos, período efetivo, manual, tela Sobre e painel — V5.77.
+// Gráficos, período efetivo, manual, tela Sobre e painel — V5.78.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
