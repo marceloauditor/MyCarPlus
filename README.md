@@ -1,4 +1,7 @@
-# MyCar+ V5.52
+# MyCar+ V5.55
+
+> A V5.55 utiliza exclusivamente o novo modelo de alertas. O modelo automático antigo, seus parâmetros e registros de teste foram eliminados do código e do dataset.
+
 
 Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas técnicos e análises veiculares com IA.
 
@@ -42,7 +45,7 @@ O Relatório Executivo e o Relatório de Inteligência são exibidos dentro do a
 - o usuário pode incluir, alterar, ativar, desativar, concluir e excluir alertas;
 - a exclusão exige confirmação e preserva integralmente o histórico técnico;
 - o cadastro coleta explicitamente o veículo mesmo com o campo bloqueado;
-- alertas antigos são normalizados sem apagar movimentos ou históricos reais.
+- o modelo antigo de alertas, os parâmetros automáticos e o histórico de teste foram removidos; permanecem apenas os alertas cadastrados no novo modelo e os movimentos reais.
 
 
 ## Novo Alerta Técnico — V5.52

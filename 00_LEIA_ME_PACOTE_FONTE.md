@@ -1,3 +1,11 @@
+# MyCar+ V5.55 — pacote-fonte
+
+## Regra vigente dos alertas
+
+O aplicativo utiliza exclusivamente o **novo modelo de alertas técnicos**. A geração automática antiga, os parâmetros técnicos separados e o histórico de alertas de teste foram eliminados do código e do dataset.
+
+No Relatório Executivo, a seção de manutenção lista apenas itens que existem no Cadastro de Itens e possuem alerta do novo modelo cadastrado para o veículo selecionado.
+
 # MyCar+ V5.52 — Pacote-fonte oficial
 
 Pacote consolidado para Web/PWA e Android, com as correções e parametrizações pendentes da V5.41 implantadas.

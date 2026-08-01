@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.54",
+  APP_VERSION = "5.55",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -33,16 +33,10 @@ let movements = [],
   vehicles = [],
   suppliers = [],
   paymentMethods = [],
-  alerts = [],
-  alertHistory = [],
-  technicalParameters = [];
+  alerts = [];
 let entryContext = null;
 let entryReturnPage = "movimentos";
 const NI = "NI — Não informado";
-const TECHNICAL_ITEMS = {
-  OIL: { key: "OIL", label: "Troca de Óleo", km: 9000, months: 6 },
-  BATTERY: { key: "BATTERY", label: "Bateria", km: 0, months: 36 },
-};
 const defaults = [
   ["COMBUSTÍVEL", "Etanol", 1],
   ["COMBUSTÍVEL", "Gasolina", 0],
@@ -99,8 +93,6 @@ function persistLocalState() {
     ["mycar_suppliers_v1", suppliers],
     ["mycar_payment_methods_v1", paymentMethods],
     ["mycar_alerts_v1", alerts],
-    ["mycar_alert_history_v1", alertHistory],
-    ["mycar_technical_parameters_v1", technicalParameters],
   ];
   const previous = new Map(entries.map(([key]) => [key, localStorage.getItem(key)]));
   try {
@@ -114,7 +106,7 @@ function persistLocalState() {
   }
 }
 function save(syncCloud = true) {
-  ensureTechnicalData();
+  ensureAlertData();
   persistLocalState();
   let renderError = null;
   try {
@@ -254,57 +246,27 @@ function normalizeAlertRecord(item = {}) {
   const criterion = ["DATE", "KM", "BOTH"].includes(item.criterion)
     ? item.criterion
     : "DATE";
-  const recurrence = ["NONE", "MONTHS", "KM", "BOTH"].includes(item.recurrence)
-    ? item.recurrence
-    : "NONE";
+  const modelVersion = Number(item.modelVersion ?? item.modelo_versao ?? (item.manualSchedule ? 2 : 1)) || 1;
+  const active = item.active !== false && item.statusMode !== "DISABLED";
   return {
-    ...item,
     id: String(item.id || crypto.randomUUID()),
+    modelVersion,
     vehicleId: String(item.vehicleId || item.veiculo_id || ""),
     group: "MANUTENÇÃO",
     itemId: String(item.itemId || item.item_id || ""),
     description: String(item.description || item.descricao || "").trim(),
     criterion,
+    baseDate: String(item.baseDate || item.data_base || ""),
+    baseKm: Number(item.baseKm ?? item.km_base ?? 0) || 0,
+    recurrenceMonths: Number(item.recurrenceMonths ?? item.vida_util_meses ?? item.meses_recorrencia ?? 0) || 0,
+    recurrenceKm: Number(item.recurrenceKm ?? item.vida_util_km ?? item.km_recorrencia ?? 0) || 0,
     dueDate: String(item.dueDate || item.data_prevista || ""),
     dueKm: Number(item.dueKm ?? item.km_previsto ?? 0) || 0,
     leadDays: Number(item.leadDays ?? item.antecedencia_dias ?? 0) || 0,
     leadKm: Number(item.leadKm ?? item.antecedencia_km ?? 0) || 0,
-    recurrence,
-    recurrenceMonths: Number(item.recurrenceMonths ?? item.meses_recorrencia ?? 0) || 0,
-    recurrenceKm: Number(item.recurrenceKm ?? item.km_recorrencia ?? 0) || 0,
-    baseDate: String(item.baseDate || item.data_base || ""),
-    baseKm: Number(item.baseKm ?? item.km_base ?? 0) || 0,
     observations: String(item.observations || item.observacao || "").slice(0, 300),
-    statusMode: item.active === false || item.statusMode === "DISABLED" ? "DISABLED" : "ACTIVE",
-    active: item.active !== false,
-    technical: true,
-    technicalKey: String(item.technicalKey || item.chave_tecnica || ""),
-    manualSchedule: Boolean(item.manualSchedule),
-    completed: Boolean(item.completed),
-  };
-}
-function normalizeAlertHistoryRecord(item = {}) {
-  return {
-    ...item,
-    id: String(item.id || crypto.randomUUID()),
-    alertId: String(item.alertId || item.alerta_id || ""),
-    vehicleId: String(item.vehicleId || item.veiculo_id || ""),
-    technicalKey: String(item.technicalKey || item.chave_tecnica || ""),
-    description: String(item.description || item.descricao || "").trim(),
-    completedAt: item.completedAt || item.concluido_em || "",
-    completedKm: Number(item.completedKm ?? item.hodometro_conclusao ?? 0) || 0,
-  };
-}
-function normalizeTechnicalParameter(item = {}) {
-  return {
-    ...item,
-    id: String(item.id || crypto.randomUUID()),
-    vehicleId: String(item.vehicleId || item.veiculo_id || ""),
-    technicalKey: String(item.technicalKey || item.chave_tecnica || ""),
-    intervalKm: Number(item.intervalKm ?? item.intervalo_km ?? 0) || 0,
-    intervalMonths: Number(item.intervalMonths ?? item.intervalo_meses ?? 0) || 0,
-    active: item.active !== false,
-    deleted: Boolean(item.deleted),
+    statusMode: active ? "ACTIVE" : "DISABLED",
+    active,
   };
 }
 function newestFirst(a, b) {
@@ -340,16 +302,15 @@ async function load() {
   paymentMethods = JSON.parse(localStorage.getItem("mycar_payment_methods_v1") || "null") || official.paymentMethods;
   alerts = (JSON.parse(localStorage.getItem("mycar_alerts_v1") || "null") || official.alerts || [])
     .map(normalizeAlertRecord);
-  alertHistory = (JSON.parse(localStorage.getItem("mycar_alert_history_v1") || "null") || official.alertHistory || [])
-    .map(normalizeAlertHistoryRecord);
-  technicalParameters = (JSON.parse(localStorage.getItem("mycar_technical_parameters_v1") || "null") || official.technicalParameters || [])
-    .map(normalizeTechnicalParameter);
+  localStorage.removeItem("mycar_alert_history_v1");
+  localStorage.removeItem("mycar_technical_parameters_v1");
 
   vehicles = vehicles.map(normalizeVehicle);
   registers = registers.map(normalizeRegister);
   enforceSingleDefaults();
   movements = movements.map((m, i) => enforceItemGroup(normalizeMovement(m, i)));
-  ensureTechnicalData();
+  migrateToNewAlertModel();
+  ensureAlertData();
   localStorage.setItem("mycar_data_migration", migrationVersion);
   recalculateDistances();
   save(false);
@@ -1005,8 +966,6 @@ function reportScopedState() {
     suppliers,
     paymentMethods,
     alerts: vehicle ? alerts.filter((a) => a.vehicleId === vehicle.id) : alerts,
-    alertHistory: vehicle ? alertHistory.filter((h) => h.vehicleId === vehicle.id) : alertHistory,
-    technicalParameters: vehicle ? technicalParameters.filter((p) => p.vehicleId === vehicle.id) : technicalParameters,
   };
 }
 async function exportReportXlsx() {
@@ -2175,22 +2134,20 @@ $("#registerDialog").addEventListener("cancel", (event) => {
 function deleteRegister(id) {
   const g = $("#registerGroup").value;
   const target = g === "ITEM" ? registers.find((x) => x.id === id) : null;
-  if (target?.technicalKey) {
-    if (!confirm(`${target.item} sustenta um alerta técnico. Para excluir, os alertas técnicos deste item serão desativados e os movimentos históricos passarão a usar "${NI}". Deseja continuar?`)) return;
-  } else if (!confirm("Excluir este cadastro?")) return;
+  const linkedAlerts = target ? alerts.filter((item) => item.itemId === target.id) : [];
+  const message = linkedAlerts.length
+    ? `Este item possui ${linkedAlerts.length} alerta(s) do novo modelo. Ao excluir o item, esses alertas também serão excluídos. Os movimentos históricos serão preservados. Deseja continuar?`
+    : "Excluir este cadastro?";
+  if (!confirm(message)) return;
   const stateBeforeSave = cloneDataState();
   try {
-    if (target?.technicalKey) {
-      technicalParameters.filter((p) => p.technicalKey === target.technicalKey).forEach((p) => p.active = false);
-      alerts.filter((a) => a.technicalKey === target.technicalKey).forEach((a) => a.active = false);
-      movements.filter((m) => m.item_id === id || m.item === target.item).forEach((m) => {
-        m.item_id = "technical-ni";
-        m.item = NI;
-      });
-    }
+    if (target) alerts = alerts.filter((item) => item.itemId !== target.id);
     if (g === "ITEM") registers = registers.filter((x) => x.id !== id);
     if (g === "MOTORISTA") drivers = drivers.filter((x) => x.id !== id);
-    if (g === "VEICULO") vehicles = vehicles.filter((x) => x.id !== id);
+    if (g === "VEICULO") {
+      vehicles = vehicles.filter((x) => x.id !== id);
+      alerts = alerts.filter((item) => item.vehicleId !== id);
+    }
     if (g === "FORNECEDOR") suppliers = suppliers.filter((x) => x.id !== id);
     if (g === "FORMA_PAGAMENTO") paymentMethods = paymentMethods.filter((x) => x.id !== id);
     save();
@@ -2409,7 +2366,7 @@ async function exportXlsx() {
   await exportReportXlsx();
 }
 window.vehicleAppBridge = {
-  getState: () => ({ movements, registers, drivers, vehicles, suppliers, paymentMethods, alerts, alertHistory, technicalParameters }),
+  getState: () => ({ movements, registers, drivers, vehicles, suppliers, paymentMethods, alerts }),
   applyState: (state) => {
     if (!state) return;
     registers = (state.registers || defaults).map(normalizeRegister);
@@ -2419,10 +2376,9 @@ window.vehicleAppBridge = {
     vehicles = (state.vehicles || []).map(normalizeVehicle);
     suppliers = state.suppliers || [];
     paymentMethods = state.paymentMethods || [];
-    alerts = state.alerts || [];
-    alertHistory = state.alertHistory || [];
-    technicalParameters = state.technicalParameters || [];
-    ensureTechnicalData();
+    alerts = (state.alerts || []).map(normalizeAlertRecord);
+    migrateToNewAlertModel();
+    ensureAlertData();
     recalculateDistances();
     save(false);
     setTimeout(() => evaluateAlerts(true), 0);
@@ -2610,7 +2566,7 @@ function exportPdfReport() {
   if (!periodIsValid("report")) return alert("Corrija o período antes de gerar o relatório.");
   if (!ms.length) return alert("Não existem movimentos no veículo e período selecionados.");
 
-  ensureTechnicalData();
+  ensureAlertData();
   const s = stats(ms), groups = groupTotals(ms);
   const expenseGroups = [
     ["Combustível", +groups.Combustível || 0],
@@ -2675,22 +2631,30 @@ function exportPdfReport() {
   const latestRows = groupOrder.flatMap(group => ms.filter(m => m.grupo === group).sort((a,b)=>new Date(b.data_hora)-new Date(a.data_hora)).slice(0,2));
   const latestHtml = latestRows.length ? latestRows.map(m=>`<tr><td data-label="Grupo"><span class="tag ${m.grupo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(m.grupo)}</span></td><td data-label="Item">${e(m.item || "—")}</td><td data-label="Data">${dateBR(m.data_hora)}</td><td data-label="Hodômetro" class="num">${m.hodometro_km ? intFmt(m.hodometro_km)+" km" : "—"}</td><td data-label="Valor" class="num">${money(m.valor)}</td></tr>`).join("") : '<tr><td colspan="5">Sem lançamentos.</td></tr>';
 
-  const essentialNames = ["Troca de Óleo","Filtro de Óleo","Filtro de Ar do Motor","Fluido de Freio","Aditivo do Radiador","Pastilhas de Freio","Pneus","Rodízio dos Pneus","Calibração dos Pneus","Bateria","Alinhamento e Balanceamento","Correia Dentada / Corrente"];
-  const vehicleAlerts = alerts.filter(a => a.vehicleId === currentVehicle?.id && !a.archived);
-  const normalizeText = v => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-  const maintenanceMovements = movements.filter(m => m.veiculo === currentVehicle?.nome && m.grupo === "MANUTENÇÃO").sort((a,b)=>new Date(b.data_hora)-new Date(a.data_hora));
-  const essentialRows = essentialNames.map(name => {
-    const n=normalizeText(name);
-    const alertItem=vehicleAlerts.find(a=>normalizeText(a.description).includes(n) || n.includes(normalizeText(a.description)) || (name==="Troca de Óleo" && a.technicalKey==="OIL") || (name==="Bateria" && a.technicalKey==="BATTERY"));
-    const movement=maintenanceMovements.find(m=>{const x=normalizeText(m.item); return x.includes(n) || n.includes(x) || (name==="Troca de Óleo" && x.includes("oleo"));});
-    const history=alertItem ? alertHistory.filter(h=>h.vehicleId===currentVehicle?.id && (h.alertId===alertItem.id || (h.technicalKey && h.technicalKey===alertItem.technicalKey))).sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt))[0] : null;
-    let lastDate=movement?.data_hora, lastKm=movement?.hodometro_km;
-    if (history && (!lastDate || new Date(history.completedAt)>new Date(lastDate))) { lastDate=history.completedAt; lastKm=history.completedKm; }
-    const status=alertItem ? alertStatus(alertItem) : "SEM REGISTRO";
-    const forecast=alertItem ? alertForecast(alertItem) : "Não configurado";
-    return {name,lastDate,lastKm,forecast,status,active:alertItem?.active};
+  const registeredItems = new Map(registers
+    .filter((item) => item.grupo === "MANUTENÇÃO")
+    .map((item) => [item.id, item]));
+  const vehicleAlerts = alerts
+    .filter((item) => item.vehicleId === currentVehicle?.id && item.modelVersion === 2 && registeredItems.has(item.itemId))
+    .sort((a, b) => String(registeredItems.get(a.itemId)?.item || a.description).localeCompare(String(registeredItems.get(b.itemId)?.item || b.description), "pt-BR"));
+  const maintenanceMovements = movements
+    .filter((movement) => movement.veiculo === currentVehicle?.nome && movement.grupo === "MANUTENÇÃO")
+    .sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora));
+  const maintenanceRows = vehicleAlerts.map((alertItem) => {
+    const register = registeredItems.get(alertItem.itemId);
+    const movement = maintenanceMovements.find((row) => row.item_id === register.id || row.item === register.item);
+    return {
+      name: register.item,
+      lastDate: movement?.data_hora || "",
+      lastKm: movement?.hodometro_km || 0,
+      forecast: alertForecast(alertItem),
+      status: alertStatus(alertItem),
+      active: alertItem.active,
+    };
   });
-  const maintenanceHtml = essentialRows.map(r=>`<tr><td data-label="Serviço">${e(r.name)}</td><td data-label="Último registro">${r.lastDate ? dateBR(r.lastDate) : "Sem registro"}</td><td data-label="Hodômetro" class="num">${r.lastKm ? intFmt(r.lastKm)+" km" : "—"}</td><td data-label="Próxima referência">${e(r.forecast)}</td><td data-label="Situação técnica"><span class="status ${String(r.status).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(r.status === "INATIVO" ? "Monitoramento inativo" : r.status)}</span></td><td data-label="Alerta">${r.active === true ? "Ativo" : r.active === false ? "Inativo" : "—"}</td></tr>`).join("");
+  const maintenanceHtml = maintenanceRows.length
+    ? maintenanceRows.map((row) => `<tr><td data-label="Serviço">${e(row.name)}</td><td data-label="Último registro">${row.lastDate ? dateBR(row.lastDate) : "Sem registro"}</td><td data-label="Hodômetro" class="num">${row.lastKm ? intFmt(row.lastKm)+" km" : "—"}</td><td data-label="Próxima referência">${e(row.forecast)}</td><td data-label="Situação técnica"><span class="status ${String(row.status).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}">${e(row.status === "INATIVO" ? "Monitoramento inativo" : row.status)}</span></td><td data-label="Alerta">${row.active ? "Ativo" : "Desativado"}</td></tr>`).join("")
+    : '<tr><td colspan="6">Nenhum item do cadastro possui alerta do novo modelo para este veículo.</td></tr>';
 
   const biggest = expenseGroups.slice().sort((a,b)=>b[1]-a[1])[0];
   const content = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Relatório Executivo MyCar+</title><style>
@@ -2703,7 +2667,7 @@ function exportPdfReport() {
   <section class="section"><h2 class="section-title">Leitura executiva</h2><div class="note">O maior grupo de gastos foi <b>${e(biggest[0])}</b>, com <b>${pct(biggest[1],gross)}</b> do custo bruto. O consumo médio geral foi de <b>${num(fuelConsumption,2)} km/L</b> e o custo líquido por quilômetro foi de <b>${money(costKm)}</b>. Foram consolidados <b>${ms.length}</b> lançamentos.</div></section><div class="footer"><span>MyCar+ · Relatório Executivo</span><span>Página 1 de 2 · v${e(APP_VERSION)}</span></div></main>
   <main class="page"><div class="header"><div><div class="brand">MyCar+</div><h1>Movimentações e manutenção</h1></div><div class="meta"><b>Veículo:</b> ${e(vehicleLabel)}<br><b>Período:</b> ${e(period)}</div></div>
   <section class="section"><h2 class="section-title">Últimos lançamentos por grupo</h2><table class="responsive-table"><thead><tr><th>Grupo</th><th>Item</th><th>Data</th><th class="num">Km</th><th class="num">Valor</th></tr></thead><tbody>${latestHtml}</tbody></table></section>
-  <section class="section"><h2 class="section-title">Manutenções essenciais</h2><table class="responsive-table"><thead><tr><th>Serviço</th><th>Último registro</th><th class="num">Km</th><th>Próxima referência</th><th>Situação técnica</th><th>Alerta</th></tr></thead><tbody>${maintenanceHtml}</tbody></table><div class="note" style="margin-top:7px"><b>Referência:</b> parâmetros dos alertas ativos e inativos do veículo selecionado, cruzados com o histórico de manutenção. Alertas inativos são exibidos apenas como referência histórica e não geram avisos.</div></section>
+  <section class="section"><h2 class="section-title">Manutenções com alertas cadastrados</h2><table class="responsive-table"><thead><tr><th>Serviço</th><th>Último registro</th><th class="num">Km</th><th>Próxima referência</th><th>Situação técnica</th><th>Alerta</th></tr></thead><tbody>${maintenanceHtml}</tbody></table><div class="note" style="margin-top:7px"><b>Regra:</b> esta relação contém somente itens existentes no Cadastro de Itens e que possuem alerta do novo modelo cadastrado para o veículo selecionado.</div></section>
   <div class="footer"><span>MyCar+ · Relatório Executivo</span><span>Página 2 de 2 · v${e(APP_VERSION)}</span></div></main><div class="actions"><button type="button" id="reportCloseButton" class="danger">Fechar</button><button type="button" id="reportShareButton" class="primary">Compartilhar</button></div><script>(function(){
   function printableDocument(){
     var clone=document.documentElement.cloneNode(true);
@@ -2759,12 +2723,10 @@ const DATA_TABLES = {
   drivers: "Motoristas",
   suppliers: "Fornecedores",
   paymentMethods: "Formas de pagamento",
-  alerts: "Alertas",
-  alertHistory: "Histórico de alertas",
-  technicalParameters: "Parâmetros técnicos",
+  alerts: "Alertas do novo modelo",
 };
 function dataState() {
-  return { movements, registers, vehicles, drivers, suppliers, paymentMethods, alerts, alertHistory, technicalParameters };
+  return { movements, registers, vehicles, drivers, suppliers, paymentMethods, alerts };
 }
 function cloneDataState() {
   return JSON.parse(JSON.stringify(dataState()));
@@ -2776,9 +2738,7 @@ function restoreDataState(state, rerender = true) {
   drivers = state.drivers || [];
   suppliers = state.suppliers || [];
   paymentMethods = state.paymentMethods || [];
-  alerts = state.alerts || [];
-  alertHistory = state.alertHistory || [];
-  technicalParameters = state.technicalParameters || [];
+  alerts = (state.alerts || []).map(normalizeAlertRecord);
   if (rerender) {
     try { renderAll(); } catch (_) {}
   }
@@ -2790,7 +2750,7 @@ function downloadBackup(keys) {
   const payload = {
     app: APP_NAME,
     version: APP_VERSION,
-    schemaVersion: 8,
+    schemaVersion: 9,
     createdAt: new Date().toISOString(),
     tables,
   };
@@ -2837,11 +2797,9 @@ function openDataSelector(mode) {
           if (key === "drivers") drivers = backup.tables[key];
           if (key === "suppliers") suppliers = backup.tables[key];
           if (key === "paymentMethods") paymentMethods = backup.tables[key];
-          if (key === "alerts") alerts = backup.tables[key];
-          if (key === "alertHistory") alertHistory = backup.tables[key];
-          if (key === "technicalParameters") technicalParameters = backup.tables[key];
+          if (key === "alerts") alerts = backup.tables[key].map(normalizeAlertRecord);
         });
-        ensureTechnicalData();
+        ensureAlertData();
         enforceSingleDefaults();
         movements.forEach(enforceItemGroup);
         recalculateDistances();
@@ -2872,8 +2830,6 @@ function openDataSelector(mode) {
       if (key === "suppliers") suppliers = [];
       if (key === "paymentMethods") paymentMethods = [];
       if (key === "alerts") alerts = [];
-      if (key === "alertHistory") alertHistory = [];
-      if (key === "technicalParameters") technicalParameters = [];
     });
     try {
       save();
@@ -2899,88 +2855,39 @@ function addMonths(date, months) {
 function dateOnly(value) {
   return value ? new Date(String(value).slice(0, 10) + "T12:00:00") : null;
 }
-function technicalBase(vehicle, key) {
-  const label = TECHNICAL_ITEMS[key].label.toLocaleLowerCase("pt-BR");
-  const related = movements.filter((m) =>
-    m.veiculo === vehicle.nome &&
-    String(m.item || "").toLocaleLowerCase("pt-BR") === label)
-    .sort(newestFirst)[0];
-  const completed = alertHistory.filter((h) => h.vehicleId === vehicle.id && h.technicalKey === key)
-    .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))[0];
-  if (completed && (!related || new Date(completed.completedAt) > new Date(related.data_hora)))
-    return { date: completed.completedAt, km: Number(completed.completedKm || vehicle.kmInicial || 0) };
-  if (related) return { date: related.data_hora, km: Number(related.hodometro_km || 0) };
-  const first = movements.filter((m) => m.veiculo === vehicle.nome).sort((a, b) => new Date(a.data_hora) - new Date(b.data_hora))[0];
-  return { date: first?.data_hora || vehicle.criadoEm || new Date().toISOString(), km: Number(first?.hodometro_km ?? vehicle.kmInicial ?? 0) };
+function migrateToNewAlertModel() {
+  const validVehicles = new Set(vehicles.map((vehicle) => vehicle.id));
+  const validItems = new Set(registers.filter((item) => item.grupo === "MANUTENÇÃO").map((item) => item.id));
+  alerts = alerts
+    .map(normalizeAlertRecord)
+    .filter((item) => item.modelVersion === 2 && validVehicles.has(item.vehicleId) && validItems.has(item.itemId));
+  localStorage.removeItem("mycar_alert_history_v1");
+  localStorage.removeItem("mycar_technical_parameters_v1");
+  localStorage.setItem("mycar_alert_model", "2");
 }
-function ensureTechnicalData() {
-  alerts = alerts.map(normalizeAlertRecord);
-  alertHistory = alertHistory.map(normalizeAlertHistoryRecord);
-  technicalParameters = technicalParameters.map(normalizeTechnicalParameter);
-  registers.forEach((r) => {
-    const name = String(r.item || "").toLocaleLowerCase("pt-BR");
-    if (name === "troca de óleo") r.technicalKey = "OIL";
-    if (name === "bateria") r.technicalKey = "BATTERY";
-  });
-  if (!registers.some((r) => r.item === NI))
-    registers.push({ id: "technical-ni", grupo: "MANUTENÇÃO", item: NI, padrao: false, ativo: true });
-  alerts.forEach((item) => {
-    item.group = "MANUTENÇÃO";
-    item.technical = true;
-    const vehicle = vehicles.find((v) => v.id === item.vehicleId);
-    if (!vehicle) {
-      item.active = false;
-      item.orphaned = true;
-      return;
-    }
-    delete item.orphaned;
-    if (vehicle.ativo === false) {
-      if (item.active) item.activeBeforeVehicleInactive = true;
-      item.active = false;
-    } else if (item.activeBeforeVehicleInactive) {
-      item.active = true;
-      delete item.activeBeforeVehicleInactive;
-    }
-  });
-  vehicles.filter((v) => v.ativo !== false).forEach((vehicle) => {
-    Object.values(TECHNICAL_ITEMS).forEach((spec) => {
-      let parameter = technicalParameters.find((p) => p.vehicleId === vehicle.id && p.technicalKey === spec.key);
-      if (!parameter) {
-        parameter = { id: crypto.randomUUID(), vehicleId: vehicle.id, technicalKey: spec.key,
-          intervalKm: spec.km, intervalMonths: spec.months, active: true, deleted: false };
-        technicalParameters.push(parameter);
-      }
-      if (parameter.deleted === true) return;
-      let item = alerts.find((a) => a.vehicleId === vehicle.id && a.technicalKey === spec.key && !a.archived);
-      if (!item) {
-        item = { id: crypto.randomUUID(), vehicleId: vehicle.id, group: "MANUTENÇÃO",
-          itemId: registers.find((r) => r.technicalKey === spec.key)?.id || "",
-          description: spec.label, technicalKey: spec.key, active: parameter.active,
-          technical: true, manualSchedule: false,
-          recurrence: spec.key === "OIL" ? "BOTH" : "MONTHS", leadDays: 30, leadKm: spec.key === "OIL" ? 500 : 0 };
-        alerts.push(item);
-      }
-      Object.assign(item, {
-        technical: true,
-        active: parameter.active,
-        recurrenceKm: Number(parameter.intervalKm || 0),
-        recurrenceMonths: Number(parameter.intervalMonths || 0),
-      });
-      if (!item.manualSchedule) {
-        item.criterion = parameter.intervalKm > 0 && parameter.intervalMonths > 0 ? "BOTH" :
-          parameter.intervalKm > 0 ? "KM" : "DATE";
-        const base = technicalBase(vehicle, spec.key);
-        item.baseDate = dateOnly(base.date)?.toISOString().slice(0, 10) || new Date().toISOString().slice(0, 10);
-        item.baseKm = Number(base.km || 0);
-        item.dueKm = parameter.intervalKm ? item.baseKm + Number(parameter.intervalKm) : 0;
-        item.dueDate = parameter.intervalMonths ? addMonths(dateOnly(item.baseDate), parameter.intervalMonths).toISOString().slice(0, 10) : "";
-      }
+function ensureAlertData() {
+  const vehiclesById = new Map(vehicles.map((vehicle) => [vehicle.id, vehicle]));
+  const itemsById = new Map(registers
+    .filter((item) => item.grupo === "MANUTENÇÃO")
+    .map((item) => [item.id, item]));
+  alerts = alerts
+    .map(normalizeAlertRecord)
+    .filter((item) => item.modelVersion === 2 && vehiclesById.has(item.vehicleId) && itemsById.has(item.itemId))
+    .map((item) => {
+      const register = itemsById.get(item.itemId);
+      const active = item.statusMode !== "DISABLED" && item.active !== false;
+      return {
+        ...item,
+        modelVersion: 2,
+        group: "MANUTENÇÃO",
+        description: register.item,
+        active,
+        statusMode: active ? "ACTIVE" : "DISABLED",
+      };
     });
-  });
 }
 function alertStatus(item) {
   if (!item.active) return "INATIVO";
-  if (item.completed) return "CONCLUÍDO";
   const vehicle = vehicles.find((v) => v.id === item.vehicleId);
   if (!vehicle || vehicle.ativo === false) return "INATIVO";
   const km = vehicle ? vehicleSummary(vehicle).last : 0;
@@ -3000,7 +2907,7 @@ function alertForecast(item) {
   return parts.join(" ou ") || "Sem previsão";
 }
 function evaluateAlerts(notify = false) {
-  ensureTechnicalData();
+  ensureAlertData();
   const selected = selectedVehicleObject();
   const due = selected?.ativo === false ? [] : alerts.filter((a) =>
     a.vehicleId === selected?.id && ["ATENÇÃO", "VENCIDO"].includes(alertStatus(a)));
@@ -3019,25 +2926,14 @@ function deleteAlert(id) {
     "Excluir alerta técnico?\n\n" +
     "Os alertas são utilizados na programação das manutenções do veículo. " +
     "A exclusão removerá somente este alerta e sua programação futura e não apagará " +
-    "os registros do histórico técnico.\n\n" +
+    "os movimentos de manutenção já registrados.\n\n" +
     "Tem certeza de que deseja excluir?",
   )) return false;
   const stateBeforeSave = cloneDataState();
-  if (item.technicalKey) {
-    let parameter = technicalParameters.find((p) =>
-      p.vehicleId === item.vehicleId && p.technicalKey === item.technicalKey);
-    if (!parameter) {
-      parameter = { id: crypto.randomUUID(), vehicleId: item.vehicleId,
-        technicalKey: item.technicalKey, intervalKm: 0, intervalMonths: 0 };
-      technicalParameters.push(parameter);
-    }
-    parameter.active = false;
-    parameter.deleted = true;
-  }
   alerts = alerts.filter((a) => a.id !== id);
   try {
     save();
-    showToast("Alerta excluído. O histórico técnico foi preservado.");
+    showToast("Alerta excluído. Os movimentos de manutenção foram preservados.");
     return true;
   } catch (error) {
     restoreDataState(stateBeforeSave);
@@ -3064,15 +2960,15 @@ function alertPanelSvg(name) {
 }
 function alertPanelItemIcon(item) {
   const text = normalizeText(`${item.description || ""} ${registers.find((r) => r.id === item.itemId)?.item || ""}`);
-  if (text.includes("oleo") || item.technicalKey === "OIL") return "oil";
+  if (text.includes("oleo")) return "oil";
   if (text.includes("pastilha") || text.includes("freio")) return text.includes("fluido") ? "fluid" : "brake";
-  if (text.includes("bateria") || item.technicalKey === "BATTERY") return "battery";
+  if (text.includes("bateria")) return "battery";
   if (text.includes("pneu")) return "tire";
   return "wrench";
 }
 function alertPanelStatus(item) {
   const raw = alertStatus(item);
-  const labels = { PROGRAMADO: "Ativo", ATENÇÃO: "Atenção", VENCIDO: "Vencido", INATIVO: "Desativado", CONCLUÍDO: "Concluído" };
+  const labels = { PROGRAMADO: "Ativo", ATENÇÃO: "Atenção", VENCIDO: "Vencido", INATIVO: "Desativado" };
   return { raw, label: labels[raw] || raw, css: normalizeText(raw).replace(/\s+/g, "-") };
 }
 function alertPanelRemaining(item, vehicle) {
@@ -3089,7 +2985,7 @@ function alertPanelRemaining(item, vehicle) {
 
 function renderAlerts() {
   if (!$("#alertList")) return;
-  ensureTechnicalData();
+  ensureAlertData();
   const selectedVehicle = selectedVehicleObject();
   const panelName = $("#alertPanelVehicleName");
   const panelMeta = $("#alertPanelVehicleMeta");
@@ -3103,9 +2999,9 @@ function renderAlerts() {
     ? "Veículos inativos não podem receber novos alertas."
     : "Novo alerta técnico";
 
-  const statusOrder = { VENCIDO: 0, ATENÇÃO: 1, PROGRAMADO: 2, INATIVO: 3, CONCLUÍDO: 4 };
+  const statusOrder = { VENCIDO: 0, ATENÇÃO: 1, PROGRAMADO: 2, INATIVO: 3 };
   const rows = alerts
-    .filter((item) => item.vehicleId === selectedVehicle?.id && !item.archived)
+    .filter((item) => item.vehicleId === selectedVehicle?.id && item.modelVersion === 2)
     .sort((a, b) => (statusOrder[alertStatus(a)] ?? 9) - (statusOrder[alertStatus(b)] ?? 9) || String(a.description).localeCompare(String(b.description), "pt-BR"));
 
   $("#alertList").innerHTML = rows.map((item) => {
@@ -3240,13 +3136,14 @@ function applyAlertItemDefaults({ preserveValues = false } = {}) {
     const base = alertBaseForItem(vehicle, register.id);
     f.baseDate.value = base.date;
     f.baseKm.value = String(base.km || 0);
-    if (register.technicalKey === "OIL") {
+    const itemName = normalizeText(register.item);
+    if (itemName.includes("oleo")) {
       f.recurrenceMonths.value = "6";
       f.recurrenceKm.value = "9000";
       f.leadDays.value = "15";
       f.leadKm.value = "1000";
       setAlertCriterion("BOTH");
-    } else if (register.technicalKey === "BATTERY") {
+    } else if (itemName.includes("bateria")) {
       f.recurrenceMonths.value = "36";
       f.recurrenceKm.value = "0";
       f.leadDays.value = "30";
@@ -3293,22 +3190,24 @@ function openAlert(id = "", mode = "edit") {
   if (item?.itemId && [...f.itemId.options].some((option) => option.value === item.itemId)) {
     f.itemId.value = item.itemId;
   } else if (!item) {
-    const oilRegister = registers.find((register) => register.grupo === "MANUTENÇÃO" && register.technicalKey === "OIL" && register.ativo !== false);
-    const defaultRegister = oilRegister || registers.find((register) => register.grupo === "MANUTENÇÃO" && register.padrao && register.ativo !== false);
+    const defaultRegister = registers.find((register) => register.grupo === "MANUTENÇÃO" && register.padrao && register.ativo !== false)
+      || registers.find((register) => register.grupo === "MANUTENÇÃO" && register.ativo !== false);
     if (defaultRegister && [...f.itemId.options].some((option) => option.value === defaultRegister.id)) f.itemId.value = defaultRegister.id;
   }
   const selectedRegister = registers.find((register) => register.id === f.itemId.value);
   const base = deriveAlertBase(item, selectedVehicle);
-  const defaultCriterion = selectedRegister?.technicalKey === "BATTERY" ? "DATE" : "BOTH";
+  const selectedName = normalizeText(selectedRegister?.item);
+  const isBattery = selectedName.includes("bateria");
+  const defaultCriterion = isBattery ? "DATE" : "BOTH";
   const criterion = item?.criterion || defaultCriterion;
-  const defaultMonths = selectedRegister?.technicalKey === "BATTERY" ? 36 : 6;
-  const defaultKm = selectedRegister?.technicalKey === "BATTERY" ? 0 : 9000;
+  const defaultMonths = isBattery ? 36 : 6;
+  const defaultKm = isBattery ? 0 : 9000;
   f.recurrenceMonths.value = String(item?.recurrenceMonths ?? defaultMonths);
   f.recurrenceKm.value = String(item?.recurrenceKm ?? defaultKm);
   f.baseDate.value = base.date;
   f.baseKm.value = String(base.km || 0);
-  f.leadDays.value = String(item?.leadDays ?? (selectedRegister?.technicalKey === "BATTERY" ? 30 : 15));
-  f.leadKm.value = String(item?.leadKm ?? (selectedRegister?.technicalKey === "BATTERY" ? 0 : 1000));
+  f.leadDays.value = String(item?.leadDays ?? (isBattery ? 30 : 15));
+  f.leadKm.value = String(item?.leadKm ?? (isBattery ? 0 : 1000));
   f.observations.value = item?.observations || "";
   f.statusMode.value = item?.active === false ? "DISABLED" : "ACTIVE";
   $("#alertVehicleName").textContent = selectedVehicle?.nome || "Veículo não localizado";
@@ -3364,24 +3263,17 @@ $("#alertForm").onsubmit = (event) => {
     return ($("#alertFormError").textContent = "Informe o KM base e a vida útil em quilômetros.");
   const dueDate = criterion !== "KM" ? addMonths(dateOnly(baseDate), months).toISOString().slice(0, 10) : "";
   const dueKm = criterion !== "DATE" ? baseKm + kmLife : 0;
-  const technicalKey = register.technicalKey || "";
-  const oldTechnicalKey = current?.technicalKey || "";
   const stateBeforeSave = cloneDataState();
-  if (oldTechnicalKey && oldTechnicalKey !== technicalKey) {
-    const previousParameter = technicalParameters.find((p) =>
-      p.vehicleId === data.vehicleId && p.technicalKey === oldTechnicalKey);
-    if (previousParameter) Object.assign(previousParameter, { active: false, deleted: true });
-  }
   const active = data.statusMode !== "DISABLED";
   const object = {
     ...current,
     id: data.id || crypto.randomUUID(),
+    modelVersion: 2,
     vehicleId: data.vehicleId,
     group: "MANUTENÇÃO",
     itemId: data.itemId,
     description: register.item,
     criterion,
-    recurrence: criterion === "BOTH" ? "BOTH" : criterion === "DATE" ? "MONTHS" : "KM",
     recurrenceMonths: months,
     recurrenceKm: kmLife,
     baseDate,
@@ -3393,20 +3285,8 @@ $("#alertForm").onsubmit = (event) => {
     observations: String(data.observations || "").slice(0, 300),
     statusMode: active ? "ACTIVE" : "DISABLED",
     active,
-    technical: true,
-    technicalKey,
-    manualSchedule: true,
-    completed: false,
   };
   if (current) Object.assign(current, object); else alerts.push(object);
-  if (technicalKey) {
-    let parameter = technicalParameters.find((p) => p.vehicleId === object.vehicleId && p.technicalKey === technicalKey);
-    if (!parameter) {
-      parameter = { id: crypto.randomUUID(), vehicleId: object.vehicleId, technicalKey };
-      technicalParameters.push(parameter);
-    }
-    Object.assign(parameter, { active, deleted: false, intervalKm: kmLife, intervalMonths: months });
-  }
   try {
     save();
     $("#alertDialog").close();

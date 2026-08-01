@@ -5,7 +5,7 @@
  * Este módulo lê e exporta diretamente a estrutura do arquivo MyCarPlus.xlsx.
  */
 window.MyCarPlusDB = (() => {
-  const FILE = "data/MyCarPlus.xlsx?v=545";
+  const FILE = "data/MyCarPlus.xlsx?v=555";
   const NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
   const REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
@@ -108,9 +108,7 @@ window.MyCarPlusDB = (() => {
     for (const name of ["Movimentacoes","Veiculos","Motoristas","Fornecedores","Itens","Formas_Pagamento"]) {
       sheets[name] = table(await readSheet(zip, map[name], shared));
     }
-    for (const name of ["Alertas","Historico_Alertas","Parametros_Tecnicos"]) {
-      sheets[name] = map[name] ? table(await readSheet(zip, map[name], shared)) : [];
-    }
+    sheets.Alertas = map.Alertas ? table(await readSheet(zip, map.Alertas, shared)) : [];
 
     const vehicles = sheets.Veiculos.map(r => ({
       id:r.id, nome:r.nome, placa:r.placa || "",
@@ -186,28 +184,17 @@ window.MyCarPlusDB = (() => {
       };
     });
     const alerts = sheets.Alertas.map(r => ({
-      id:r.id, vehicleId:r.veiculo_id, group:r.grupo, itemId:r.item_id,
-      description:r.descricao || "", criterion:r.criterio || "DATE",
-      dueDate:r.data_prevista || "", dueKm:Number(r.km_previsto || 0),
-      leadDays:Number(r.antecedencia_dias || 0), leadKm:Number(r.antecedencia_km || 0),
-      recurrence:r.recorrencia || "NONE", recurrenceMonths:Number(r.meses_recorrencia || 0),
-      recurrenceKm:Number(r.km_recorrencia || 0), active:bool(r.ativo),
-      technicalKey:r.chave_tecnica || "", technical:r.tecnico === "" ? true : bool(r.tecnico),
-      manualSchedule:bool(r.agenda_manual), completed:bool(r.concluido)
+      id:r.id, modelVersion:Number(r.modelo_versao || 2), vehicleId:r.veiculo_id,
+      group:"MANUTENÇÃO", itemId:r.item_id, description:r.descricao || "",
+      criterion:r.criterio || "DATE", baseDate:r.data_base || "",
+      baseKm:Number(r.km_base || 0), recurrenceMonths:Number(r.vida_util_meses || 0),
+      recurrenceKm:Number(r.vida_util_km || 0), dueDate:r.data_prevista || "",
+      dueKm:Number(r.km_previsto || 0), leadDays:Number(r.antecedencia_dias || 0),
+      leadKm:Number(r.antecedencia_km || 0), observations:r.observacao || "",
+      statusMode:String(r.status || "ATIVO").toUpperCase() === "DESATIVADO" ? "DISABLED" : "ACTIVE",
+      active:bool(r.ativo)
     }));
-    const alertHistory = sheets.Historico_Alertas.map(r => ({
-      id:r.id, alertId:r.alerta_id, vehicleId:r.veiculo_id,
-      technicalKey:r.chave_tecnica || "", description:r.descricao || "",
-      completedAt:r.concluido_em ? excelDate(r.concluido_em) : "",
-      completedKm:Number(r.hodometro_conclusao || 0)
-    }));
-    const technicalParameters = sheets.Parametros_Tecnicos.map(r => ({
-      id:r.id, vehicleId:r.veiculo_id, technicalKey:r.chave_tecnica,
-      intervalKm:Number(r.intervalo_km || 0), intervalMonths:Number(r.intervalo_meses || 0),
-      active:bool(r.ativo), deleted:bool(r.excluido)
-    }));
-    return { movements, vehicles, drivers, suppliers, paymentMethods, registers,
-      alerts, alertHistory, technicalParameters };
+    return { movements, vehicles, drivers, suppliers, paymentMethods, registers, alerts };
   }
 
   function cell(v, ref) {
@@ -230,8 +217,7 @@ window.MyCarPlusDB = (() => {
   async function exportDatabase(state) {
     const zip = await openTemplate();
     const map = await workbookMap(zip);
-    const { movements=[], vehicles=[], drivers=[], suppliers=[], paymentMethods=[], registers=[],
-      alerts=[], alertHistory=[], technicalParameters=[] } = state;
+    const { movements=[], vehicles=[], drivers=[], suppliers=[], paymentMethods=[], registers=[], alerts=[] } = state;
     const exportedSuppliers = suppliers.some(s => s.nome === "NI — Não informado")
       ? suppliers : [...suppliers, { id:"supplier-ni", nome:"NI — Não informado", ativo:true }];
 
@@ -318,15 +304,9 @@ window.MyCarPlusDB = (() => {
       zip.file("[Content_Types].xml", types);
       zip.file(path, worksheet(title, subtitle, headers, rows));
     }
-    await addSheet("Alertas", "ALERTAS TÉCNICOS", "Programação de manutenção por veículo",
-      ["id","veiculo_id","grupo","item_id","descricao","criterio","data_prevista","km_previsto","antecedencia_dias","antecedencia_km","recorrencia","meses_recorrencia","km_recorrencia","ativo","chave_tecnica","tecnico","agenda_manual","concluido"],
-      alerts.map(a => [a.id,a.vehicleId,a.group,a.itemId,a.description,a.criterion,a.dueDate||"",Number(a.dueKm||0),Number(a.leadDays||0),Number(a.leadKm||0),a.recurrence,Number(a.recurrenceMonths||0),Number(a.recurrenceKm||0),yes(a.active),a.technicalKey||"",yes(a.technical!==false),yes(!!a.manualSchedule),yes(!!a.completed)]));
-    await addSheet("Historico_Alertas", "HISTÓRICO DE ALERTAS", "Ciclos concluídos preservados",
-      ["id","alerta_id","veiculo_id","chave_tecnica","descricao","concluido_em","hodometro_conclusao"],
-      alertHistory.map(h => [h.id,h.alertId,h.vehicleId,h.technicalKey||"",h.description||"",serialDate(h.completedAt),Number(h.completedKm||0)]));
-    await addSheet("Parametros_Tecnicos", "PARÂMETROS TÉCNICOS", "Periodicidades editáveis por veículo",
-      ["id","veiculo_id","chave_tecnica","intervalo_km","intervalo_meses","ativo","excluido"],
-      technicalParameters.map(p => [p.id,p.vehicleId,p.technicalKey,Number(p.intervalKm||0),Number(p.intervalMonths||0),yes(p.active),yes(!!p.deleted)]));
+    await addSheet("Alertas", "ALERTAS TÉCNICOS — NOVO MODELO", "Somente alertas cadastrados manualmente e vinculados aos itens do cadastro",
+      ["id","modelo_versao","veiculo_id","grupo","item_id","descricao","criterio","data_base","km_base","vida_util_meses","vida_util_km","data_prevista","km_previsto","antecedencia_dias","antecedencia_km","status","ativo","observacao"],
+      alerts.filter(a => Number(a.modelVersion || 2) === 2).map(a => [a.id,2,a.vehicleId,"MANUTENÇÃO",a.itemId,a.description,a.criterion,a.baseDate||"",Number(a.baseKm||0),Number(a.recurrenceMonths||0),Number(a.recurrenceKm||0),a.dueDate||"",Number(a.dueKm||0),Number(a.leadDays||0),Number(a.leadKm||0),a.active===false?"DESATIVADO":"ATIVO",yes(a.active!==false),a.observations||""]));
 
     const blob = await zip.generateAsync({
       type:"blob",
