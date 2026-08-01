@@ -224,10 +224,20 @@ public class MainActivity extends BridgeActivity {
         File coverFile = new File(shareDirectory, safeCoverName);
         try (FileOutputStream htmlOutput = new FileOutputStream(htmlFile); FileOutputStream coverOutput = new FileOutputStream(coverFile)) {
             htmlOutput.write(html.getBytes(StandardCharsets.UTF_8)); htmlOutput.flush();
-            coverOutput.write(Base64.decode(coverBase64, Base64.DEFAULT)); coverOutput.flush();
+            String normalizedBase64 = coverBase64;
+            int commaIndex = normalizedBase64.indexOf(',');
+            if (normalizedBase64.startsWith("data:") && commaIndex >= 0) {
+                normalizedBase64 = normalizedBase64.substring(commaIndex + 1);
+            }
+            coverOutput.write(Base64.decode(normalizedBase64, Base64.DEFAULT)); coverOutput.flush();
         } catch (Exception error) {
             if (htmlFile.exists()) htmlFile.delete(); if (coverFile.exists()) coverFile.delete();
             showMessage("Não foi possível preparar os arquivos para compartilhar."); return;
+        }
+        if (!coverFile.exists() || coverFile.length() == 0L) {
+            showMessage("Não foi possível gerar a capa. O relatório será compartilhado apenas em HTML.");
+            shareHtmlFile(htmlFile, jobName);
+            return;
         }
         shareHtmlAndCover(htmlFile, coverFile, jobName);
     }

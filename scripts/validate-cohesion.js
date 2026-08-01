@@ -3,11 +3,21 @@ const path = require('path');
 const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
+const packagePreview = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+const semver = String(packagePreview.version || '').trim();
+const match = semver.match(/^(\d+)\.(\d+)\.(\d+)$/);
+if (!match) {
+  console.error('package.json possui versão inválida. Use o formato X.Y.Z.');
+  process.exit(1);
+}
+const appVersion = `${match[1]}.${match[2]}`;
 const expected = {
-  semver: '5.64.0',
-  app: '5.64',
-  versionCode: '564',
-  cache: 'mycar-plus-v5-64',
+  semver,
+  app: appVersion,
+  versionCode: `${match[1]}${match[2].padStart(2, '0')}`,
+  cache: `mycar-plus-v${match[1]}-${match[2]}`,
+  batch: `ATUALIZAR_MYCAR_V${match[1]}_${match[2]}_WEB_ANDROID.bat`,
+  zip: `MYCAR_PLUS_V${match[1]}_${match[2]}_MASTER.zip`,
 };
 const failures = [];
 
@@ -33,7 +43,7 @@ const html = read('index.html');
 const styles = read('styles.css');
 const sw = read('sw.js');
 const gradle = read('android/app/build.gradle');
-const batch = read('ATUALIZAR_MYCAR_V5_64_WEB_ANDROID.bat');
+const batch = read(expected.batch);
 
 assert(pkg.version === expected.semver, `package.json deve estar em ${expected.semver}.`);
 assert(new RegExp(`APP_VERSION\\s*=\\s*["']${expected.app.replace('.', '\\.')}`).test(app), `APP_VERSION deve ser ${expected.app}.`);
@@ -76,18 +86,20 @@ assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios
 assert(/mycar-share-report-html/.test(app), 'Compartilhamento HTML ausente.');
 assert(/id="reportShareButton"[^>]*>Compartilhar</.test(app), 'Botão Compartilhar do Executivo ausente.');
 assert(/id="aiReportShare"[^>]*>Compartilhar</.test(app), 'Botão Compartilhar da IA ausente.');
-assert(!/reportPrintButton|aiReportPrint/.test(app), 'Botão Imprimir antigo ainda existe.');
+assert(/id="reportPrintButton"[^>]*>Imprimir</.test(app), 'Botão Imprimir do Executivo ausente.');
+assert(/id="aiReportPrint"[^>]*>Imprimir</.test(app), 'Botão Imprimir da IA ausente.');
 
 // Android.
 const mainActivity = read('android/app/src/main/java/br/com/marceloauditor/mycarplus/MainActivity.java');
 assert(/public void shareHtml\(String jobName, String html\)/.test(mainActivity), 'Ponte nativa shareHtml ausente.');
 assert(/Intent\.ACTION_SEND/.test(mainActivity), 'Compartilhamento Android ACTION_SEND ausente.');
-assert(/setType\("text\/html"\)/.test(mainActivity), 'Compartilhamento Android não usa text/html.');
+assert(/Intent\.ACTION_SEND_MULTIPLE/.test(mainActivity), 'Compartilhamento múltiplo Android ausente.');
+assert(/shareHtmlWithCover/.test(mainActivity), 'Ponte nativa shareHtmlWithCover ausente.');
 assert(/public void onDestroy\(\)/.test(mainActivity), 'onDestroy deve ser público.');
 
 // BAT.
-assert(batch.includes('set "VERSAO=5.64"'), 'BAT não está configurado para 5.64.');
-assert(batch.includes('MYCAR_PLUS_V5_64_MASTER.zip'), 'BAT não procura o ZIP V5.64.');
+assert(batch.includes(`set "VERSAO=${expected.app}"`), `BAT não está configurado para ${expected.app}.`);
+assert(batch.includes(expected.zip), `BAT não procura o ZIP ${expected.zip}.`);
 assert(batch.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
 assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 externo.');
 for (const oldVersion of ['41','42','43','44','45','46','47','48','49','50','51','52','53','54']) {
