@@ -82,7 +82,7 @@ assert(!html.includes('id="netTotal"'), 'Resumo azul repetido ainda está na tel
 assert(!html.includes('id="costKm"') && !html.includes('id="dailyKm"') && !html.includes('id="avgConsumption"') && !html.includes('id="dailyCost"'), 'Cards repetidos ainda estão na tela inicial.');
 assert(html.includes('id="lastConsumption"') && html.includes('id="lastDistance"'), 'Indicadores exclusivos da tela inicial devem permanecer.');
 
-// Gráficos, período efetivo, manual e tela Sobre — V5.75.
+// Gráficos, período efetivo, manual e tela Sobre — V5.76.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
@@ -97,8 +97,9 @@ assert(html.includes('Altere o período no final da página.'), 'Instrução com
 assert(html.includes('class="about-title-icon"') && html.includes('<h2>Informações</h2>'), 'Novo cabeçalho da tela Sobre ausente.');
 assert(html.includes('class="about-info-stack"') && html.includes('class="about-contact-link"'), 'Desenvolvedor e contato não foram reorganizados na tela Sobre.');
 assert(/white-space:\s*nowrap!important/.test(styles) && /font-size:clamp\(10\.5px,3\.2vw,13px\)/.test(styles), 'E-mail da tela Sobre ainda pode quebrar ou não possui fonte responsiva.');
-assert(/function\s+odometerReferencePointsByYear\s*\(/.test(app) && /function\s+drawOdometerChart\s*\(/.test(app), 'Seleção anual ou desenho específico do hodômetro ausente.');
-assert(/odometerMonthLabel/.test(app) && /yearGroups/.test(app), 'Meses e anos em dois níveis não foram implementados no hodômetro.');
+assert(/function\s+odometerGlobalLabelIndexes\s*\(/.test(app) && /function\s+drawOdometerChart\s*\(/.test(app), 'Seleção global de início, meio e fim do hodômetro ausente.');
+assert(!/odometerReferencePointsByYear/.test(app) && !/yearGroups/.test(app), 'O hodômetro ainda utiliza três referências por ano.');
+assert(/labelIndexes,/.test(app) && /odometerMonthLabel/.test(app), 'Meses e anos globais não foram implementados no hodômetro.');
 assert(html.includes('<strong>Desenvolvedor:</strong>') && html.includes('class="about-developer-name"'), 'Nome cursivo do desenvolvedor ou dois-pontos ausente.');
 assert(/Segoe Script/.test(styles) && /about-developer-name[^}]*font-style:\s*italic/.test(styles), 'Fonte cursiva e itálica do desenvolvedor ausente.');
 assert(html.includes('<strong>Contato:</strong>') && html.includes('href="mailto:marcelo.auditortl@gmail.com"'), 'Contato com dois-pontos ou link mailto ausente.');
@@ -110,6 +111,14 @@ assert(html.includes('Padrão: período do último ano, ajustado aos registros d
 assert(/class=\"manual-cover\"/.test(app) && /class=\"manual-meta\"/.test(app), 'Capa do Manual de Ajuda ausente.');
 assert(/Desenvolvedor/.test(app) && /Criação do sistema/.test(app) && /Geração do documento/.test(app), 'Metadados completos do manual ausentes.');
 assert(/break-after:page/.test(app) && /page-break-after:always/.test(app), 'Quebra de página após a capa do manual ausente.');
+assert(/function\s+fuelSeriesIdentity\s*\(/.test(app) && /function\s+drawFuelConsumptionChart\s*\(/.test(app), 'Gráfico multilinha de consumo ausente.');
+assert(/key:\s*"geral"[\s\S]*color:\s*fuelSeriesColor\("geral"\)[\s\S]*showPointValues:\s*true/.test(app), 'Linha Geral ou valores fixos da linha geral ausentes.');
+assert(/if \(key === "geral"\) return "#d94b4b"/.test(app), 'Linha Geral deve ser vermelha.');
+assert(/if \(key === "gasolina"\) return "#f28b0c"/.test(app), 'Linha Gasolina deve ser laranja.');
+assert(/if \(key === "etanol"\) return "#246b9e"/.test(app), 'Linha Etanol deve ser azul.');
+assert(/if \(key === "diesel"\) return "#1f8a70"/.test(app), 'Linha Diesel deve ser verde.');
+assert(/showPointValues:\s*false/.test(app), 'Linhas específicas não devem mostrar valores fixos nos pontos.');
+assert(!/Álcool|álcool|Alcool|alcool/.test(app + html), 'A interface não deve utilizar a palavra substituída por Etanol.');
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');

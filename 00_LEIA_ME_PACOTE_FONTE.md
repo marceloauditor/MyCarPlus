@@ -1,6 +1,6 @@
-# MyCar+ V5.75 KEY — pacote-fonte oficial
+# MyCar+ V5.76 KEY — pacote-fonte oficial
 
-Este pacote foi produzido a partir da V5.74 KEY e mantém a raiz do projeto como fonte oficial.
+Este pacote foi produzido a partir da V5.75 KEY e mantém a raiz do projeto como fonte oficial.
 
 ## Estrutura
 
@@ -12,25 +12,26 @@ Edite sempre a raiz e execute a sincronização antes de compilar o aplicativo.
 
 ## Identificação da versão
 
-- Aplicação: **5.75.0**
-- Android `versionCode`: **575**
-- Android `versionName`: **5.75.0**
-- Cache PWA: **mycar-plus-v5-75**
+- Aplicação: **5.76.0**
+- Android `versionCode`: **576**
+- Android `versionName`: **5.76.0**
+- Cache PWA: **mycar-plus-v5-76**
 - Pacote Android: `br.com.marceloauditor.mycarplus`
 
-## Melhorias da V5.75
+## Melhorias da V5.76
 
-- quarta barra laranja com o total no custo médio diário por grupo;
-- quarta barra laranja com o total no custo total por grupo;
-- gráficos e relatórios com padrão do último ano ajustado aos registros;
-- Manual de Ajuda com capa semelhante aos relatórios;
-- versão, desenvolvedor, criação do sistema e geração do documento em blocos responsivos.
+- consumo geral em vermelho, mantendo os valores nos pontos;
+- consumo de Gasolina em laranja e de Etanol em azul;
+- Diesel em verde quando houver registros;
+- demais combustíveis com cores distintas e estáveis;
+- meses sem dados permanecem como ausência de informação, sem queda para zero;
+- hodômetro com todos os registros reais e apenas primeiro, meio e último mês identificados no eixo.
 
 ## Atualização automatizada
 
 Coloque na pasta Downloads:
 
-- `MYCAR_PLUS_V5_75_KEY.zip`
-- `ATUALIZAR_MYCAR_V5_75_KEY.bat`
+- `MYCAR_PLUS_V5_76_KEY.zip`
+- `ATUALIZAR_MYCAR_V5_76_KEY.bat`
 
 Depois execute o BAT pelo PowerShell. Ele cria backup, atualiza a fonte, sincroniza Web e Android, valida a coesão, envia as alterações ao GitHub e gera o APK debug.

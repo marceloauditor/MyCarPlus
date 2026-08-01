@@ -881,3 +881,9 @@ html[data-theme="light"] .odometer-point-tooltip{background:rgba(255,255,255,.98
 #chartPeriodLabel{font-weight:800;color:var(--navy)}
 html[data-theme="dark"] #chartDefaultHint,html[data-theme="dark"] #reportDefaultHint{color:#b7cad8!important}
 html[data-theme="dark"] #chartPeriodLabel{color:#eef6ff!important}
+
+
+/* V5.76 — consumo multilinha e três referências globais no hodômetro */
+#chartAnnualConsumption{min-height:350px}
+#chartOdometer{min-height:330px}
+@media(max-width:560px){#chartAnnualConsumption{min-height:370px}#chartOdometer{min-height:340px}}

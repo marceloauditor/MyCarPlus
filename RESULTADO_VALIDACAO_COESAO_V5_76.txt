@@ -1,0 +1,8 @@
+VALIDAÇÃO DE COESÃO V5.76: APROVADA
+
+- Versão Web/PWA: 5.76.0
+- Android versionCode: 576
+- Android versionName: 5.76.0
+- Cache PWA: mycar-plus-v5-76
+- 30 arquivos conferidos na cadeia raiz → www → Android.
+- Sintaxe do app.js e do validador aprovada pelo Node.js.

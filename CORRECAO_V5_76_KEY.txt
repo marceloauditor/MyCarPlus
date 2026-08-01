@@ -1,0 +1,8 @@
+MYCAR+ V5.76 KEY
+
+1. Linha Geral vermelha com valores nos pontos.
+2. Linha Gasolina laranja.
+3. Linha Etanol azul.
+4. Linha Diesel verde.
+5. Outros combustíveis com cores distintas.
+6. Hodômetro com somente primeiro, meio e último mês do período.

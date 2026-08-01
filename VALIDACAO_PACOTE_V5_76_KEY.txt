@@ -1,0 +1,20 @@
+PACOTE MYCAR_PLUS_V5_76_KEY
+VALIDAÇÃO: APROVADA
+
+1. Fonte aplicada sobre a V5.75 KEY.
+2. APP_VERSION 5.76 conferido.
+3. package.json e package-lock.json em 5.76.0.
+4. Android versionCode 576 e versionName 5.76.0.
+5. Cache PWA mycar-plus-v5-76.
+6. Linha Geral vermelha com valores fixos nos pontos.
+7. Linha Gasolina laranja sem valores fixos.
+8. Linha Etanol azul sem valores fixos.
+9. Linha Diesel verde quando houver dados.
+10. Outros combustíveis recebem cores distintas e estáveis.
+11. Ausência de combustível no mês permanece nula, sem cair para zero.
+12. Média Geral calculada por distância total dividida pelos litros totais.
+13. Hodômetro preserva todos os pontos reais.
+14. Eixo temporal do hodômetro mostra apenas primeiro, meio e último mês, com anos.
+15. Sintaxe JavaScript aprovada.
+16. Validação de coesão aprovada em 30 arquivos.
+17. BAT V5.76 aprovado.
