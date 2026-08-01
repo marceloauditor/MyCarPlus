@@ -12,6 +12,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import android.widget.FrameLayout;
+import android.view.ViewGroup;
 import android.util.Base64;
 
 import androidx.core.content.FileProvider;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 public class MainActivity extends BridgeActivity {
 
     private WebView printWebView;
+    private FrameLayout printContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +122,12 @@ public class MainActivity extends BridgeActivity {
         }
         printWebView.stopLoading();
         printWebView.setWebViewClient(null);
+        if (printContainer != null) {
+            printContainer.removeAllViews();
+            ViewGroup parent = (ViewGroup) printContainer.getParent();
+            if (parent != null) parent.removeView(printContainer);
+            printContainer = null;
+        }
         printWebView.destroy();
         printWebView = null;
     }
@@ -154,6 +163,14 @@ public class MainActivity extends BridgeActivity {
 
         printWebView = new WebView(this);
         printWebView.getSettings().setJavaScriptEnabled(true);
+        printContainer = new FrameLayout(this);
+        printContainer.setAlpha(0.01f);
+        FrameLayout.LayoutParams containerParams = new FrameLayout.LayoutParams(2, 2);
+        addContentView(printContainer, containerParams);
+        printContainer.addView(printWebView, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        ));
         printWebView.getSettings().setDefaultTextEncodingName("UTF-8");
         printWebView.setWebViewClient(new WebViewClient() {
             private boolean printStarted = false;
@@ -220,7 +237,7 @@ public class MainActivity extends BridgeActivity {
         }
         deleteOldSharedReports(shareDirectory);
         File htmlFile = new File(shareDirectory, safeFileName(jobName) + ".html");
-        String safeCoverName = coverFileName == null ? "CAPA_RELATORIO_MYCAR_PLUS.png" : coverFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+        String safeCoverName = coverFileName == null ? "CAPA_RELATORIO_MYCAR_PLUS.jpg" : coverFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
         File coverFile = new File(shareDirectory, safeCoverName);
         try (FileOutputStream htmlOutput = new FileOutputStream(htmlFile); FileOutputStream coverOutput = new FileOutputStream(coverFile)) {
             htmlOutput.write(html.getBytes(StandardCharsets.UTF_8)); htmlOutput.flush();

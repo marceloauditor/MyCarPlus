@@ -9,11 +9,15 @@
   };
 
   function nativeBridge() {
-    try {
-      return window.MyCarNative || null;
-    } catch (_) {
-      return null;
-    }
+    const candidates = [];
+    try { candidates.push(window.MyCarNative); } catch (_) {}
+    try { if (window.parent && window.parent !== window) candidates.push(window.parent.MyCarNative); } catch (_) {}
+    try { if (window.top && window.top !== window) candidates.push(window.top.MyCarNative); } catch (_) {}
+    return candidates.find((candidate) => candidate && typeof candidate === "object") || null;
+  }
+
+  function notify(message) {
+    try { alert(message); } catch (_) { console.warn(message); }
   }
 
   function isNative() {
@@ -76,7 +80,7 @@
     const reportHtml = String(html || state.currentHtml || "");
     const reportName = safeJobName(jobName || state.currentJobName);
     if (!reportHtml.trim()) {
-      alert("Relatório vazio. Não foi possível abrir a impressão.");
+      notify("Relatório vazio. Não foi possível abrir a impressão.");
       return false;
     }
     const bridge = nativeBridge();
@@ -91,7 +95,7 @@
 
     const win = window.open("", "_blank");
     if (!win) {
-      alert("Não foi possível abrir a impressão. Permita janelas pop-up ou compartilhe o relatório.");
+      notify("Não foi possível abrir a impressão nativa. Tente compartilhar o relatório e imprimir pelo navegador.");
       return false;
     }
     win.document.open();
@@ -114,7 +118,7 @@
     const reportHtml = String(html || state.currentHtml || "");
     const reportName = safeJobName(jobName || state.currentJobName);
     if (!reportHtml.trim()) {
-      alert("Relatório vazio. Não foi possível compartilhar.");
+      notify("Relatório vazio. Não foi possível compartilhar.");
       return false;
     }
 
@@ -146,7 +150,7 @@
           console.error("Falha no compartilhamento HTML:", error);
         }
       }
-      alert("O módulo de compartilhamento não está disponível. Feche e abra novamente o aplicativo.");
+      notify("O módulo de compartilhamento não está disponível. Feche e abra novamente o aplicativo.");
       return false;
     }
 
