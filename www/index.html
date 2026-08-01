@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.71</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.72</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -166,10 +166,9 @@
   </section>
 
   <section id="reportPeriodView" class="report-period-step" hidden>
-    <section class="report-guide-card report-guide-vehicle-card selected-vehicle-context">
-      <small>Veículo selecionado</small>
-      <strong id="reportVehicleName">—</strong>
-      <span id="reportVehicleMeta" class="report-guide-meta">—</span>
+    <section class="vehicle-static-summary" aria-label="Veículo selecionado para o relatório">
+      <b id="reportVehicleName">—</b>
+      <span id="reportVehicleMeta" class="vehicle-status active">Ativo</span>
     </section>
     <section class="report-guide-card report-guide-period-card">
       <div id="reportSelectedTypeTitle" class="report-guide-card-title">Período do relatório</div>
@@ -247,9 +246,9 @@
 <section id="graficos" class="page">
 <select id="chartVehicle" hidden aria-hidden="true">
 </select>
-<div class="selected-vehicle-context">
-<small>Veículo definido na tela inicial</small>
-<strong id="chartVehicleName">—</strong>
+<div class="vehicle-static-summary" aria-label="Veículo selecionado para os gráficos">
+<b id="chartVehicleName">—</b>
+<span id="chartVehicleStatus" class="vehicle-status active">Ativo</span>
 </div>
 <p class="chart-period-instruction">Para alterar o período de análise, role até o final da página.</p>
 
@@ -283,8 +282,8 @@
 </div>
 <h3 class="chart-section-title">Composição dos custos</h3>
 <div class="chart-card">
-<h3>Custo por grupo e por quilômetro (R$/km)</h3>
-<p class="chart-note">Valor acumulado de cada grupo dividido pela distância percorrida.</p>
+<h3>Custo por grupo e custo total por quilômetro (R$/km)</h3>
+<p class="chart-note">Cada grupo é apresentado separadamente e a barra laranja consolida os três custos do período.</p>
 <canvas id="chartCategoryKm">
 </canvas>
 </div>
@@ -301,7 +300,7 @@
 </canvas>
 </div>
 <div class="chart-card">
-<h3>10 itens com maior valor acumulado (R$)</h3>
+<h3>5 itens com maior valor acumulado (R$)</h3>
 <p class="chart-note">Apresenta os itens de lançamento com maior valor acumulado no período.</p>
 <canvas id="chartTopSubcategories">
 </canvas>
@@ -497,7 +496,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V5.71</h3>
+<h3>Manual de utilização — MyCar+ V5.72</h3>
 <p>Controle de abastecimentos, manutenções, despesas administrativas, receitas, relatórios, gráficos, alertas técnicos e sincronização entre Android e Web.</p>
 <details open><summary>1. Visão geral</summary><p>O MyCar+ organiza os dados por veículo. A seleção feita na tela inicial controla lançamentos, indicadores, relatórios, gráficos, alertas e análise inteligente. Use a mesma Conta Google no Android e na Web para manter os dados sincronizados pelo Firebase.</p></details>
 <details><summary>2. Seleção do veículo</summary><p>A tela inicial mostra somente o veículo selecionado em uma barra compacta. Toque na barra para abrir a lista com rolagem, localize o veículo e toque nele. São exibidos apenas o nome e o status Ativo ou Inativo.</p></details>
@@ -509,7 +508,7 @@
 <details><summary>8. Administrativo e receitas</summary><p>Use Administrativo para despesas não relacionadas diretamente a combustível ou manutenção. Use Receita para entradas vinculadas ao veículo. Cada grupo lista somente os itens compatíveis.</p></details>
 <details><summary>9. Cadastro rápido</summary><p>Durante o lançamento, abra a lista de Item, Motorista ou Fornecedor e use o botão verde “＋ Novo”. Salvar retorna ao lançamento e seleciona o novo cadastro. Cancelar, X ou Voltar retorna sem apagar os dados já preenchidos.</p></details>
 <details><summary>10. Movimentos</summary><p>Consulte, pesquise, altere ou exclua movimentos. Os filtros permitem localizar registros por data, descrição, item, grupo ou fornecedor. Exclusões são sincronizadas com os demais dispositivos.</p></details>
-<details><summary>11. Gráficos</summary><p>A guia Gráficos utiliza, por padrão, os últimos 6 meses. Em períodos menores que um ano, consumo e custo diário são exibidos por mês; em períodos de um ano ou mais, por ano. A evolução financeira é acumulada desde a data inicial e o hodômetro parte da quilometragem real do veículo nessa data.</p></details>
+<details><summary>11. Gráficos</summary><p>A guia Gráficos utiliza, por padrão, os últimos 6 meses. Em períodos menores que um ano, consumo e custo diário são exibidos por mês; em períodos de um ano ou mais, por ano. Meses sem lançamentos não são apresentados como custo zero. A evolução financeira é acumulada desde a data inicial e identifica Custo bruto, Receitas e Custo líquido. O hodômetro parte da quilometragem real do veículo nessa data. O ranking mostra os 5 itens de maior valor e o custo por KM inclui uma barra laranja com o total dos três grupos.</p></details>
 <details><summary>12. Relatórios</summary><p>Na tela inicial, escolha o demonstrativo. Depois informe o período e use o botão verde-claro para gerar o Relatório Executivo, o relatório por Inteligência Artificial ou a exportação XLSX. As informações são restritas ao veículo selecionado e ao período informado.</p></details>
 <details><summary>13. Relatório Executivo</summary><p>A seção Manutenções com alertas cadastrados apresenta Serviço, Último registro, Valor, Fornecedor, Km, Próxima referência, Situação técnica e Alerta. A Próxima referência recebe o principal destaque visual.</p></details>
 <details><summary>14. Alertas técnicos</summary><p>Use “Incluir Alerta” para programar controles por data, quilometragem ou ambos. Os alertas são vinculados ao veículo e a um item cadastrado. Excluir um alerta não apaga os movimentos de manutenção.</p></details>
@@ -535,7 +534,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.71</p>
+<strong>Versão:</strong> 5.72</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>

@@ -827,3 +827,11 @@ body.report-viewer-open>nav{display:none!important}
 html[data-theme="dark"] .report-menu-title{color:#eef6ff!important}
 html[data-theme="dark"] .report-guide-action-confirm{background:#8fd19e!important;color:#102d1d!important;border-color:#76bd87!important}
 @media(max-width:560px){.report-menu-title{font-size:1.02rem;margin-bottom:12px}}
+
+
+/* V5.72 — identificação compacta e gráficos consolidados */
+.vehicle-static-summary{width:100%;min-height:50px;border:1px solid var(--line);background:var(--card,#fff);color:var(--ink);border-radius:12px;padding:9px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:0 0 12px;box-shadow:0 8px 22px rgba(16,42,67,.08)}
+.vehicle-static-summary b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}.vehicle-static-summary .vehicle-status{justify-self:end}
+html[data-theme="dark"] .vehicle-static-summary{background:#0b2539!important;color:#eef6ff!important;border-color:#24445d!important}
+html[data-theme="light"] .vehicle-static-summary{background:#fff!important;color:#12395b!important}
+@media(max-width:560px){.vehicle-static-summary{min-height:48px;padding:8px 10px}}

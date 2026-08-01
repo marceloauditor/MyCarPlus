@@ -1,0 +1,5 @@
+MYCAR+ V5.72 KEY
+
+Base utilizada: V5.71 KEY estável.
+Escopo: gráficos e padronização visual das telas analíticas.
+Não houve alteração da estrutura do Firebase, do dataset XLSX ou dos cadastros.

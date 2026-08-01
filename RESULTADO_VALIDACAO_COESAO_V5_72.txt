@@ -1,0 +1,15 @@
+MYCAR+ V5.72 — RESULTADO DA VALIDAÇÃO DE COESÃO
+Data: 01/08/2026
+
+RESULTADO: APROVADO
+
+Versão da aplicação: 5.72.0
+Android versionCode: 572
+Android versionName: 5.72.0
+Cache PWA: mycar-plus-v5-72
+
+Foram conferidos 27 arquivos na cadeia:
+raiz do projeto → www → android/app/src/main/assets/public
+
+Os hashes dos arquivos sincronizados são idênticos nas três camadas.
+O script scripts/validate-cohesion.js também verifica as melhorias específicas da V5.72.

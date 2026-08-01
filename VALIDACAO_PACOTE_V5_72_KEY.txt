@@ -1,0 +1,16 @@
+MYCAR+ V5.72 KEY — VALIDAÇÃO DO PACOTE
+Data: 01/08/2026
+
+Base utilizada: MYCAR_PLUS_V5_71_KEY.zip
+
+Validações concluídas:
+- sintaxe JavaScript aprovada em raiz, www e Android;
+- teste funcional confirmou que período sem movimento retorna ausência de dado, e não zero;
+- teste funcional confirmou ranking limitado a 5 itens;
+- teste funcional confirmou quarta barra Total dos custos e soma correta por KM;
+- legenda Custo líquido incluída em layout responsivo;
+- identificação compacta do veículo incluída em Relatórios e Gráficos;
+- coesão raiz → www → Android aprovada em 27 arquivos;
+- versão 5.72.0, versionCode 572 e cache mycar-plus-v5-72 conferidos.
+
+- integridade do ZIP aprovada por teste completo de descompactação, sem erros.
