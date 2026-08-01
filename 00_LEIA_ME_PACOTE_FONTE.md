@@ -1,54 +1,36 @@
-# MyCar+ V5.73 — pacote-fonte
+# MyCar+ V5.75 KEY — pacote-fonte oficial
 
-## Regra vigente dos alertas
+Este pacote foi produzido a partir da V5.74 KEY e mantém a raiz do projeto como fonte oficial.
 
-O aplicativo utiliza exclusivamente o **novo modelo de alertas técnicos**. A geração automática antiga, os parâmetros técnicos separados e o histórico de alertas de teste foram eliminados do código e do dataset.
+## Estrutura
 
-No Relatório Executivo, a seção de manutenção lista apenas itens que existem no Cadastro de Itens e possuem alerta do novo modelo cadastrado para o veículo selecionado.
+- **Raiz:** fonte editável oficial.
+- **`www/`:** cópia sincronizada para Web/PWA.
+- **`android/app/src/main/assets/public/`:** cópia sincronizada para o Android.
 
-# MyCar+ V5.52 — Pacote-fonte oficial
+Edite sempre a raiz e execute a sincronização antes de compilar o aplicativo.
 
-Pacote consolidado para Web/PWA e Android, com as correções e parametrizações pendentes da V5.41 implantadas.
+## Identificação da versão
 
-## Fonte de verdade
+- Aplicação: **5.75.0**
+- Android `versionCode`: **575**
+- Android `versionName`: **5.75.0**
+- Cache PWA: **mycar-plus-v5-75**
+- Pacote Android: `br.com.marceloauditor.mycarplus`
 
-- **Raiz do projeto:** fonte oficial editável.
-- **`www/`:** cópia sincronizada da fonte oficial para Web/PWA e Capacitor.
-- **`android/app/src/main/assets/public/`:** cópia gerada pelo Capacitor para o aplicativo Android.
+## Melhorias da V5.75
 
-Não altere manualmente `www/` ou os assets Android. Edite a raiz e execute a sincronização.
-
-## Versão
-
-- Aplicação: **5.52.0**
-- Android `versionCode`: **550**
-- Android `versionName`: **5.52.0**
-- Cache PWA: **mycar-plus-v5-51**
-- Esquema de dados/nuvem: **8**
+- quarta barra laranja com o total no custo médio diário por grupo;
+- quarta barra laranja com o total no custo total por grupo;
+- gráficos e relatórios com padrão do último ano ajustado aos registros;
+- Manual de Ajuda com capa semelhante aos relatórios;
+- versão, desenvolvedor, criação do sistema e geração do documento em blocos responsivos.
 
 ## Atualização automatizada
 
-Na pasta Downloads, mantenha o arquivo `MYCAR_PLUS_V5_73_KEY.zip` e execute:
+Coloque na pasta Downloads:
 
-```powershell
-.\ATUALIZAR_MYCAR_V5_73_KEY.bat
-```
+- `MYCAR_PLUS_V5_75_KEY.zip`
+- `ATUALIZAR_MYCAR_V5_75_KEY.bat`
 
-O BAT cria backup, instala dependências, sincroniza Web e Android, valida a coesão e gera o APK de teste.
-
-Se o navegador salvar o ZIP com sufixo como `(1)`, o BAT V5.73 localiza automaticamente o arquivo mais recente compatível na pasta Downloads.
-
-## Relatórios V5.52
-
-Os Relatórios Executivo e de Inteligência compartilham arquivos `.html` por meio da ponte nativa `MainActivity.shareHtml`. O arquivo Java correto está incluído no pacote Android.
-
-
-## Alertas de manutenção V5.52
-
-A V5.52 padroniza os alertas no grupo **MANUTENÇÃO**, mantém o vínculo obrigatório com o veículo selecionado e impede avisos ativos para veículos inativos. A exclusão remove somente o alerta e sua programação futura; os registros do histórico técnico e os movimentos de manutenção são preservados.
-
-O BAT da V5.52 é autocontido e não depende de arquivo `.ps1`.
-
-## V5.58 — etapa obrigatória do Firebase
-
-Antes do primeiro teste da V5.58, execute `PUBLICAR_REGRAS_FIREBASE_V5_58.bat` para publicar as regras que autorizam as novas coleções por registro. Depois, instale/abra a V5.58 e entre com a mesma Conta Google usada no backup. A migração do documento legado ocorrerá automaticamente uma única vez.
+Depois execute o BAT pelo PowerShell. Ele cria backup, atualiza a fonte, sincroniza Web e Android, valida a coesão, envia as alterações ao GitHub e gera o APK debug.

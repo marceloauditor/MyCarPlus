@@ -7,7 +7,7 @@ const webRoot = path.join(projectRoot, "www");
 const files = [
   "index.html", "styles.css", "report-manager.js", "app.js", "mycarplus-db.js", "cloud.js",
   "ai-logic.js", "firebase-config.js", "jszip.min.js", "manifest.webmanifest",
-  "sw.js", "icon.svg", "icon-16.png", "icon-32.png", "icon-48.png", "icon-72.png", "icon-96.png", "icon-128.png", "icon-144.png", "icon-180.png", "icon-192.png", "icon-256.png", "icon-384.png",
+  "package.json", "package-lock.json", "capacitor.config.json", "sw.js", "icon.svg", "icon-16.png", "icon-32.png", "icon-48.png", "icon-72.png", "icon-96.png", "icon-128.png", "icon-144.png", "icon-180.png", "icon-192.png", "icon-256.png", "icon-384.png",
   "icon-512.png", "mycar-plus-logo.png", "desenvolvedor.png"
 ];
 const directories = ["data"];

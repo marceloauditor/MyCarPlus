@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.73</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.75</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -177,7 +177,7 @@
         <label class="report-guide-field"><span>Data final</span><input id="reportEnd" type="date"></label>
       </div>
       <div class="report-guide-period-foot">
-        <small id="reportDefaultHint">Padrão: últimos 12 meses. Altere as datas para consultar outro período.</small>
+        <small id="reportDefaultHint">Padrão: período do último ano, ajustado aos registros disponíveis.</small>
       </div>
       <p id="reportPeriodError" class="period-error"></p>
     </section>
@@ -263,7 +263,7 @@
 </div>
 <div class="chart-card">
 <h3>Evolução do hodômetro (km)</h3>
-<p class="chart-note">A escala do eixo Y se adapta à variação de KM do período efetivamente utilizado.</p>
+<p class="chart-note">A escala vertical mostra os KM do período. Acima de um ano, são exibidos o início, o ponto intermediário e o final de cada ano.</p>
 <canvas id="chartOdometer">
 </canvas>
 </div>
@@ -288,14 +288,14 @@
 </canvas>
 </div>
 <div class="chart-card">
-<h3>Custo médio diário por grupo (R$/dia)</h3>
-<p class="chart-note">Valor acumulado de cada grupo dividido pelos dias abrangidos.</p>
+<h3>Custo médio diário por grupo e total (R$/dia)</h3>
+<p class="chart-note">Valor de cada grupo dividido pelos dias abrangidos. A barra laranja apresenta o custo médio diário consolidado.</p>
 <canvas id="chartCategoryDay">
 </canvas>
 </div>
 <div class="chart-card">
-<h3>Custo total por grupo (R$)</h3>
-<p class="chart-note">Composição do custo bruto entre combustível, administrativo e manutenção.</p>
+<h3>Custos por grupo e total consolidado (R$)</h3>
+<p class="chart-note">Apresenta os custos acumulados de cada grupo. A barra laranja corresponde ao somatório dos três grupos no período.</p>
 <canvas id="chartCategoryTotal">
 </canvas>
 </div>
@@ -318,8 +318,9 @@
 <input id="chartEnd" type="date">
 </label>
 </div>
-<div class="report-guide-period-foot">
-<small id="chartPeriodLabel">Padrão: últimos 6 meses. Altere as datas para consultar outro período.</small>
+<div class="report-guide-period-foot chart-period-foot">
+<small id="chartDefaultHint">Padrão: período do último ano, ajustado aos registros disponíveis.</small>
+<small id="chartPeriodLabel">O período será limitado à primeira e à última movimentação disponíveis.</small>
 </div>
 <p id="chartPeriodError" class="period-error"></p>
 </section>
@@ -496,7 +497,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V5.73</h3>
+<h3>Manual de utilização — MyCar+ V5.75</h3>
 <p>Controle de abastecimentos, manutenções, despesas administrativas, receitas, relatórios, gráficos, alertas técnicos e sincronização entre Android e Web.</p>
 <details open><summary>1. Visão geral</summary><p>O MyCar+ organiza os dados por veículo. A seleção feita na tela inicial controla lançamentos, indicadores, relatórios, gráficos, alertas e análise inteligente. Use a mesma Conta Google no Android e na Web para manter os dados sincronizados pelo Firebase.</p></details>
 <details><summary>2. Seleção do veículo</summary><p>A tela inicial mostra somente o veículo selecionado em uma barra compacta. Toque na barra para abrir a lista com rolagem, localize o veículo e toque nele. São exibidos apenas o nome e o status Ativo ou Inativo.</p></details>
@@ -508,7 +509,7 @@
 <details><summary>8. Administrativo e receitas</summary><p>Use Administrativo para despesas não relacionadas diretamente a combustível ou manutenção. Use Receita para entradas vinculadas ao veículo. Cada grupo lista somente os itens compatíveis.</p></details>
 <details><summary>9. Cadastro rápido</summary><p>Durante o lançamento, abra a lista de Item, Motorista ou Fornecedor e use o botão verde “＋ Novo”. Salvar retorna ao lançamento e seleciona o novo cadastro. Cancelar, X ou Voltar retorna sem apagar os dados já preenchidos.</p></details>
 <details><summary>10. Movimentos</summary><p>Consulte, pesquise, altere ou exclua movimentos. Os filtros permitem localizar registros por data, descrição, item, grupo ou fornecedor. Exclusões são sincronizadas com os demais dispositivos.</p></details>
-<details><summary>11. Gráficos</summary><p>A guia Gráficos utiliza, por padrão, os últimos 6 meses. Quando as datas excedem o histórico do veículo, o período é ajustado à primeira e à última movimentação disponíveis. Em períodos menores que um ano, consumo e custo diário são exibidos por mês; em períodos de um ano ou mais, por ano. Meses sem lançamentos não são apresentados como custo zero. A evolução financeira é acumulada e o eixo do hodômetro adapta a escala à variação real de KM. O ranking mostra os 5 itens de maior valor e o custo por KM inclui uma barra laranja com o total dos três grupos.</p></details>
+<details><summary>11. Gráficos</summary><p>A guia Gráficos utiliza, por padrão, o período do último ano, ajustado à primeira e à última movimentação disponíveis do veículo. Em períodos menores que um ano, consumo e custo diário são exibidos por mês; em períodos de um ano ou mais, por ano. Meses sem lançamentos não são apresentados como custo zero. A evolução financeira é acumulada e o eixo do hodômetro adapta a escala à variação real de KM. Os gráficos de custo por quilômetro, custo médio diário por grupo e custo total por grupo apresentam três barras individuais e uma quarta barra laranja com o somatório dos custos de combustível, administrativo e manutenção. As receitas não compõem essa barra consolidada.</p></details>
 <details><summary>12. Relatórios</summary><p>Na tela inicial, escolha o demonstrativo. Depois informe o período e use o botão verde-claro para gerar o Relatório Executivo, o relatório por Inteligência Artificial ou a exportação XLSX. Quando as datas informadas ultrapassam o histórico disponível, o período é ajustado aos registros do veículo selecionado.</p></details>
 <details><summary>13. Relatório Executivo</summary><p>A seção Manutenções com alertas cadastrados apresenta Serviço, Último registro, Valor, Fornecedor, Km, Próxima referência, Situação técnica e Alerta. A Próxima referência recebe o principal destaque visual.</p></details>
 <details><summary>14. Alertas técnicos</summary><p>Use “Incluir Alerta” para programar controles por data, quilometragem ou ambos. Os alertas são vinculados ao veículo e a um item cadastrado. Excluir um alerta não apaga os movimentos de manutenção.</p></details>
@@ -533,14 +534,14 @@
 <div class="about-card">
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
-<p><strong>Versão:</strong> 5.73</p>
+<p><strong>Versão:</strong> 5.75</p>
 <div class="about-info-stack">
-<strong>Desenvolvedor</strong>
-<span>Marcelo Ribeiro</span>
+<strong>Desenvolvedor:</strong>
+<span class="about-developer-name">Marcelo Ribeiro</span>
 </div>
 <p><strong>Criação:</strong> julho de 2026</p>
 <div class="about-info-stack about-contact-stack">
-<strong>Contato</strong>
+<strong>Contato:</strong>
 <a class="about-contact-link" href="mailto:marcelo.auditortl@gmail.com">marcelo.auditortl@gmail.com</a>
 </div>
 <p>Aplicativo para controle de consumo de combustível, manutenção e despesas administrativas de veículos.</p>

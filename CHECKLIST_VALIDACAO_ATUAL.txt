@@ -1,13 +1,13 @@
-MYCARPLUS V5.73 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.75 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
 [ ] Backup do projeto anterior realizado
-[ ] Pacote MYCAR_PLUS_V5_73_KEY.zip localizado na pasta Downloads
-[ ] ATUALIZAR_MYCAR_V5_73_KEY.bat executado
+[ ] Pacote MYCAR_PLUS_V5_75_KEY.zip localizado na pasta Downloads
+[ ] ATUALIZAR_MYCAR_V5_75_KEY.bat executado
 [ ] npm.cmd install executado sem erros
 [ ] npm.cmd run sync:web executado sem erros
 [ ] npm.cmd run sync:android executado sem erros
 [ ] npm.cmd run validate:cohesion aprovado
-[ ] Tela inicial e versão 5.73 conferidas
+[ ] Tela inicial e versão 5.75 conferidas
 [ ] Cabeçalho MyCar+ aparece abaixo da hora e dos ícones do Android
 [ ] Relatório Executivo abre dentro do aplicativo
 [ ] Relatório Executivo apresenta somente Fechar e Compartilhar ao final
@@ -36,8 +36,12 @@ MYCARPLUS V5.73 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 [ ] Identificação do veículo em Relatórios e Gráficos está compacta e sem opção de troca
 [ ] Ranking apresenta somente os 5 itens de maior valor acumulado
 [ ] Custo por grupo e por KM apresenta a quarta barra laranja Total dos custos
+[ ] Custo médio diário por grupo apresenta a quarta barra laranja Total dos custos
+[ ] Custo total por grupo apresenta a quarta barra laranja Total dos custos
+[ ] Gráficos e relatórios iniciam com o período do último ano ajustado aos registros
+[ ] Manual possui capa, versão, desenvolvedor, criação e data de geração sem truncamento
 
-[ ] BAT V5.73 executado sem arquivo PS1 externo
+[ ] BAT V5.75 executado sem arquivo PS1 externo
 [ ] Tela de alertas mostra somente o veículo selecionado
 [ ] Grupo do alerta permanece fixo em MANUTENÇÃO
 [ ] Veículo inativo não gera aviso ativo nem aceita novo alerta

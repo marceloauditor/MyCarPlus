@@ -82,21 +82,34 @@ assert(!html.includes('id="netTotal"'), 'Resumo azul repetido ainda está na tel
 assert(!html.includes('id="costKm"') && !html.includes('id="dailyKm"') && !html.includes('id="avgConsumption"') && !html.includes('id="dailyCost"'), 'Cards repetidos ainda estão na tela inicial.');
 assert(html.includes('id="lastConsumption"') && html.includes('id="lastDistance"'), 'Indicadores exclusivos da tela inicial devem permanecer.');
 
-// Gráficos, período efetivo e tela Sobre — V5.73.
+// Gráficos, período efetivo, manual e tela Sobre — V5.75.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
 assert(/slice\(0,5\)/.test(app) && html.includes('5 itens com maior valor acumulado'), 'Ranking não foi limitado aos 5 maiores itens.');
-assert(/perKmLabels:\s*\[\.\.\.labels,\s*"Total dos custos"\]/.test(app), 'Barra consolidada Total dos custos ausente.');
-assert(/perKmColors:\s*\["#246b9e",\s*"#246b9e",\s*"#246b9e",\s*"#f28b0c"\]/.test(app), 'Barra consolidada não está configurada em laranja.');
+assert(/consolidatedLabels\s*=\s*\[\.\.\.labels,\s*"Total dos custos"\]/.test(app) && /perKmLabels:\s*consolidatedLabels/.test(app), 'Barra consolidada Total dos custos ausente.');
+assert(/consolidatedColors\s*=\s*\["#246b9e",\s*"#246b9e",\s*"#246b9e",\s*"#f28b0c"\]/.test(app) && /perKmColors:\s*consolidatedColors/.test(app), 'Barra consolidada não está configurada em laranja.');
 assert(/function\s+resolveEffectivePeriod\s*\(/.test(app) && /function\s+applyEffectivePeriodToFields\s*\(/.test(app), 'Tratamento centralizado do período efetivo ausente.');
-assert(/effectivePeriodMessage\(effective\)/.test(app) && /Período ajustado aos registros disponíveis/.test(app), 'Mensagem de ajuste do período aos registros ausente.');
+assert(/effectivePeriodMessage\(effective\)/.test(app) && /Período ajustado:/.test(app), 'Mensagem de ajuste do período aos registros ausente.');
 assert(/function\s+calculateNiceAxis\s*\(/.test(app) && /measureText\(label\)/.test(app), 'Escala adaptativa ou margem dinâmica do eixo Y ausente.');
-assert(/niceAxis:true/.test(app), 'Gráfico do hodômetro não ativou a escala adaptativa.');
+assert(/drawOdometerChart\(\$\("#chartOdometer"\),\s*odometer\)/.test(app) && /calculateNiceAxis\(data\.yMin,\s*data\.yMax,\s*5\)/.test(app), 'Gráfico do hodômetro não ativou a escala adaptativa específica.');
 assert(html.includes('Altere o período no final da página.'), 'Instrução compacta da tela de gráficos ausente.');
 assert(html.includes('class="about-title-icon"') && html.includes('<h2>Informações</h2>'), 'Novo cabeçalho da tela Sobre ausente.');
 assert(html.includes('class="about-info-stack"') && html.includes('class="about-contact-link"'), 'Desenvolvedor e contato não foram reorganizados na tela Sobre.');
 assert(/white-space:\s*nowrap!important/.test(styles) && /font-size:clamp\(10\.5px,3\.2vw,13px\)/.test(styles), 'E-mail da tela Sobre ainda pode quebrar ou não possui fonte responsiva.');
+assert(/function\s+odometerReferencePointsByYear\s*\(/.test(app) && /function\s+drawOdometerChart\s*\(/.test(app), 'Seleção anual ou desenho específico do hodômetro ausente.');
+assert(/odometerMonthLabel/.test(app) && /yearGroups/.test(app), 'Meses e anos em dois níveis não foram implementados no hodômetro.');
+assert(html.includes('<strong>Desenvolvedor:</strong>') && html.includes('class="about-developer-name"'), 'Nome cursivo do desenvolvedor ou dois-pontos ausente.');
+assert(/Segoe Script/.test(styles) && /about-developer-name[^}]*font-style:\s*italic/.test(styles), 'Fonte cursiva e itálica do desenvolvedor ausente.');
+assert(html.includes('<strong>Contato:</strong>') && html.includes('href="mailto:marcelo.auditortl@gmail.com"'), 'Contato com dois-pontos ou link mailto ausente.');
+assert(/perDayLabels:\s*consolidatedLabels/.test(app) && /perDayColors:\s*consolidatedColors/.test(app), 'Quarta barra laranja ausente no custo médio diário por grupo.');
+assert(/totalLabels:\s*consolidatedLabels/.test(app) && /totalValues:\s*\[\.\.\.totals,\s*totalCosts\]/.test(app), 'Quarta barra total ausente no custo total por grupo.');
+assert(html.includes('Custo médio diário por grupo e total') && html.includes('Custos por grupo e total consolidado'), 'Títulos dos gráficos consolidados não foram atualizados.');
+assert(/start\.setMonth\(start\.getMonth\(\) - 12\)/.test(app), 'Gráficos não usam o último ano como período padrão.');
+assert(html.includes('Padrão: período do último ano, ajustado aos registros disponíveis.'), 'Texto do período padrão anual ausente.');
+assert(/class=\"manual-cover\"/.test(app) && /class=\"manual-meta\"/.test(app), 'Capa do Manual de Ajuda ausente.');
+assert(/Desenvolvedor/.test(app) && /Criação do sistema/.test(app) && /Geração do documento/.test(app), 'Metadados completos do manual ausentes.');
+assert(/break-after:page/.test(app) && /page-break-after:always/.test(app), 'Quebra de página após a capa do manual ausente.');
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');
@@ -129,7 +142,7 @@ assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 ex
 
 const syncedFiles = [
   'index.html','styles.css','report-manager.js','app.js','mycarplus-db.js','cloud.js','ai-logic.js',
-  'firebase-config.js','jszip.min.js','manifest.webmanifest','sw.js','icon.svg',
+  'firebase-config.js','jszip.min.js','manifest.webmanifest','package.json','package-lock.json','capacitor.config.json','sw.js','icon.svg',
   'icon-16.png','icon-32.png','icon-48.png','icon-72.png','icon-96.png','icon-128.png','icon-144.png','icon-180.png','icon-192.png','icon-256.png','icon-384.png','icon-512.png','mycar-plus-logo.png','desenvolvedor.png',
   'data/MyCarPlus.xlsx',
 ];

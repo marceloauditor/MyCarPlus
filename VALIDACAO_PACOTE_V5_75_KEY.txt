@@ -1,0 +1,16 @@
+PACOTE MYCAR_PLUS_V5_75_KEY
+
+Situação: APROVADO PARA ENTREGA
+
+Verificações realizadas:
+1. Sintaxe de app.js aprovada por node --check.
+2. Sintaxe do validador aprovada.
+3. Quarta barra do custo médio diário confere com a soma dos três grupos.
+4. Quarta barra do custo total confere com a soma dos três grupos.
+5. Barras consolidadas configuradas em laranja.
+6. Gráficos e relatórios utilizam o último ano como padrão.
+7. Período permanece ajustado aos registros disponíveis.
+8. Manual de Ajuda possui capa, versão, desenvolvedor, criação e data de geração.
+9. Metadados do manual foram organizados para não truncar em celular e PDF.
+10. Coesão raiz → www → Android aprovada.
+11. Versão 5.75.0, versionCode 575 e cache mycar-plus-v5-75 conferidos.

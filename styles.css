@@ -829,7 +829,7 @@ html[data-theme="dark"] .report-guide-action-confirm{background:#8fd19e!importan
 @media(max-width:560px){.report-menu-title{font-size:1.02rem;margin-bottom:12px}}
 
 
-/* V5.73 — período efetivo, escala adaptativa e tela Sobre compacta */
+/* V5.74 — hodômetro anual legível e assinatura do desenvolvedor */
 .vehicle-static-summary{width:100%;min-height:50px;border:1px solid var(--line);background:var(--card,#fff);color:var(--ink);border-radius:12px;padding:9px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin:0 0 12px;box-shadow:0 8px 22px rgba(16,42,67,.08)}
 .vehicle-static-summary b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}.vehicle-static-summary .vehicle-status{justify-self:end}
 html[data-theme="dark"] .vehicle-static-summary{background:#0b2539!important;color:#eef6ff!important;border-color:#24445d!important}
@@ -837,7 +837,7 @@ html[data-theme="light"] .vehicle-static-summary{background:#fff!important;color
 @media(max-width:560px){.vehicle-static-summary{min-height:48px;padding:8px 10px}}
 
 
-/* V5.73 — período efetivo, escala adaptativa e tela Sobre */
+/* V5.74 — período efetivo, escala adaptativa e tela Sobre */
 .chart-period-instruction{
   margin:4px 0 8px!important;
   padding:6px 8px!important;
@@ -861,3 +861,23 @@ html[data-theme="light"] .vehicle-static-summary{background:#fff!important;color
   .about-title-brand h2{font-size:1.22rem}
   .chart-period-instruction{font-size:.7rem!important}
 }
+
+
+/* V5.74 — referências anuais do hodômetro e tela Sobre */
+.chart-card{position:relative}
+#chartOdometer{min-height:310px}
+.odometer-point-tooltip{position:absolute;z-index:5;width:174px;padding:8px 10px;border-radius:9px;background:rgba(7,31,49,.96);border:1px solid rgba(117,184,229,.7);box-shadow:0 8px 22px rgba(0,0,0,.35);color:#eef7ff;pointer-events:none;text-align:left}
+.odometer-point-tooltip strong,.odometer-point-tooltip span,.odometer-point-tooltip small{display:block;color:inherit!important;line-height:1.25}
+.odometer-point-tooltip span{font-weight:800;margin-top:2px}.odometer-point-tooltip small{font-size:10.5px;margin-top:3px;opacity:.88}
+.about-developer-name{font-family:"Segoe Script","Brush Script MT","URW Chancery L","Comic Sans MS",cursive;font-style:italic;font-size:clamp(1.32rem,5vw,1.62rem);font-weight:500;line-height:1.25;letter-spacing:.01em;white-space:nowrap}
+@media(max-width:560px){#chartOdometer{min-height:350px}.odometer-point-tooltip{width:162px;font-size:12px}.about-developer-name{font-size:clamp(1.28rem,6vw,1.5rem)}}
+html[data-theme="light"] .odometer-point-tooltip{background:rgba(255,255,255,.98);border-color:#246b9e;color:#12395b;box-shadow:0 8px 22px rgba(18,57,91,.22)}
+
+
+/* V5.75 — período padrão anual e leitura em duas linhas */
+.chart-period-foot{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:4px!important}
+.chart-period-foot small{display:block;width:100%;line-height:1.3}
+#chartDefaultHint,#reportDefaultHint{font-weight:750;color:var(--muted)}
+#chartPeriodLabel{font-weight:800;color:var(--navy)}
+html[data-theme="dark"] #chartDefaultHint,html[data-theme="dark"] #reportDefaultHint{color:#b7cad8!important}
+html[data-theme="dark"] #chartPeriodLabel{color:#eef6ff!important}

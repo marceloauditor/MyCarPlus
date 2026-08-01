@@ -1,0 +1,6 @@
+VALIDAÇÃO DE COESÃO: APROVADA
+Versão: 5.75.0
+Android versionCode: 575
+Android versionName: 5.75.0
+Cache PWA: mycar-plus-v5-75
+Arquivos conferidos na cadeia raiz → www → Android: 30
