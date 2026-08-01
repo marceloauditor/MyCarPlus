@@ -114,6 +114,29 @@
     });
   }
 
+
+  function chooseShareFormat(canShareImages) {
+    return new Promise((resolve) => {
+      const backdrop = document.createElement("div");
+      backdrop.className = "report-share-choice-backdrop";
+      backdrop.innerHTML = `
+        <div class="report-share-choice" role="dialog" aria-modal="true" aria-labelledby="reportShareChoiceTitle">
+          <h3 id="reportShareChoiceTitle">Compartilhar relatório</h3>
+          <p>Escolha o formato de envio.</p>
+          <button type="button" class="primary" data-choice="images" ${canShareImages ? "" : "disabled"}>Compartilhar como imagens</button>
+          <button type="button" class="secondary" data-choice="html">Compartilhar como HTML</button>
+          <button type="button" class="danger" data-choice="cancel">Cancelar</button>
+        </div>`;
+      document.body.appendChild(backdrop);
+      const finish = (choice) => { backdrop.remove(); resolve(choice); };
+      backdrop.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-choice]");
+        if (button && !button.disabled) finish(button.dataset.choice);
+        else if (event.target === backdrop) finish("cancel");
+      });
+    });
+  }
+
   async function share(jobName, html) {
     const reportHtml = String(html || state.currentHtml || "");
     const reportName = safeJobName(jobName || state.currentJobName);
@@ -133,13 +156,16 @@
 
     const bridge = nativeBridge();
     if (isNative() && bridge) {
-      if (coverFile && typeof bridge.shareHtmlWithCover === "function") {
+      const canShareImages = typeof bridge.shareHtmlAsImages === "function";
+      const choice = await chooseShareFormat(canShareImages);
+      if (choice === "cancel") return false;
+      if (choice === "images" && canShareImages) {
         try {
-          const coverBase64 = await fileToBase64(coverFile);
-          bridge.shareHtmlWithCover(reportName, reportHtml, coverFile.name, coverBase64);
+          bridge.shareHtmlAsImages(reportName, reportHtml);
           return true;
         } catch (error) {
-          console.error("Falha no compartilhamento com capa:", error);
+          console.error("Falha no compartilhamento como imagens:", error);
+          notify("Não foi possível gerar as imagens. O relatório será preparado em HTML.");
         }
       }
       if (typeof bridge.shareHtml === "function") {
