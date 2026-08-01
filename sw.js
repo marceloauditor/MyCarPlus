@@ -1,4 +1,4 @@
-const CACHE = "mycar-plus-v5-61";
+const CACHE = "mycar-plus-v5-62";
 const APP_SHELL = [
   "./",
   "index.html",

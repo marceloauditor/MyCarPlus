@@ -4,10 +4,10 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 const expected = {
-  semver: '5.61.0',
-  app: '5.61',
-  versionCode: '561',
-  cache: 'mycar-plus-v5-61',
+  semver: '5.62.0',
+  app: '5.62',
+  versionCode: '562',
+  cache: 'mycar-plus-v5-62',
 };
 const failures = [];
 
@@ -33,7 +33,7 @@ const html = read('index.html');
 const styles = read('styles.css');
 const sw = read('sw.js');
 const gradle = read('android/app/build.gradle');
-const batch = read('ATUALIZAR_MYCAR_V5_61_WEB_ANDROID.bat');
+const batch = read('ATUALIZAR_MYCAR_V5_62_WEB_ANDROID.bat');
 
 assert(pkg.version === expected.semver, `package.json deve estar em ${expected.semver}.`);
 assert(new RegExp(`APP_VERSION\\s*=\\s*["']${expected.app.replace('.', '\\.')}`).test(app), `APP_VERSION deve ser ${expected.app}.`);
@@ -86,8 +86,8 @@ assert(/setType\("text\/html"\)/.test(mainActivity), 'Compartilhamento Android n
 assert(/public void onDestroy\(\)/.test(mainActivity), 'onDestroy deve ser público.');
 
 // BAT.
-assert(batch.includes('set "VERSAO=5.61"'), 'BAT não está configurado para 5.61.');
-assert(batch.includes('MYCAR_PLUS_V5_61_MASTER.zip'), 'BAT não procura o ZIP V5.61.');
+assert(batch.includes('set "VERSAO=5.62"'), 'BAT não está configurado para 5.62.');
+assert(batch.includes('MYCAR_PLUS_V5_62_MASTER.zip'), 'BAT não procura o ZIP V5.62.');
 assert(batch.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
 assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 externo.');
 for (const oldVersion of ['41','42','43','44','45','46','47','48','49','50','51','52','53','54']) {
@@ -97,7 +97,7 @@ for (const oldVersion of ['41','42','43','44','45','46','47','48','49','50','51'
 const syncedFiles = [
   'index.html','styles.css','app.js','mycarplus-db.js','cloud.js','ai-logic.js',
   'firebase-config.js','jszip.min.js','manifest.webmanifest','sw.js','icon.svg',
-  'icon-32.png','icon-180.png','icon-192.png','icon-512.png','desenvolvedor.png',
+  'icon-16.png','icon-32.png','icon-48.png','icon-72.png','icon-96.png','icon-128.png','icon-144.png','icon-180.png','icon-192.png','icon-256.png','icon-384.png','icon-512.png','mycar-plus-logo.png','desenvolvedor.png',
   'data/MyCarPlus.xlsx',
 ];
 for (const rel of syncedFiles) {
