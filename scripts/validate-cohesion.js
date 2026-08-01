@@ -88,6 +88,9 @@ assert(/id="reportShareButton"[^>]*>Compartilhar</.test(app), 'Botão Compartilh
 assert(/id="aiReportShare"[^>]*>Compartilhar</.test(app), 'Botão Compartilhar da IA ausente.');
 assert(/id="reportPrintButton"[^>]*>Imprimir</.test(app), 'Botão Imprimir do Executivo ausente.');
 assert(/id="aiReportPrint"[^>]*>Imprimir</.test(app), 'Botão Imprimir da IA ausente.');
+assert(/function printHtml\(\)\{var html=printableDocument\(\)/.test(app), 'Impressão do Executivo não usa o HTML completo.');
+assert(/bridge\.printHtml\('RELATORIO_EXECUTIVO_MYCAR_PLUS',html\)/.test(app), 'Executivo não chama a ponte nativa de impressão.');
+assert(/bridge\.printHtml\('RELATORIO_IA_MYCAR_PLUS',html\)/.test(app), 'Relatório IA não chama a ponte nativa de impressão.');
 
 // Android.
 const mainActivity = read('android/app/src/main/java/br/com/marceloauditor/mycarplus/MainActivity.java');
