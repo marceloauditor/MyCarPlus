@@ -16,8 +16,8 @@ const expected = {
   app: appVersion,
   versionCode: `${match[1]}${match[2].padStart(2, '0')}`,
   cache: `mycar-plus-v${match[1]}-${match[2]}`,
-  batch: `ATUALIZAR_MYCAR_V${match[1]}_${match[2]}_WEB_ANDROID.bat`,
-  zip: `MYCAR_PLUS_V${match[1]}_${match[2]}_TREE.zip`,
+  batch: `ATUALIZAR_MYCAR_V${match[1]}_${match[2]}_KEY.bat`,
+  zip: `MYCAR_PLUS_V${match[1]}_${match[2]}_KEY.zip`,
 };
 const failures = [];
 
@@ -108,7 +108,7 @@ assert(batch.includes(expected.zip), `BAT não procura o ZIP ${expected.zip}.`);
 assert(batch.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
 assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 externo.');
 
-// A validacao V5.70 verifica somente a coesao funcional.
+// A validação da versão atual verifica somente a coesão funcional.
 // A organizacao historica da pasta real nao e alterada por este script.
 
 const syncedFiles = [

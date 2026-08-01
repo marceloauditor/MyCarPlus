@@ -1,0 +1,13 @@
+ATUALIZAÇÃO V5.71 KEY
+
+Base: V5.70 KEY instalada e validada com sucesso.
+
+Melhorias aplicadas:
+- título Escolha o demonstrativo;
+- confirmação dos relatórios em verde-claro;
+- hodômetro com eixo Y iniciado no KM real da data inicial;
+- evolução financeira acumulada;
+- consumo e custo diário mensais para períodos menores que um ano;
+- manutenção da análise anual para períodos de um ano ou mais.
+
+Não houve alteração da estrutura do Firebase ou do dataset.

@@ -1,0 +1,11 @@
+VALIDAÇÃO DO BAT V5.71 KEY
+
+- ZIP esperado: MYCAR_PLUS_V5_71_KEY.zip.
+- Pasta interna: MYCAR_PLUS_V5_71_KEY.
+- Backup antes da atualização.
+- Sincronização Web e Android.
+- Validação de coesão.
+- Commit e push no GitHub.
+- Abertura do Android Studio.
+- Geração do APK debug.
+- Aceita arquivos baixados com sufixos (1), (2), (3) etc.

@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.70</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.71</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -156,6 +156,7 @@
 <select id="reportVehicle" hidden aria-hidden="true"></select>
 <div class="report-guide-screen">
   <section id="reportMenuView" class="report-guide-card report-guide-actions-card report-menu-only">
+    <h3 class="report-menu-title">Escolha o demonstrativo</h3>
     <div class="report-guide-actions">
       <button id="exportPdf" type="button" class="report-guide-action report-guide-action-blue">GERAR RELATÓRIO EXECUTIVO</button>
       <button id="reportAiButton" type="button" class="report-guide-action report-guide-action-orange">GERAR RELATÓRIO POR I.A.</button>
@@ -181,7 +182,7 @@
       </div>
       <p id="reportPeriodError" class="period-error"></p>
     </section>
-    <button id="reportGenerateSelected" type="button" class="report-guide-action report-guide-action-blue">GERAR RELATÓRIO</button>
+    <button id="reportGenerateSelected" type="button" class="report-guide-action report-guide-action-confirm">GERAR RELATÓRIO</button>
     <button id="reportPeriodBack" type="button" class="report-guide-back">Voltar</button>
     <p id="reportPeriodLabel" class="report-guide-note">O relatório será gerado conforme o período informado.</p>
   </section>
@@ -256,27 +257,27 @@
 <div id="chartContent">
 <h3 class="chart-section-title">Desempenho do veículo</h3>
 <div class="chart-card">
-<h3>Consumo médio anual de combustível (km/L)</h3>
-<p class="chart-note">Distância entre abastecimentos válidos ÷ litros abastecidos.</p>
+<h3 id="chartConsumptionTitle">Consumo médio anual de combustível (km/L)</h3>
+<p id="chartConsumptionNote" class="chart-note">Distância entre abastecimentos válidos ÷ litros abastecidos.</p>
 <canvas id="chartAnnualConsumption">
 </canvas>
 </div>
 <div class="chart-card">
 <h3>Evolução do hodômetro (km)</h3>
-<p class="chart-note">Escala do hodômetro iniciada no primeiro registro, com acompanhamento da evolução da quilometragem.</p>
+<p class="chart-note">O eixo Y começa no KM real do veículo na data inicial; sem registro nessa data, utiliza o último KM anterior.</p>
 <canvas id="chartOdometer">
 </canvas>
 </div>
 <h3 class="chart-section-title">Evolução financeira</h3>
 <div class="chart-card">
-<h3>Evolução anual dos custos (R$)</h3>
-<p class="chart-note">Compara custo bruto, receitas e custo líquido em cada ano.</p>
+<h3 id="chartFinancialTitle">Evolução financeira acumulada no período (R$)</h3>
+<p id="chartFinancialNote" class="chart-note">Valores acumulados desde a data inicial informada.</p>
 <canvas id="chartAnnualCost">
 </canvas>
 </div>
 <div class="chart-card">
-<h3>Custo líquido médio diário por ano (R$/dia)</h3>
-<p class="chart-note">Custo líquido anual ÷ dias abrangidos no período de cada ano.</p>
+<h3 id="chartDailyTitle">Custo líquido médio diário por ano (R$/dia)</h3>
+<p id="chartDailyNote" class="chart-note">Custo líquido anual ÷ dias abrangidos no período de cada ano.</p>
 <canvas id="chartAnnualDaily">
 </canvas>
 </div>
@@ -496,7 +497,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V5.70</h3>
+<h3>Manual de utilização — MyCar+ V5.71</h3>
 <p>Controle de abastecimentos, manutenções, despesas administrativas, receitas, relatórios, gráficos, alertas técnicos e sincronização entre Android e Web.</p>
 <details open><summary>1. Visão geral</summary><p>O MyCar+ organiza os dados por veículo. A seleção feita na tela inicial controla lançamentos, indicadores, relatórios, gráficos, alertas e análise inteligente. Use a mesma Conta Google no Android e na Web para manter os dados sincronizados pelo Firebase.</p></details>
 <details><summary>2. Seleção do veículo</summary><p>A tela inicial mostra somente o veículo selecionado em uma barra compacta. Toque na barra para abrir a lista com rolagem, localize o veículo e toque nele. São exibidos apenas o nome e o status Ativo ou Inativo.</p></details>
@@ -508,8 +509,8 @@
 <details><summary>8. Administrativo e receitas</summary><p>Use Administrativo para despesas não relacionadas diretamente a combustível ou manutenção. Use Receita para entradas vinculadas ao veículo. Cada grupo lista somente os itens compatíveis.</p></details>
 <details><summary>9. Cadastro rápido</summary><p>Durante o lançamento, abra a lista de Item, Motorista ou Fornecedor e use o botão verde “＋ Novo”. Salvar retorna ao lançamento e seleciona o novo cadastro. Cancelar, X ou Voltar retorna sem apagar os dados já preenchidos.</p></details>
 <details><summary>10. Movimentos</summary><p>Consulte, pesquise, altere ou exclua movimentos. Os filtros permitem localizar registros por data, descrição, item, grupo ou fornecedor. Exclusões são sincronizadas com os demais dispositivos.</p></details>
-<details><summary>11. Gráficos</summary><p>As guias Gráficos e Relatórios utilizam, por padrão, os últimos 6 meses. Para consultar outro período, altere diretamente as datas inicial e final. Ao reabrir a guia ou trocar o veículo, o período padrão é restaurado.</p></details>
-<details><summary>12. Relatórios</summary><p>Escolha o período e gere o Relatório Executivo, o relatório por Inteligência Artificial ou a exportação XLSX. As informações são restritas ao veículo selecionado e ao período informado.</p></details>
+<details><summary>11. Gráficos</summary><p>A guia Gráficos utiliza, por padrão, os últimos 6 meses. Em períodos menores que um ano, consumo e custo diário são exibidos por mês; em períodos de um ano ou mais, por ano. A evolução financeira é acumulada desde a data inicial e o hodômetro parte da quilometragem real do veículo nessa data.</p></details>
+<details><summary>12. Relatórios</summary><p>Na tela inicial, escolha o demonstrativo. Depois informe o período e use o botão verde-claro para gerar o Relatório Executivo, o relatório por Inteligência Artificial ou a exportação XLSX. As informações são restritas ao veículo selecionado e ao período informado.</p></details>
 <details><summary>13. Relatório Executivo</summary><p>A seção Manutenções com alertas cadastrados apresenta Serviço, Último registro, Valor, Fornecedor, Km, Próxima referência, Situação técnica e Alerta. A Próxima referência recebe o principal destaque visual.</p></details>
 <details><summary>14. Alertas técnicos</summary><p>Use “Incluir Alerta” para programar controles por data, quilometragem ou ambos. Os alertas são vinculados ao veículo e a um item cadastrado. Excluir um alerta não apaga os movimentos de manutenção.</p></details>
 <details><summary>15. Indicador de alertas</summary><p>Na tela inicial, o indicador fica verde quando não existem alertas vencidos, vermelho quando existem alertas vencidos e cinza quando não há veículo ativo selecionado. Toque no indicador para abrir os Alertas Técnicos.</p></details>
@@ -534,7 +535,7 @@
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
 <p>
-<strong>Versão:</strong> 5.70</p>
+<strong>Versão:</strong> 5.71</p>
 <p>
 <strong>Desenvolvedor:</strong> Marcelo Ribeiro</p>
 <p>

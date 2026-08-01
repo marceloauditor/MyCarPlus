@@ -1,0 +1,9 @@
+VALIDAÇÃO DO PACOTE MYCAR+ V5.71 KEY
+
+- ZIP esperado: MYCAR_PLUS_V5_71_KEY.zip
+- Pasta interna: MYCAR_PLUS_V5_71_KEY
+- BAT: ATUALIZAR_MYCAR_V5_71_KEY.bat
+- Log: Downloads\ATUALIZACAO_MYCAR_V5_71_KEY_LOG.txt
+- APK: Downloads\MYCAR_PLUS_V5_71_KEY_DEBUG.apk
+- Base preservada: V5.70 KEY
+- Coesão funcional: scripts/validate-cohesion.js

@@ -818,3 +818,12 @@ body.report-viewer-open>nav{display:none!important}
 
 /* V5.70 — fluxo de períodos */
 .report-menu-only{margin-top:8px}.report-period-step[hidden]{display:none!important}.report-period-step{display:grid;gap:12px}.chart-period-instruction{margin:8px 0 14px;padding:10px 12px;border-left:4px solid var(--primary,#246b9e);border-radius:8px;background:rgba(36,107,158,.10);font-weight:700}.chart-period-card{margin-top:18px;margin-bottom:22px}.report-guide-actions-card.report-menu-only .report-guide-actions{gap:14px}.report-guide-actions-card.report-menu-only .report-guide-action{min-height:52px}
+
+
+/* V5.71 — orientação dos relatórios e confirmação visual */
+.report-menu-title{margin:0 0 14px;text-align:center;color:var(--navy);font-size:1.12rem;font-weight:900;letter-spacing:.01em}
+.report-guide-action-confirm{background:#8fd19e!important;color:#123524!important;border:1px solid #5ead71!important;box-shadow:0 8px 18px rgba(46,125,69,.18)!important}
+.report-guide-action-confirm:active{background:#79c78b!important}
+html[data-theme="dark"] .report-menu-title{color:#eef6ff!important}
+html[data-theme="dark"] .report-guide-action-confirm{background:#8fd19e!important;color:#102d1d!important;border-color:#76bd87!important}
+@media(max-width:560px){.report-menu-title{font-size:1.02rem;margin-bottom:12px}}
