@@ -1,37 +1,24 @@
-# MyCar+ V5.76 KEY — pacote-fonte oficial
+# MyCar+ V5.77 KEY — pacote-fonte oficial
 
-Este pacote foi produzido a partir da V5.75 KEY e mantém a raiz do projeto como fonte oficial.
+Este pacote parte da V5.76 KEY e mantém a estrutura estável de instalação, Firebase, dataset, Web/PWA e Android.
 
-## Estrutura
+## Identificação
 
-- **Raiz:** fonte editável oficial.
-- **`www/`:** cópia sincronizada para Web/PWA.
-- **`android/app/src/main/assets/public/`:** cópia sincronizada para o Android.
+- Aplicação: **5.77.0**
+- Android `versionCode`: **577**
+- Android `versionName`: **5.77.0**
+- Cache PWA: **mycar-plus-v5-77**
 
-Edite sempre a raiz e execute a sincronização antes de compilar o aplicativo.
+## Melhorias da V5.77
 
-## Identificação da versão
+1. Painel inteligente com título simplificado e avaliação preservada.
+2. Seis indicadores principais reorganizados na ordem aprovada.
+3. Última distância e cartão Destaques removidos.
+4. Tendências colocadas antes da área complementar.
+5. Composição dos custos, Utilização e MyCar Score mantidos na rolagem.
+6. Layout compacto para celulares de menor altura.
 
-- Aplicação: **5.76.0**
-- Android `versionCode`: **576**
-- Android `versionName`: **5.76.0**
-- Cache PWA: **mycar-plus-v5-76**
-- Pacote Android: `br.com.marceloauditor.mycarplus`
+## Arquivos de distribuição
 
-## Melhorias da V5.76
-
-- consumo geral em vermelho, mantendo os valores nos pontos;
-- consumo de Gasolina em laranja e de Etanol em azul;
-- Diesel em verde quando houver registros;
-- demais combustíveis com cores distintas e estáveis;
-- meses sem dados permanecem como ausência de informação, sem queda para zero;
-- hodômetro com todos os registros reais e apenas primeiro, meio e último mês identificados no eixo.
-
-## Atualização automatizada
-
-Coloque na pasta Downloads:
-
-- `MYCAR_PLUS_V5_76_KEY.zip`
-- `ATUALIZAR_MYCAR_V5_76_KEY.bat`
-
-Depois execute o BAT pelo PowerShell. Ele cria backup, atualiza a fonte, sincroniza Web e Android, valida a coesão, envia as alterações ao GitHub e gera o APK debug.
+- `MYCAR_PLUS_V5_77_KEY.zip`
+- `ATUALIZAR_MYCAR_V5_77_KEY.bat`

@@ -80,9 +80,15 @@ assert(styles.includes('alert-panel-card'), 'Estilos do painel de alertas ausent
 assert(!html.includes('technicalHistoryList'), 'Histórico antigo ainda está visível na tela.');
 assert(!html.includes('id="netTotal"'), 'Resumo azul repetido ainda está na tela inicial.');
 assert(!html.includes('id="costKm"') && !html.includes('id="dailyKm"') && !html.includes('id="avgConsumption"') && !html.includes('id="dailyCost"'), 'Cards repetidos ainda estão na tela inicial.');
-assert(html.includes('id="lastConsumption"') && html.includes('id="lastDistance"'), 'Indicadores exclusivos da tela inicial devem permanecer.');
+assert(!html.includes('id="lastConsumption"') && !html.includes('id="lastDistance"'), 'Indicadores externos antigos ainda estão na tela inicial.');
+assert(/<strong>Painel inteligente<\/strong>/.test(app) && !/Análise automática|Painel inteligente do veículo/.test(app), 'Título simplificado do Painel inteligente não foi aplicado.');
+assert(/Custo por km[\s\S]*Custo por dia[\s\S]*Custo mensal[\s\S]*Custo total líquido[\s\S]*Consumo médio[\s\S]*Último consumo/.test(app), 'Os seis cartões não estão na ordem aprovada.');
+assert(/class="insight-trends-primary"/.test(app) && app.indexOf('insight-trends-primary') < app.indexOf('insight-grid-secondary'), 'Tendências devem aparecer antes das seções complementares.');
+assert(!/<h3>Destaques<\/h3>/.test(app), 'O cartão Destaques ainda está presente.');
+assert(/<h3>Composição dos custos<\/h3>/.test(app) && /<h3>Utilização<\/h3>/.test(app) && /MyCar Score/.test(app), 'Composição, Utilização e MyCar Score devem permanecer abaixo de Tendências.');
+assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
-// Gráficos, período efetivo, manual e tela Sobre — V5.76.
+// Gráficos, período efetivo, manual, tela Sobre e painel — V5.77.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');

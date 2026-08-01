@@ -1,34 +1,24 @@
-# MyCar+ V5.76
+# MyCar+ V5.77
 
-Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas técnicos e análises veiculares.
+Pacote-fonte oficial para Web/PWA e Android.
 
-## Identificação
+## Versões
 
-- versão: **5.76.0**
-- Android: `versionCode 576` / `versionName 5.76.0`
-- pacote: `br.com.marceloauditor.mycarplus`
-- Firebase: `mycarplus-3180a`
-- cache PWA: `mycar-plus-v5-76`
+- versão: **5.77.0**
+- Android: `versionCode 577` / `versionName 5.77.0`
+- cache PWA: `mycar-plus-v5-77`
 
-## Fonte oficial
+## Melhorias da V5.77
 
-A raiz do projeto é a fonte editável. As pastas `www/` e `android/app/src/main/assets/public/` devem permanecer sincronizadas com ela.
+- título simplificado para **Painel inteligente**;
+- avaliação mantida ao lado do título;
+- seis cartões na ordem: custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo;
+- cartão de última distância removido;
+- cartão Destaques removido;
+- Tendências posicionadas imediatamente depois dos seis cartões;
+- Composição dos custos, Utilização e MyCar Score preservados abaixo, acessíveis pela rolagem normal;
+- modo compacto para priorizar os seis indicadores e Tendências na primeira visualização.
 
-```powershell
-npm.cmd install
-npm.cmd run sync:web
-npx.cmd cap sync android
-npm.cmd run validate:cohesion
-```
+## Atualização
 
-## Atualização automatizada
-
-Use `ATUALIZAR_MYCAR_V5_76_KEY.bat` junto com `MYCAR_PLUS_V5_76_KEY.zip` na pasta Downloads.
-
-## Destaques da V5.76
-
-- linha Geral vermelha no consumo, com valores fixos nos pontos;
-- linha Gasolina laranja e linha Etanol azul;
-- linha Diesel verde, quando houver registros;
-- demais combustíveis recebem cores distintas e estáveis;
-- hodômetro com todos os pontos reais e somente três referências no eixo: primeiro mês, mês central e último mês.
+Use `ATUALIZAR_MYCAR_V5_77_KEY.bat` junto com `MYCAR_PLUS_V5_77_KEY.zip` na pasta Downloads.

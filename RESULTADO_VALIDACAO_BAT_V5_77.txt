@@ -1,0 +1,12 @@
+VALIDAÇÃO DO BAT V5.77 KEY: APROVADA
+
+- VERSAO=5.77
+- ZIP esperado: MYCAR_PLUS_V5_77_KEY.zip
+- Pasta interna: MYCAR_PLUS_V5_77_KEY
+- Backup anterior à V5.77 configurado
+- Limpeza das pastas residuais V5.76 e V5.77 configurada
+- Sincronização Web e Android configurada
+- Validação de coesão configurada
+- Commit GitHub: Atualiza MyCar+ para V5.77 KEY
+- Geração do APK debug configurada
+- Nenhuma dependência de arquivo PS1 externo

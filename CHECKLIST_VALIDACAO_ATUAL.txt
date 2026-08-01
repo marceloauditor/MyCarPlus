@@ -1,8 +1,8 @@
-MYCARPLUS V5.76 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.77 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
 [ ] Backup do projeto anterior realizado
-[ ] Pacote MYCAR_PLUS_V5_76_KEY.zip localizado na pasta Downloads
-[ ] ATUALIZAR_MYCAR_V5_76_KEY.bat executado
+[ ] Pacote MYCAR_PLUS_V5_77_KEY.zip localizado na pasta Downloads
+[ ] ATUALIZAR_MYCAR_V5_77_KEY.bat executado
 [ ] npm.cmd install executado sem erros
 [ ] npm.cmd run sync:web executado sem erros
 [ ] npm.cmd run sync:android executado sem erros
@@ -49,7 +49,7 @@ MYCARPLUS V5.76 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 [ ] Hodômetro apresenta apenas primeiro mês, mês central e último mês no eixo
 [ ] Todos os pontos reais do hodômetro permanecem na linha
 
-[ ] BAT V5.76 executado sem arquivo PS1 externo
+[ ] BAT V5.77 executado sem arquivo PS1 externo
 [ ] Tela de alertas mostra somente o veículo selecionado
 [ ] Grupo do alerta permanece fixo em MANUTENÇÃO
 [ ] Veículo inativo não gera aviso ativo nem aceita novo alerta
@@ -70,3 +70,10 @@ VALIDAÇÃO FUNCIONAL DO NOVO ALERTA TÉCNICO — V5.52
 [ ] Período posterior à última movimentação ajustado corretamente
 [ ] Escala Y do hodômetro legível em períodos curtos e longos
 [ ] Tela Sobre validada em celular estreito
+
+[ ] Título exibe apenas Painel inteligente
+[ ] Avaliação permanece ao lado do título
+[ ] Seis cartões aparecem na ordem aprovada
+[ ] Tendências aparecem antes das seções complementares
+[ ] Cartões Última distância e Destaques não aparecem
+[ ] Composição, Utilização e MyCar Score permanecem após Tendências
