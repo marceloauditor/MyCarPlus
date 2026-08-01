@@ -1,5 +1,5 @@
 const APP_NAME = "MyCar+",
-  APP_VERSION = "5.57",
+  APP_VERSION = "5.58",
   APP_CREATED = "julho de 2026";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
@@ -249,6 +249,7 @@ function normalizeAlertRecord(item = {}) {
   const modelVersion = Number(item.modelVersion ?? item.modelo_versao ?? (item.manualSchedule ? 2 : 1)) || 1;
   const active = item.active !== false && item.statusMode !== "DISABLED";
   return {
+    ...item,
     id: String(item.id || crypto.randomUUID()),
     modelVersion,
     vehicleId: String(item.vehicleId || item.veiculo_id || ""),

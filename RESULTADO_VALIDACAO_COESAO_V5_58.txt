@@ -1,0 +1,33 @@
+MYCAR+ V5.58 — RESULTADO DE VALIDAÇÃO
+
+Status: APROVADO
+
+1. Versões
+- Aplicação: 5.58
+- Pacote: 5.58.0
+- Android versionCode: 558
+- Android versionName: 5.58.0
+- Cache PWA: mycar-plus-v5-58
+
+2. Cadeia de arquivos
+- Fonte oficial (raiz): conferida
+- Web/PWA (www): sincronizada
+- Android assets/public: sincronizada
+- 17 arquivos da cadeia raiz → www → Android: idênticos
+
+3. Sincronização Firebase
+- Estrutura por registro aplicada às sete tabelas
+- Migração automática do documento legado /app/state
+- Consulta da nuvem antes do envio
+- Controle por id, sequencial, versão e datas
+- Exclusão lógica por deletedAt
+- Fila local V2 e baseline confirmado V2
+- Sintaxe JavaScript de app.js e cloud.js: aprovada
+
+4. Regras do Firestore
+- firebase/firestore.rules atualizada
+- firebase.json e .firebaserc incluídos
+- PUBLICAR_REGRAS_FIREBASE_V5_58.bat incluído
+
+Observação obrigatória:
+Antes do primeiro teste da V5.58, publicar as novas regras do Firestore usando o BAT específico. Sem essa publicação, o Firebase poderá negar acesso às novas coleções.

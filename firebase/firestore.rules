@@ -1,8 +1,13 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId}/app/{documentId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    // Cada usuário acessa somente seu próprio banco MyCar+.
+    // Abrange o documento legado /app/state e a estrutura V5.58
+    // por registro: movements, registers, drivers, vehicles,
+    // suppliers, paymentMethods, alerts e metadados de migração.
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
     }
   }
 }

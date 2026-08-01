@@ -1,4 +1,4 @@
-# MyCar+ V5.57 — pacote-fonte
+# MyCar+ V5.58 — pacote-fonte
 
 ## Regra vigente dos alertas
 
@@ -48,3 +48,7 @@ Os Relatórios Executivo e de Inteligência compartilham arquivos `.html` por me
 A V5.52 padroniza os alertas no grupo **MANUTENÇÃO**, mantém o vínculo obrigatório com o veículo selecionado e impede avisos ativos para veículos inativos. A exclusão remove somente o alerta e sua programação futura; os registros do histórico técnico e os movimentos de manutenção são preservados.
 
 O BAT da V5.52 é autocontido e não depende de arquivo `.ps1`.
+
+## V5.58 — etapa obrigatória do Firebase
+
+Antes do primeiro teste da V5.58, execute `PUBLICAR_REGRAS_FIREBASE_V5_58.bat` para publicar as regras que autorizam as novas coleções por registro. Depois, instale/abra a V5.58 e entre com a mesma Conta Google usada no backup. A migração do documento legado ocorrerá automaticamente uma única vez.
