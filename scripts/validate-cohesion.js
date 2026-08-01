@@ -38,6 +38,7 @@ function hash(file) {
 
 const pkg = JSON.parse(read('package.json') || '{}');
 const app = read('app.js');
+const reportManager = read('report-manager.js');
 const db = read('mycarplus-db.js');
 const html = read('index.html');
 const styles = read('styles.css');
@@ -83,14 +84,15 @@ assert(html.includes('id="lastConsumption"') && html.includes('id="lastDistance"
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');
-assert(/mycar-share-report-html/.test(app), 'Compartilhamento HTML ausente.');
+assert(/MyCarReportManager/.test(app) && /mycar-share-report-html/.test(reportManager), 'Gerenciador central de compartilhamento ausente.');
 assert(/id="reportShareButton"[^>]*>Compartilhar</.test(app), 'Botão Compartilhar do Executivo ausente.');
 assert(/id="aiReportShare"[^>]*>Compartilhar</.test(app), 'Botão Compartilhar da IA ausente.');
 assert(/id="reportPrintButton"[^>]*>Imprimir</.test(app), 'Botão Imprimir do Executivo ausente.');
 assert(/id="aiReportPrint"[^>]*>Imprimir</.test(app), 'Botão Imprimir da IA ausente.');
 assert(/function printHtml\(\)\{var html=printableDocument\(\)/.test(app), 'Impressão do Executivo não usa o HTML completo.');
-assert(/bridge\.printHtml\('RELATORIO_EXECUTIVO_MYCAR_PLUS',html\)/.test(app), 'Executivo não chama a ponte nativa de impressão.');
-assert(/bridge\.printHtml\('RELATORIO_IA_MYCAR_PLUS',html\)/.test(app), 'Relatório IA não chama a ponte nativa de impressão.');
+assert(/MyCarReportManager\.print\('RELATORIO_EXECUTIVO_MYCAR_PLUS',html\)/.test(app), 'Executivo não usa o gerenciador central de impressão.');
+assert(/MyCarReportManager\.print\('RELATORIO_IA_MYCAR_PLUS',html\)/.test(app), 'Relatório IA não usa o gerenciador central de impressão.');
+assert(/bridge\.printHtml\(reportName, reportHtml\)/.test(reportManager), 'Gerenciador central não chama a ponte nativa printHtml.');
 
 // Android.
 const mainActivity = read('android/app/src/main/java/br/com/marceloauditor/mycarplus/MainActivity.java');
@@ -110,7 +112,7 @@ for (const oldVersion of ['41','42','43','44','45','46','47','48','49','50','51'
 }
 
 const syncedFiles = [
-  'index.html','styles.css','app.js','mycarplus-db.js','cloud.js','ai-logic.js',
+  'index.html','styles.css','report-manager.js','app.js','mycarplus-db.js','cloud.js','ai-logic.js',
   'firebase-config.js','jszip.min.js','manifest.webmanifest','sw.js','icon.svg',
   'icon-16.png','icon-32.png','icon-48.png','icon-72.png','icon-96.png','icon-128.png','icon-144.png','icon-180.png','icon-192.png','icon-256.png','icon-384.png','icon-512.png','mycar-plus-logo.png','desenvolvedor.png',
   'data/MyCarPlus.xlsx',

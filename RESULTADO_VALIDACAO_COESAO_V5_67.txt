@@ -1,0 +1,8 @@
+VALIDAÇÃO DE COESÃO: APROVADA
+Versão: 5.67.0
+Android versionCode: 567
+Android versionName: 5.67.0
+Cache PWA: mycar-plus-v5-67
+Arquivos conferidos na cadeia raiz → www → Android: 27
+Novo módulo central: report-manager.js
+Sintaxe JavaScript: APROVADA

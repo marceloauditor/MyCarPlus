@@ -1,8 +1,9 @@
-const CACHE = "mycar-plus-v5-66";
+const CACHE = "mycar-plus-v5-67";
 const APP_SHELL = [
   "./",
   "index.html",
   "styles.css",
+  "report-manager.js",
   "app.js",
   "mycarplus-db.js",
   "cloud.js",
@@ -53,6 +54,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   const networkFirst =
+    url.pathname.endsWith("/report-manager.js") ||
     url.pathname.endsWith("/app.js") ||
     url.pathname.endsWith("/cloud.js") ||
     url.pathname.endsWith("/ai-logic.js") ||
