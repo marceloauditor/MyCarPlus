@@ -91,7 +91,6 @@ function localFallbackReport(indicators, reason = "") {
   const recommendations = [];
   if (activeAlerts.length) recommendations.push("Revisar e tratar os alertas ativos do veículo.");
   if (incomplete) recommendations.push("Completar os próximos registros de abastecimento para elevar a confiabilidade do consumo.");
-  if (supplierMissing) recommendations.push("Informar o fornecedor quando disponível para melhorar a análise de custos.");
   recommendations.push("Manter hodômetro, valores e datas atualizados em cada lançamento.");
   return {
     executive_summary: `Relatório calculado localmente com ${movements} movimento(s). A interpretação por IA não pôde ser concluída nesta tentativa.`,
@@ -104,8 +103,8 @@ function localFallbackReport(indicators, reason = "") {
       ? `Existem ${activeAlerts.length} alerta(s) ativo(s) que devem ser revisados.`
       : "Não foram identificados alertas ativos no período analisado.",
     supplier_analysis: supplierMissing
-      ? `${supplierMissing} registro(s) não possuem fornecedor informado; os demais indicadores permanecem válidos.`
-      : "Os registros analisados possuem informação de fornecedor quando aplicável.",
+      ? `Fornecedores não informados: ${supplierMissing} registro(s). Relevância: Baixa. Essa ausência é apenas cadastral e não interfere nos custos, consumo, quilometragem, manutenções ou alertas do veículo.`
+      : "Fornecedores não informados: 0 registro(s). Relevância: Baixa.",
     recommendations,
     limitations: friendlyAiLimitation(reason),
     confidence: "Baixa",
@@ -119,8 +118,8 @@ window.mycarAiAnalyze = async (indicators) => {
   const prompt = `Você é um analista veicular sênior. Responda em português do Brasil, com linguagem executiva, objetiva e use somente os indicadores fornecidos.
 Não invente números, diagnósticos mecânicos ou causalidade. Informe quando a amostra for insuficiente.
 Abastecimentos incompletos entram nos custos, mas não no consumo em km/L.
-O fornecedor é opcional. Se estiver ausente ou a qualidade dessa informação for baixa,
-registre isso somente na análise de fornecedores e nas limitações, sem invalidar os demais indicadores.
+O fornecedor é opcional e sua ausência é apenas cadastral. Informe exclusivamente a quantidade de registros sem fornecedor na análise de fornecedores e classifique obrigatoriamente a relevância como Baixa.
+Não trate a ausência de fornecedor como risco, anomalia, falha grave, limitação relevante, problema de manutenção ou recomendação prioritária. Ela não interfere nos custos, consumo, quilometragem, manutenções ou alertas do veículo.
 Quando houver consumo de referência cidade/estrada no veículo, compare o consumo apurado com essa faixa,
 sem afirmar qual foi o tipo de percurso.
 Retorne exclusivamente JSON válido, sem markdown, com estas chaves:
@@ -139,7 +138,15 @@ ${JSON.stringify(indicators)}`;
         ? prompt
         : `${prompt}\n\nCORREÇÃO OBRIGATÓRIA: a resposta anterior não pôde ser validada. Retorne somente um objeto JSON completo, sem qualquer texto antes ou depois.`;
       const result = await model.generateContent(request);
-      return parseReport(result.response.text());
+      const report = parseReport(result.response.text());
+      const supplierMissing = Number(indicators?.quality?.missing_supplier || 0);
+      report.supplier_analysis = supplierMissing
+        ? `Fornecedores não informados: ${supplierMissing} registro(s). Relevância: Baixa. Essa ausência é apenas cadastral e não interfere nos custos, consumo, quilometragem, manutenções ou alertas do veículo.`
+        : "Fornecedores não informados: 0 registro(s). Relevância: Baixa.";
+      const supplierPattern = /fornecedor(?:es)?|supplier/i;
+      report.anomalies = report.anomalies.filter(item => !supplierPattern.test(item));
+      report.recommendations = report.recommendations.filter(item => !supplierPattern.test(item));
+      return report;
     } catch (error) {
       lastError = error;
       console.warn(`Tentativa ${attempt} da análise inteligente falhou:`, error);

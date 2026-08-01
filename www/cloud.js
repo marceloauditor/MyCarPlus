@@ -86,7 +86,7 @@
     const vals={cloudAccount:user?.email||'Não conectada',cloudNetwork:on?'Online':'Offline',cloudPending:String(q),cloudLastSync:when(m.lastPush),cloudLastPull:when(m.lastPull),cloudSent:`${Number(m.lastSent||0)} registro(s)`,cloudReceived:`${Number(m.lastReceived||0)} registro(s)`,cloudDevice:device().slice(0,18)};
     Object.entries(vals).forEach(([id,v]) => { const e=document.getElementById(id); if(e)e.textContent=v; });
     const li=document.querySelector('#cloudLogin'), lo=document.querySelector('#cloudLogout'), sy=document.querySelector('#cloudSyncNow');
-    if(li)li.hidden=!!user; if(lo)lo.hidden=!user; if(sy){sy.disabled=!configured||syncing||!on; sy.textContent=syncing?'Sincronizando…':(!user?'Entrar para sincronizar':'Sincronizar agora'); sy.setAttribute('aria-busy',syncing?'true':'false');}
+    if(li){li.hidden=!!user;li.disabled=!configured||syncing||!on;} if(lo)lo.hidden=!user; if(sy){sy.hidden=!user;sy.disabled=!configured||syncing||!on;sy.textContent=syncing?'Sincronizando…':'Sincronizar agora';sy.setAttribute('aria-busy',syncing?'true':'false');}
   }
 
   const native = () => !!window.Capacitor?.isNativePlatform?.() && window.Capacitor?.getPlatform?.() === 'android';

@@ -1,0 +1,16 @@
+MYCAR+ V5.63 — RESULTADO DA VALIDAÇÃO DE COESÃO
+
+index.html: OK — 7ac94256455775e123f66c59e111ccecefe0a7fa10563cfb0399a2cdbee0f805
+app.js: OK — 0d2aa70e2fbe678546b348ceff8234415bdeb20dc12aaa2b815d8a1addc3f576
+ai-logic.js: OK — 2777ec760caac30aa2d2eac773aa08975e054b9c2212ac70258301f4bed3fac6
+cloud.js: OK — 1c1f85a138fee072a1040b18bae973b07303d85f71ab3bb16efc2966dcdee826
+styles.css: OK — 77b2e7d3332dd76f760c8b349f7b617ec10a224fb6e087b8b50e68736aed102b
+sw.js: OK — d2b7331575a602d103508085ffa0cdcacceb56bfdc9c6d475dfed121c101bb8c
+
+Critérios funcionais:
+- Datas de Gráficos usam o mesmo componente visual de Relatórios.
+- Fornecedor ausente: quantidade e relevância baixa.
+- Botão Sincronizar oculto enquanto não há usuário autenticado.
+- Firebase Auth Persistence.LOCAL preservada para login automático.
+
+RESULTADO: APROVADO

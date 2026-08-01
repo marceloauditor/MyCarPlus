@@ -172,9 +172,9 @@ Data: 31/07/2026
 
 V5.59 - Indicador permanente de alertas, log técnico e painel de sincronização ampliado.
 
-V5.62 - Período completo automático nos gráficos; relatório executivo com Valor e Fornecedor; destaque da próxima referência; telas e seletor de veículo compactados.
+V5.63 - Período completo automático nos gráficos; relatório executivo com Valor e Fornecedor; destaque da próxima referência; telas e seletor de veículo compactados.
 
-V5.62 — Nova identidade visual oficial
+V5.63 — Nova identidade visual oficial
 - Ícone MyCar+ implantado no Android, PWA, favicon, tela inicial, relatórios e manual.
 - Cabeçalho preserva versão, conexão e alertas ao lado do ícone.
 - Relatórios e gráficos migrados para paleta azul predominante.
