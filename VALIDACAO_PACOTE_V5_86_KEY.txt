@@ -1,0 +1,20 @@
+VALIDAÇÃO DO PACOTE MYCAR_PLUS_V5_86_KEY
+Data: 02/08/2026 13:32:13
+
+STATUS: APROVADO
+
+Conteúdo principal conferido:
+- app.js / styles.css / index.html
+- www sincronizado
+- Android assets/public sincronizado
+- MainActivity nativa preservada
+- package.json 5.86.0
+- versionCode 586 / versionName 5.86.0
+- BAT V5.86 KEY
+- changelog, proposta e correção V5.86
+
+Correção funcional:
+- título único “Composição Custo Líquido”;
+- despesas somadas pelos grupos Abastecimento, Manutenção e Administrativo;
+- Receitas deduzidas do total;
+- rodapé apresenta o custo líquido apurado.

@@ -1,27 +1,26 @@
-# MyCar+ V5.85 KEY — pacote-fonte oficial
+# MyCar+ V5.86 KEY — pacote-fonte oficial
 
 Pacote completo para atualização da versão Web/PWA e Android.
 
 ## Identificação
 
-- Aplicação: **5.85.0**
-- Android `versionCode`: **584**
-- Android `versionName`: **5.85.0**
-- Cache PWA: **mycar-plus-v5-84**
+- Aplicação: **5.86.0**
+- Android `versionCode`: **586**
+- Android `versionName`: **5.86.0**
+- Cache PWA: **mycar-plus-v5-86**
 
-## Implantação da V5.85
+## Implantação da V5.86
 
-- quatro cartões de custo líquido no Relatório Executivo;
-- indicadores por km, diário, mensal e total;
-- consolidação das despesas de Abastecimento, Manutenção e Administrativo, menos Receitas;
-- bordas vermelhas nos quatro cartões totalizadores;
-- cartões posicionados após Receitas e antes de Despesas do período;
-- removida a repetição dos indicadores líquidos no resumo inferior;
-- preservadas as correções da V5.83 para o botão Voltar do Android e para a ordem das seções do relatório.
+- título único “Composição Custo Líquido” no último card da tela inicial;
+- remoção do subtítulo sobreposto;
+- despesas de Abastecimento, Manutenção e Administrativo;
+- Receitas exibidas como dedução;
+- custo líquido calculado por despesas menos receitas;
+- preservação da correção nativa do botão Voltar do Android.
 
 ## Arquivos para atualização
 
-- `MYCAR_PLUS_V5_84_KEY.zip`
-- `ATUALIZAR_MYCAR_V5_84_KEY.bat`
+- `MYCAR_PLUS_V5_86_KEY.zip`
+- `ATUALIZAR_MYCAR_V5_86_KEY.bat`
 
 O BAT cria backup, atualiza a fonte, sincroniza Web e Android, valida a coesão, atualiza o GitHub, abre o Android Studio e gera o APK debug em Downloads.

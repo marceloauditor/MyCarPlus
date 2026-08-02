@@ -224,3 +224,10 @@ Data: 02/08/2026
 - Bordas vermelhas identificam os valores consolidados.
 - Resultado líquido: Abastecimento + Manutenção + Administrativo − Receitas.
 - Versão Android atualizada para versionCode 584 e versionName 5.85.0.
+
+V5.86 — 02/08/2026 13:32:13
+- Corrigida sobreposição no card da tela inicial.
+- Título único: Composição Custo Líquido.
+- Custo líquido apurado por despesas dos três grupos menos Receitas.
+- Receitas exibidas como dedução, sem rateio artificial.
+- versionCode 586 / versionName 5.86.0.

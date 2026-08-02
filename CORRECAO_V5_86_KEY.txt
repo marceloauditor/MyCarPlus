@@ -1,0 +1,5 @@
+MYCAR+ V5.86 KEY
+
+- Corrigida sobreposição no card Composição Custo Líquido.
+- Fórmula líquida corrigida: despesas menos receitas.
+- Versão 5.86.0 / versionCode 586.

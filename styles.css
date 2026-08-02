@@ -1047,6 +1047,8 @@ html[data-theme="light"] .context-bottom-sheet{background:#fff}html[data-theme="
 .composition-row>div:first-child strong{font-size:.7rem;color:#c7dce9;text-align:right;font-weight:750}
 .composition-row .insight-track{height:9px;background:#1d425b}
 .composition-row .insight-track i{background:var(--composition-color,#2ca9ff)}
+.composition-row.composition-deduction>div:first-child strong{color:#65d9a5}
+.composition-row.composition-deduction .insight-track i{opacity:.9}
 .composition-card-total{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:11px;border-top:1px solid #31556e}
 .composition-card-total span{color:#a9c3d3;font-size:.75rem;font-weight:750}
 .composition-card-total strong{color:#fff;font-size:1rem}
@@ -1055,6 +1057,7 @@ html[data-theme="light"] .composition-card-head h3{color:#152c3f!important}
 html[data-theme="light"] .composition-card-head p,html[data-theme="light"] .composition-card-total span{color:#607786!important}
 html[data-theme="light"] .composition-row>div:first-child span{color:#24475e!important}
 html[data-theme="light"] .composition-row>div:first-child strong{color:#516a7a!important}
+html[data-theme="light"] .composition-row.composition-deduction>div:first-child strong{color:#167a50!important}
 html[data-theme="light"] .composition-row .insight-track{background:#e2ebf1}
 html[data-theme="light"] .composition-card-total{border-color:#cbd8e1}
 html[data-theme="light"] .composition-card-total strong{color:#152c3f!important}

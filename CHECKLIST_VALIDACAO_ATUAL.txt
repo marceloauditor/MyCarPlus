@@ -1,14 +1,9 @@
-CHECKLIST DE VALIDAÇÃO — MYCAR+ V5.85 KEY
+CHECKLIST DE VALIDAÇÃO — MYCAR+ V5.86
 
-[OK] Aplicação 5.85.0 conferida
-[OK] Android versionCode 584 e versionName 5.85.0 conferidos
-[OK] Cache PWA mycar-plus-v5-84 conferido
-[OK] Quatro cartões líquidos presentes e na ordem aprovada
-[OK] Custo líquido por km usa o total líquido dividido pela distância do período
-[OK] Custo líquido diário usa o total líquido dividido pelos dias do período
-[OK] Custo líquido mensal usa a média diária multiplicada por 30,44
-[OK] Custo líquido total consolida despesas menos receitas
-[OK] Bordas vermelhas aplicadas somente aos quatro totalizadores
-[OK] Totalizadores posicionados após Receitas e antes de Despesas do período
-[OK] Cópias raiz, www e Android sincronizadas
-[OK] BAT configurado para backup, sincronização, GitHub, Android Studio e APK debug
+[ ] Card da tela inicial exibe somente “Composição Custo Líquido”.
+[ ] Não existe subtítulo sobreposto no card.
+[ ] Abastecimento, Manutenção e Administrativo são somados como despesas.
+[ ] Receitas são deduzidas do total.
+[ ] Rodapé apresenta Custo líquido.
+[ ] Tela inicial funciona nos temas claro e escuro.
+[ ] Botão Voltar do Android sai após dois toques na tela inicial.

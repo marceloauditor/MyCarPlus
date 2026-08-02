@@ -1,0 +1,14 @@
+RESULTADO DA VALIDAÇÃO DE COESÃO — MYCAR+ V5.86
+Data: 02/08/2026 13:32:13
+
+STATUS: APROVADA
+
+- Aplicação: 5.86.0
+- Android versionCode: 586
+- Android versionName: 5.86.0
+- Cache PWA: mycar-plus-v5-86
+- 30 arquivos conferidos na cadeia raiz → www → Android.
+- JavaScript validado sem erros de sintaxe nas três cópias.
+- Card da tela inicial com título único “Composição Custo Líquido”.
+- Fórmula confirmada: Abastecimento + Manutenção + Administrativo − Receitas.
+- Receitas exibidas como dedução, sem rateio artificial.
