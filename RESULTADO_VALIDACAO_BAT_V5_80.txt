@@ -1,0 +1,14 @@
+VALIDAÇÃO DO BAT V5.80 KEY: APROVADA
+
+- Variável VERSAO=5.80: OK
+- ZIP esperado MYCAR_PLUS_V5_80_KEY.zip: OK
+- Pasta interna MYCAR_PLUS_V5_80_KEY: OK
+- APK de destino MYCAR_PLUS_V5_80_KEY_DEBUG.apk: OK
+- Backup automático: OK
+- Sincronização Web e Android: OK
+- Validação de coesão: OK
+- Atualização GitHub: OK
+- Abertura Android Studio: OK
+- Geração APK debug: OK
+- Referências GOTO possuem rótulos válidos: OK
+- Não depende de arquivo PS1 externo: OK

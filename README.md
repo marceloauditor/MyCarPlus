@@ -1,27 +1,24 @@
-# MyCar+ V5.79
+# MyCar+ V5.80
 
-Pacote-fonte oficial para Web/PWA e Android.
+Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas e receitas do veículo.
 
-## Versões
+## Identificação da versão
 
-- versão: **5.79.0**
-- Android: `versionCode 579` / `versionName 5.79.0`
-- cache PWA: `mycar-plus-v5-79`
+- Aplicação: **5.80.0**
+- Android: `versionCode 580` / `versionName 5.80.0`
+- Cache PWA: `mycar-plus-v5-80`
 
-## Melhorias da V5.79
+## Melhorias da V5.80
 
-- telas de Abastecimento, Manutenção, Administrativo e Receita reorganizadas em formato compacto, com os campos principais visíveis em uma única visualização;
-- Abastecimento com Data, Hod. Último, Hod. Atual, Combustível, Preço/L, Total, Litros, Tanque completo, Posto, Motorista e Forma de pagamento;
-- Etanol selecionado por padrão quando estiver cadastrado;
-- botão `+` no abastecimento para lançar outro combustível;
-- seletores sem seta visual; toque na linha abre as opções cadastradas;
-- botões `+` para cadastro rápido de fornecedor/posto, motorista e forma de pagamento/recebimento;
-- demais grupos mantêm somente o campo Valor, sem Preço/L, Litros e Tanque completo;
-- lançamentos de todos os grupos aceitam valor **R$ 0,00**;
-- data padrão corrigida para o dia local atual, sem avanço para o dia seguinte;
-- novo logotipo aplicado ao app, PWA, Android, manual e relatórios, com arquivos otimizados;
-- capa separada removida do manual e do compartilhamento dos relatórios; o logotipo passa a identificar o cabeçalho do documento.
+- Data e hodômetro atual ampliados e apresentados lado a lado em todos os grupos.
+- Último hodômetro exibido como informação auxiliar menor abaixo do hodômetro atual.
+- Tela de abastecimento com a opção **Completo** e a ação textual **Adicionar outro combustível**.
+- Motorista movido para antes das observações e sem botão de cadastro rápido.
+- Campos de item, combustível, fornecedor/posto e pagamento/recebimento abrem uma folha inferior de seleção.
+- A opção de cadastrar um novo registro aparece somente dentro da lista de seleção, evitando confusão com o salvamento do lançamento.
+- Botão exclusivo **SALVAR LANÇAMENTO** no rodapé.
+- Mantidas as correções da V5.79: valor R$ 0,00, data local correta e nova identidade visual.
 
 ## Atualização
 
-Use `ATUALIZAR_MYCAR_V5_79_KEY.bat` junto com `MYCAR_PLUS_V5_79_KEY.zip` na pasta Downloads.
+Coloque `MYCAR_PLUS_V5_80_KEY.zip` e `ATUALIZAR_MYCAR_V5_80_KEY.bat` na pasta Downloads e execute o BAT pelo PowerShell ou Explorador de Arquivos.

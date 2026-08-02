@@ -1,0 +1,17 @@
+PACOTE MYCAR_PLUS_V5_80_KEY
+STATUS: APROVADO PARA ENTREGA
+
+Conteúdo obrigatório conferido:
+- package.json 5.80.0
+- app.js APP_VERSION 5.80
+- index.html versão 5.80
+- sw.js cache mycar-plus-v5-80
+- Android versionCode 580
+- Android versionName 5.80.0
+- ATUALIZAR_MYCAR_V5_80_KEY.bat
+- CHANGELOG_V5_80.md
+- PROPOSTA_IMPLEMENTADA_MYCAR_PLUS_V5_80.md
+- RESULTADO_VALIDACAO_COESAO_V5_80.txt
+- RESULTADO_VALIDACAO_BAT_V5_80.txt
+
+A cadeia raiz → www → android/app/src/main/assets/public foi sincronizada.

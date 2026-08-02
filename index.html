@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.79</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.80</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -487,7 +487,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V5.79</h3>
+<h3>Manual de utilização — MyCar+ V5.80</h3>
 <p>Controle de abastecimentos, manutenções, despesas administrativas, receitas, relatórios, gráficos, alertas técnicos e sincronização entre Android e Web.</p>
 <details open><summary>1. Visão geral</summary><p>O MyCar+ organiza os dados por veículo. A seleção feita na tela inicial controla lançamentos, indicadores, relatórios, gráficos, alertas e análise inteligente. O Painel inteligente prioriza seis indicadores, nesta ordem: custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Logo abaixo aparecem as Tendências. Composição dos custos, Utilização e MyCar Score permanecem disponíveis ao continuar a rolagem. Use a mesma Conta Google no Android e na Web para manter os dados sincronizados pelo Firebase.</p></details>
 <details><summary>2. Seleção do veículo</summary><p>A tela inicial mostra somente o veículo selecionado em uma barra compacta. Toque na barra para abrir a lista com rolagem, localize o veículo e toque nele. São exibidos apenas o nome e o status Ativo ou Inativo.</p></details>
@@ -524,7 +524,7 @@
 <div class="about-card">
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
-<p><strong>Versão:</strong> 5.79</p>
+<p><strong>Versão:</strong> 5.80</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -650,9 +650,8 @@
 </div>
 <div class="form-scroll entry-one-screen">
 <div class="entry-top-grid">
-<label>Data *<input name="data" type="date" required></label>
-<div class="entry-readonly-field"><span>Hod. Último</span><strong id="lastKm">—</strong></div>
-<label>Hod. Atual *<input name="km" type="text" inputmode="numeric" required></label>
+<label class="entry-date-field"><span>Data *</span><input name="data" type="date" required></label>
+<label class="entry-current-km-field"><span>Hodômetro atual *</span><input name="km" type="text" inputmode="numeric" required><small>Último hodômetro: <strong id="lastKm">—</strong></small></label>
 </div>
 <div class="entry-hidden-context" aria-hidden="true">
 <strong id="entryGroupName">—</strong><small id="entryOptionalSummary"></small><small id="groupLockHelp"></small><small id="kmRule"></small><div id="fuelFields" hidden></div>
@@ -662,13 +661,25 @@
 <div class="movement-total" hidden><span>Total do movimento</span><strong id="movementTotal">R$ 0,00</strong></div>
 </section>
 <div id="tankCompleteField" class="entry-tank-row">
-<label><span><input name="tanqueCompleto" type="checkbox" checked> Tanque completo</span><small>Padrão: completo</small></label>
-<button type="button" id="addMovementItem" class="entry-add-fuel" aria-label="Lançar outro combustível" title="Lançar outro combustível">＋</button>
+<label><span><input name="tanqueCompleto" type="checkbox" checked> Completo</span></label>
+<button type="button" id="addMovementItem" class="entry-add-fuel" aria-label="Adicionar outro combustível"><b>＋</b><span>Adicionar outro combustível</span></button>
 </div>
 <section class="entry-lookup-list">
-<label class="entry-lookup-row"><span id="entrySupplierLabel">Fornecedor</span><div class="context-field entry-select-plus"><select name="fornecedor" class="no-select-arrow"></select><button type="button" class="entry-quick-add" data-register-type="FORNECEDOR" aria-label="Cadastrar fornecedor">＋</button></div><small id="entrySupplierHint">Não obrigatório</small></label>
-<label class="entry-lookup-row"><span>Motorista</span><div class="context-field entry-select-plus"><select name="motorista" class="no-select-arrow"></select><button type="button" class="entry-quick-add" data-register-type="MOTORISTA" aria-label="Cadastrar motorista">＋</button></div><small>Não obrigatório</small></label>
-<label class="entry-lookup-row"><span id="entryPaymentLabel">Forma de pagamento</span><div class="context-field entry-select-plus"><select name="formaPagamento" class="no-select-arrow"></select><button type="button" class="entry-quick-add" data-register-type="FORMA_PAGAMENTO" aria-label="Cadastrar forma de pagamento">＋</button></div></label>
+<div class="entry-lookup-row">
+<div class="entry-field-heading"><span id="entrySupplierLabel">Fornecedor</span><small id="entrySupplierHint">não obrigatório</small></div>
+<select name="fornecedor" class="entry-native-select" hidden></select>
+<button type="button" class="entry-select-trigger" data-context-type="FORNECEDOR" data-field="fornecedor"><span class="entry-trigger-value">Não informado</span><i>›</i></button>
+</div>
+<div class="entry-lookup-row">
+<div class="entry-field-heading"><span id="entryPaymentLabel">Forma de pagamento</span></div>
+<select name="formaPagamento" class="entry-native-select" hidden></select>
+<button type="button" class="entry-select-trigger" data-context-type="FORMA_PAGAMENTO" data-field="formaPagamento"><span class="entry-trigger-value">Não informado</span><i>›</i></button>
+</div>
+<div class="entry-driver-row">
+<span>Motorista</span>
+<select name="motorista" class="entry-native-select" hidden></select>
+<button type="button" class="entry-select-trigger entry-driver-trigger" data-context-type="MOTORISTA" data-field="motorista"><span class="entry-trigger-value">Não informado</span><i>›</i></button>
+</div>
 </section>
 <div class="entry-location-row">
 <button type="button" id="useCurrentLocation" class="secondary">⌖ Usar localização</button>
@@ -678,25 +689,24 @@
 <label class="entry-observation">Observações <small>(opcional)</small><textarea name="observacao" rows="2" placeholder="Digite uma observação..."></textarea></label>
 <p id="formError" class="form-error"></p>
 </div>
-<div class="form-footer">
-<button class="form-cancel" value="cancel">Cancelar</button>
-<button class="primary" value="default">Salvar</button>
+<div class="form-footer entry-save-footer">
+<button class="form-cancel" value="cancel" hidden>Cancelar</button>
+<button class="primary entry-save-launch" value="default">SALVAR LANÇAMENTO</button>
 </div>
 </form>
 </dialog>
 <dialog id="contextSelectorDialog" class="compact-dialog context-selector-dialog">
-<div class="context-selector">
-<div class="dialog-head">
-<div><small>Cadastro durante o lançamento</small><h2 id="contextSelectorTitle">Selecionar cadastro</h2></div>
-<button type="button" id="closeContextSelector" aria-label="Voltar ao lançamento">×</button>
+<div class="context-selector context-bottom-sheet">
+<div class="context-selector-grip" aria-hidden="true"></div>
+<div class="dialog-head context-selector-head">
+<div><h2 id="contextSelectorTitle">Selecionar cadastro</h2></div>
+<button type="button" id="closeContextSelector" aria-label="Fechar seleção">×</button>
 </div>
-<div class="context-selector-toolbar">
-<label class="register-search"><span>⌕</span><input id="contextSelectorSearch" type="search" placeholder="Pesquisar..."></label>
-<button type="button" id="newContextRegister" class="context-new">＋ Novo</button>
-</div>
-<p id="contextSelectorHint" class="field-help"></p>
+<label class="register-search context-selector-search" hidden><span>⌕</span><input id="contextSelectorSearch" type="search" placeholder="Pesquisar..."></label>
+<p id="contextSelectorHint" class="field-help" hidden></p>
 <div id="contextSelectorList" class="context-selector-list"></div>
-<div class="form-footer"><button type="button" id="cancelContextSelector" class="form-cancel">Voltar ao lançamento</button></div>
+<button type="button" id="newContextRegister" class="context-register-new">＋ Cadastrar novo</button>
+<button type="button" id="cancelContextSelector" hidden>Voltar ao lançamento</button>
 </div>
 </dialog>
 <dialog id="alertDialog" class="technical-alert-dialog">

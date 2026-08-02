@@ -90,7 +90,7 @@ assert(/insight-grid-score-first/.test(app) && /insight-score-card/.test(app) &&
 assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição dos custos</h3>') && app.indexOf('<h3>Utilização</h3>') < app.indexOf('<h3>Composição dos custos</h3>'), 'MyCar Score e Utilização devem aparecer antes da Composição dos custos.');
 assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
-// Gráficos, período efetivo, manual, tela Sobre e painel — V5.79.
+// Gráficos, período efetivo, manual, tela Sobre e painel — V5.80.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
@@ -128,13 +128,21 @@ assert(/if \(key === "diesel"\) return "#1f8a70"/.test(app), 'Linha Diesel deve 
 assert(/showPointValues:\s*false/.test(app), 'Linhas específicas não devem mostrar valores fixos nos pontos.');
 assert(!/Álcool|álcool|Alcool|alcool/.test(app + html), 'A interface não deve utilizar a palavra substituída por Etanol.');
 
-// Lançamentos compactos e regras da V5.79.
+// Lançamentos compactos e seletores em folha inferior — V5.80.
 assert(html.includes('entry-dialog-one-screen') && styles.includes('entry-top-grid'), 'Tela compacta de lançamento em uma única visualização ausente.');
-assert(html.includes('id="tankCompleteField"') && html.includes('id="addMovementItem"'), 'Tanque completo ou botão para outro combustível ausente.');
+assert(/entry-top-grid[\s\S]*entry-date-field[\s\S]*entry-current-km-field/.test(html), 'Data e hodômetro atual não estão no novo formato de dois campos.');
+assert(/Último hodômetro:[\s\S]*id="lastKm"/.test(html), 'Último hodômetro não está apresentado como informação auxiliar menor.');
+assert(html.includes('id="tankCompleteField"') && html.includes('id="addMovementItem"'), 'Opção Completo ou botão para outro combustível ausente.');
+assert(/> Completo<\/span>/.test(html) && /Adicionar outro combustível/.test(html), 'Texto compacto Completo ou ação Adicionar outro combustível ausente.');
+assert(!/Tanque completo|Padrão: completo/.test(html), 'Textos antigos do tanque completo ainda estão visíveis.');
 assert(/normalizeText\(r\.item\)\.includes\("etanol"\)/.test(app), 'Etanol não está configurado como combustível inicial preferencial.');
 assert(/row\.preco > 0 && row\.valor >= 0/.test(app), 'Abastecimento ainda não aceita valor total zero.');
 assert(/function\s+localDateISO\s*\(/.test(app) && /: localDateISO\(\);/.test(app), 'Data local do lançamento não foi corrigida.');
-assert(/data-register-type="FORMA_PAGAMENTO"/.test(html) && /FORMA_PAGAMENTO/.test(app), 'Cadastro rápido da forma de pagamento ausente.');
+assert(/data-context-type="FORMA_PAGAMENTO"/.test(html) && /entryContextNewLabel/.test(app), 'Seleção contextual da forma de pagamento ausente.');
+assert(/context-bottom-sheet/.test(html + styles) && /context-register-new/.test(html + styles), 'Folha inferior com ação Cadastrar novo ausente.');
+assert(/data-context-type="MOTORISTA"/.test(html) && /newButton\.hidden = type === "MOTORISTA"/.test(app), 'Motorista deve permitir somente seleção, sem cadastro rápido.');
+assert(!/entry-quick-add|data-register-type="MOTORISTA"/.test(html), 'Botões de mais isolados ainda estão visíveis nos campos do lançamento.');
+assert(/SALVAR LANÇAMENTO/.test(html), 'Botão exclusivo SALVAR LANÇAMENTO ausente.');
 assert(!/coverFile = await state\.coverFactory/.test(reportManager), 'Gerenciador ainda gera capa separada para relatórios.');
 
 // Relatórios e compartilhamento.

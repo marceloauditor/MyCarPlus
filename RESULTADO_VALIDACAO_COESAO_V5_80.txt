@@ -1,0 +1,15 @@
+VALIDAÇÃO DE COESÃO: APROVADA
+Versão: 5.80.0
+Android versionCode: 580
+Android versionName: 5.80.0
+Cache PWA: mycar-plus-v5-80
+Arquivos conferidos na cadeia raiz → www → Android: 30
+
+Validações específicas da V5.80:
+- Data e Hodômetro atual no formato de dois campos: OK
+- Último hodômetro em texto auxiliar: OK
+- Completo / Adicionar outro combustível: OK
+- Seletores em folha inferior: OK
+- Cadastro novo dentro da folha inferior: OK
+- Motorista sem cadastro rápido: OK
+- Botão SALVAR LANÇAMENTO: OK

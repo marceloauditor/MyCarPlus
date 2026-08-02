@@ -190,3 +190,10 @@ V5.79 — 02/08/2026
 - Data local corrigida.
 - Novo logotipo otimizado aplicado ao app, manual e relatórios.
 - Capas separadas removidas do manual e dos relatórios.
+
+V5.80 — 02/08/2026
+- Implantado fluxo de seleção por folha inferior nas telas de lançamento.
+- Cadastro de novos itens, fornecedores/postos e pagamentos movido para dentro da lista.
+- Motorista mantido somente como seleção.
+- Data e hodômetro atual ampliados; último hodômetro passou a informação auxiliar.
+- Opção de abastecimento simplificada para Completo e Adicionar outro combustível.

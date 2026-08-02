@@ -1,59 +1,19 @@
-MYCARPLUS V5.79 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.80 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
-[ ] Backup do projeto anterior realizado
-[ ] Pacote MYCAR_PLUS_V5_79_KEY.zip localizado na pasta Downloads
-[ ] ATUALIZAR_MYCAR_V5_79_KEY.bat executado
-[ ] npm.cmd install executado sem erros
-[ ] npm.cmd run sync:web executado sem erros
-[ ] npx.cmd cap sync android executado sem erros
-[ ] npm.cmd run validate:cohesion aprovado
-[ ] Versão 5.79 visível no aplicativo
-[ ] Android versionCode 579 e versionName 5.79.0 conferidos
-[ ] Cache PWA mycar-plus-v5-79 conferido
-
-TELAS DE LANÇAMENTO
-[ ] Abastecimento abre em tela compacta com Data, Hod. Último e Hod. Atual
-[ ] Etanol aparece como padrão quando cadastrado
-[ ] Combustível abre as opções ao tocar na linha e não mostra seta
-[ ] Preço/L, Total e Litros aparecem somente em Abastecimento
-[ ] Tanque completo inicia marcado
-[ ] Botão + permite incluir outro combustível
-[ ] Posto, Motorista e Forma de pagamento possuem cadastro rápido pelo botão +
-[ ] Administrativo mostra Item/Categoria e somente o campo Valor
-[ ] Manutenção mostra Tipo de manutenção e somente o campo Valor
-[ ] Receita mostra Tipo de receita e somente o campo Valor
-[ ] Nos grupos não combustíveis aparece Fornecedor e não aparece Tanque completo
-[ ] Forma de recebimento aparece em Receita
-[ ] Campos principais ficam visíveis em uma única visualização no celular padrão
-
-REGRAS CORRIGIDAS
-[ ] Abastecimento aceita valor total R$ 0,00 com preço por litro válido
-[ ] Manutenção aceita valor R$ 0,00
-[ ] Administrativo aceita valor R$ 0,00
-[ ] Receita aceita valor R$ 0,00
-[ ] Novo lançamento abre com a data local do dia, sem avançar para amanhã
-[ ] Edição de lançamentos antigos continua funcionando
-[ ] Lançamento com mais de um combustível salva e calcula litros separadamente
-
-LOGOTIPO E DOCUMENTOS
-[ ] Novo logotipo aparece no cabeçalho do app
-[ ] Novo logotipo aparece como ícone Web/PWA
-[ ] Novo logotipo aparece como ícone Android
-[ ] Manual não possui capa separada e usa o logotipo no cabeçalho
-[ ] Relatório Executivo não gera arquivo de capa separado
-[ ] Relatório de Inteligência não gera arquivo de capa separado
-[ ] Relatórios e manual mantêm versão, veículo/período e demais metadados
-[ ] Imagens otimizadas apresentam redução de tamanho sem perda visual relevante
-
-VALIDAÇÃO GERAL
-[ ] Cadastros rápidos retornam ao lançamento e selecionam o novo cadastro
-[ ] Cancelar, X, Esc e Voltar não salvam alterações indevidas
-[ ] Relatórios abrem dentro do aplicativo
-[ ] Compartilhamento gera somente o documento HTML solicitado
-[ ] Alertas técnicos permanecem restritos ao veículo selecionado
-[ ] Exportação XLSX continua funcionando
-[ ] Contraste conferido nos temas claro, escuro e automático
-[ ] APK debug gerado pelo BAT no computador do usuário
-[ ] Login e sincronização Firebase testados
-[ ] GitHub atualizado sem erros
-[ ] BAT executado sem depender de arquivo PS1 externo
+[ ] ZIP e BAT V5.80 na pasta Downloads
+[ ] Backup automático criado pelo BAT
+[ ] Fonte Web sincronizada
+[ ] Fonte Android sincronizada
+[ ] Validação de coesão aprovada
+[ ] GitHub atualizado
+[ ] Android Studio aberto
+[ ] APK debug gerado
+[ ] Versão 5.80 visível no aplicativo
+[ ] Android versionCode 580 e versionName 5.80.0 conferidos
+[ ] Data e Hodômetro atual maiores nos quatro grupos
+[ ] Último hodômetro exibido abaixo do hodômetro atual
+[ ] Folha inferior abre ao tocar em item, fornecedor e pagamento
+[ ] “Cadastrar novo...” aparece dentro da folha inferior
+[ ] Motorista não apresenta cadastro rápido
+[ ] Abastecimento apresenta “Completo” e “Adicionar outro combustível”
+[ ] Botão SALVAR LANÇAMENTO funciona
