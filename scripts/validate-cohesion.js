@@ -193,7 +193,8 @@ assert(/getOnBackPressedDispatcher\(\)\.addCallback/.test(mainActivity), 'Tratam
 assert(/finishAffinity\(\)/.test(mainActivity), 'Encerramento nativo do app Android ausente.');
 assert(/Pressione novamente para sair do MyCar\+\./.test(mainActivity), 'Confirmação nativa em dois toques ausente.');
 assert(/composition-cost-card/.test(app + styles) && /Composição dos Grupos/.test(app), 'Card Composição dos Grupos ausente.');
-assert(/Receitas \(dedução\)/.test(app) && /netCost\s*=\s*totalExpenses\s*-\s*totalIncome/.test(app), 'Dedução das receitas ou fórmula do custo líquido ausente.');
+assert(/label:\s*"Receitas"/.test(app) && /netCost\s*=\s*totalExpenses\s*-\s*totalIncome/.test(app), 'Receitas ou fórmula do custo líquido ausente.');
+assert(!/% de dedução|>dedução</.test(app), 'A palavra “dedução” ainda aparece no card Composição dos Grupos.');
 assert(/label: "Abastecimento"[\s\S]*label: "Administrativo"[\s\S]*label: "Manutenção"/.test(app), 'Grupos do card não estão em ordem alfabética.');
 assert(!/% das despesas/.test(app), 'A observação “das despesas” ainda aparece no card.');
 assert(/<span>Custo líquido<\/span>/.test(app) && /Nenhum lançamento financeiro registrado no período/.test(app), 'Total líquido ou estado vazio do card de composição ausente.');
