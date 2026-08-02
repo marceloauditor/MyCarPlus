@@ -1,22 +1,21 @@
-# MyCar+ V5.86
+# MyCar+ V5.87
 
 Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas, receitas e alertas técnicos de veículos.
 
 ## Versões
 
-- Aplicação: **5.86.0**
-- Android: `versionCode 586` / `versionName 5.86.0`
-- Cache PWA: `mycar-plus-v5-86`
+- Aplicação: **5.87.0**
+- Android: `versionCode 587` / `versionName 5.87.0`
+- Cache PWA: `mycar-plus-v5-87`
 
-## Melhorias da V5.86
+## Melhorias da V5.87
 
-- Card da tela inicial com título único **Composição Custo Líquido**.
-- Removido o subtítulo que estava sobrepondo e truncando o conteúdo.
-- Apuração: Abastecimento + Manutenção + Administrativo − Receitas.
-- Receitas exibidas como dedução, sem rateio entre grupos.
-- Rodapé do card mostra o custo líquido efetivamente apurado.
+- Título do último card da tela inicial alterado para **Composição dos Grupos**.
+- Removida a expressão “das despesas” dos percentuais.
+- Grupos apresentados em ordem alfabética: Abastecimento, Administrativo, Manutenção e Receitas.
+- Mantida a apuração líquida: Abastecimento + Administrativo + Manutenção − Receitas.
 - Mantida a correção nativa do botão Voltar do Android.
 
 ## Atualização
 
-Execute `ATUALIZAR_MYCAR_V5_86_KEY.bat` com o ZIP na pasta Downloads.
+Execute `ATUALIZAR_MYCAR_V5_87_KEY.bat` com o ZIP na pasta Downloads.

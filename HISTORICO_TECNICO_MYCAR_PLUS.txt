@@ -231,3 +231,11 @@ V5.86 — 02/08/2026 13:32:13
 - Custo líquido apurado por despesas dos três grupos menos Receitas.
 - Receitas exibidas como dedução, sem rateio artificial.
 - versionCode 586 / versionName 5.86.0.
+
+VERSÃO 5.87 — COMPOSIÇÃO DOS GRUPOS
+Data: 02/08/2026
+
+- Card da tela inicial renomeado para Composição dos Grupos.
+- Ordem alfabética: Abastecimento, Administrativo, Manutenção e Receitas.
+- Removida a expressão “das despesas” dos percentuais.
+- Fórmula líquida preservada: despesas dos três grupos menos Receitas.

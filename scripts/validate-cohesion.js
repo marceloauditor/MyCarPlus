@@ -85,9 +85,9 @@ assert(/<strong>Painel inteligente<\/strong>/.test(app) && !/Análise automátic
 assert(/Custo por km[\s\S]*Custo por dia[\s\S]*Custo mensal[\s\S]*Custo total líquido[\s\S]*Consumo médio[\s\S]*Último consumo/.test(app), 'Os seis cartões não estão na ordem aprovada.');
 assert(/class="insight-trends-primary"/.test(app) && app.indexOf('insight-trends-primary') < app.indexOf('insight-grid-secondary'), 'Tendências devem aparecer antes das seções complementares.');
 assert(!/<h3>Destaques<\/h3>/.test(app), 'O cartão Destaques ainda está presente.');
-assert(/<h3>Composição Custo Líquido<\/h3>/.test(app) && /<h3>Utilização<\/h3>/.test(app) && /MyCar Score/.test(app), 'Composição líquida, Utilização e MyCar Score devem permanecer abaixo de Tendências.');
+assert(/<h3>Composição dos Grupos<\/h3>/.test(app) && /<h3>Utilização<\/h3>/.test(app) && /MyCar Score/.test(app), 'Composição dos Grupos, Utilização e MyCar Score devem permanecer abaixo de Tendências.');
 assert(/insight-grid-score-first/.test(app) && /insight-score-card/.test(app) && /insight-grid-composition-wide/.test(app + styles), 'Estrutura da inversão Score/Composição ausente.');
-assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição Custo Líquido</h3>') && app.indexOf('<h3>Utilização</h3>') < app.indexOf('<h3>Composição Custo Líquido</h3>'), 'MyCar Score e Utilização devem aparecer antes da composição líquida.');
+assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição dos Grupos</h3>') && app.indexOf('<h3>Utilização</h3>') < app.indexOf('<h3>Composição dos Grupos</h3>'), 'MyCar Score e Utilização devem aparecer antes da Composição dos Grupos.');
 assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
 // Gráficos, período efetivo, manual, tela Sobre e painel — versão atual.
@@ -188,8 +188,10 @@ assert(/public void onDestroy\(\)/.test(mainActivity), 'onDestroy deve ser públ
 assert(/getOnBackPressedDispatcher\(\)\.addCallback/.test(mainActivity), 'Tratamento nativo do botão Voltar Android ausente.');
 assert(/finishAffinity\(\)/.test(mainActivity), 'Encerramento nativo do app Android ausente.');
 assert(/Pressione novamente para sair do MyCar\+\./.test(mainActivity), 'Confirmação nativa em dois toques ausente.');
-assert(/composition-cost-card/.test(app + styles) && /Composição Custo Líquido/.test(app), 'Card Composição Custo Líquido ausente.');
+assert(/composition-cost-card/.test(app + styles) && /Composição dos Grupos/.test(app), 'Card Composição dos Grupos ausente.');
 assert(/Receitas \(dedução\)/.test(app) && /netCost\s*=\s*totalExpenses\s*-\s*totalIncome/.test(app), 'Dedução das receitas ou fórmula do custo líquido ausente.');
+assert(/label: "Abastecimento"[\s\S]*label: "Administrativo"[\s\S]*label: "Manutenção"/.test(app), 'Grupos do card não estão em ordem alfabética.');
+assert(!/% das despesas/.test(app), 'A observação “das despesas” ainda aparece no card.');
 assert(/<span>Custo líquido<\/span>/.test(app) && /Nenhum lançamento financeiro registrado no período/.test(app), 'Total líquido ou estado vazio do card de composição ausente.');
 
 // BAT.

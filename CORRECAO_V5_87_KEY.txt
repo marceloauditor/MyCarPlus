@@ -1,0 +1,7 @@
+MYCAR+ V5.87 KEY
+
+- Card renomeado para Composição dos Grupos.
+- Grupos em ordem alfabética.
+- Removida a expressão “das despesas” dos percentuais.
+- Fórmula líquida preservada: despesas menos receitas.
+- Versão 5.87.0 / versionCode 587.

@@ -1,8 +1,9 @@
-CHECKLIST DE VALIDAÇÃO — MYCAR+ V5.86
+CHECKLIST DE VALIDAÇÃO — MYCAR+ V5.87
 
-[ ] Card da tela inicial exibe somente “Composição Custo Líquido”.
-[ ] Não existe subtítulo sobreposto no card.
-[ ] Abastecimento, Manutenção e Administrativo são somados como despesas.
+[ ] Card da tela inicial exibe “Composição dos Grupos”.
+[ ] Não existe subtítulo ou texto sobreposto no cabeçalho do card.
+[ ] Grupos aparecem em ordem: Abastecimento, Administrativo, Manutenção e Receitas.
+[ ] Percentuais não exibem a expressão “das despesas”.
 [ ] Receitas são deduzidas do total.
 [ ] Rodapé apresenta Custo líquido.
 [ ] Tela inicial funciona nos temas claro e escuro.
