@@ -1,6 +1,6 @@
 {
   "name": "mycar-plus",
-  "version": "5.83.0",
+  "version": "5.85.0",
   "private": true,
   "description": "MyCar+ para Web/PWA e Android com Capacitor",
   "scripts": {

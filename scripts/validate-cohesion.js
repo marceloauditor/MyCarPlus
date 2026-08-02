@@ -156,11 +156,15 @@ assert(/Relatório Executivo contínuo/.test(app) && /<main class="report">/.tes
 assert(!/Página 1 de 2|Página 2 de 2/.test(app), 'Relatório Executivo ainda possui paginação fixa em duas páginas.');
 assert(/Indicadores principais de consumo/.test(app) && /Somente etanol/.test(app) && /Somente gasolina/.test(app), 'Cards de consumo geral, Etanol e Gasolina ausentes.');
 assert(/Média diária[\s\S]*Média mensal[\s\S]*Último ano[\s\S]*Total acumulado/.test(app), 'Indicadores financeiros diário, mensal, anual e total ausentes.');
+assert(/Custo líquido por km[\s\S]*Custo líquido diário[\s\S]*Custo líquido mensal[\s\S]*Custo líquido total/.test(app), 'Quatro cartões totalizadores de custo líquido ausentes ou fora da ordem.');
+assert(/net-totalizers/.test(app) && /net-totalizer/.test(app), 'Estrutura dos cartões totalizadores líquidos ausente.');
+assert(/net-totalizers \.net-totalizer\{border:2px solid var\(--red\)/.test(app), 'Bordas vermelhas dos totalizadores líquidos ausentes.');
+assert(app.indexOf('${financialCards}') < app.indexOf('${netTotalizerCards}') && app.indexOf('${netTotalizerCards}') < app.indexOf('Despesas do período'), 'Totalizadores líquidos devem ficar após Receitas e antes de Despesas do período.');
+assert(/periodNetDaily\s*=\s*periodNet\s*\/\s*inclusiveDays/.test(app) && /periodNetMonthly\s*=\s*periodNetDaily\s*\*\s*30\.44/.test(app), 'Cálculos diário e mensal do custo líquido não seguem a proposta aprovada.');
 assert(/chartCards = \[/.test(app) && /Cinco itens com maior valor acumulado/.test(app), 'Conjunto completo de gráficos do aplicativo ausente no Executivo.');
 assert(/slice\(0, 3\)/.test(app), 'Últimos lançamentos por grupo não estão limitados aos três mais recentes.');
 assert(app.indexOf('Últimos lançamentos por grupo') < app.indexOf('Manutenções com alertas cadastrados'), 'Últimos lançamentos por grupo devem aparecer antes das manutenções com alertas cadastrados.');
-assert(/appPlugin\.exitApp\(\)/.test(app), 'Saída nativa do Android pelo botão Voltar ausente.');
-assert(/Pressione novamente para sair do MyCar\+\./.test(app), 'Confirmação em dois toques para sair do Android ausente.');
+assert(/window\.myCarHandleAndroidBack/.test(app), 'Ponte JavaScript de navegação do botão Voltar ausente.');
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');
@@ -181,6 +185,11 @@ assert(/Intent\.ACTION_SEND/.test(mainActivity), 'Compartilhamento Android ACTIO
 assert(/Intent\.ACTION_SEND_MULTIPLE/.test(mainActivity), 'Compartilhamento múltiplo Android ausente.');
 assert(/shareHtmlWithCover/.test(mainActivity), 'Ponte nativa shareHtmlWithCover ausente.');
 assert(/public void onDestroy\(\)/.test(mainActivity), 'onDestroy deve ser público.');
+assert(/getOnBackPressedDispatcher\(\)\.addCallback/.test(mainActivity), 'Tratamento nativo do botão Voltar Android ausente.');
+assert(/finishAffinity\(\)/.test(mainActivity), 'Encerramento nativo do app Android ausente.');
+assert(/Pressione novamente para sair do MyCar\+\./.test(mainActivity), 'Confirmação nativa em dois toques ausente.');
+assert(/composition-cost-card/.test(app + styles) && /Distribuição das despesas do veículo/.test(app), 'Novo visual do card Composição dos custos ausente.');
+assert(/Total de despesas/.test(app) && /Nenhuma despesa registrada no período/.test(app), 'Total ou estado vazio do card de composição ausente.');
 
 // BAT.
 assert(batch.includes(`set "VERSAO=${expected.app}"`), `BAT não está configurado para ${expected.app}.`);

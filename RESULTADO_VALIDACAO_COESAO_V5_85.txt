@@ -1,0 +1,15 @@
+VALIDAÇÃO DE COESÃO: APROVADA
+
+Versão: 5.85.0
+Android versionCode: 585
+Android versionName: 5.85.0
+Cache PWA: mycar-plus-v5-85
+
+30 arquivos conferidos na cadeia raiz → www → Android.
+
+VALIDAÇÕES ESPECÍFICAS
+- Tratamento nativo do botão Voltar registrado na MainActivity.
+- Primeiro toque na tela inicial exibe confirmação de saída.
+- Segundo toque em até 2,2 segundos executa finishAffinity().
+- Navegação interna continua delegada à função navigateBack().
+- Card Composição dos custos usa caixa normal, subtítulo, valores, percentuais, barras e total.

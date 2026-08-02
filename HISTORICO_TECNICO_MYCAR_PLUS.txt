@@ -213,3 +213,14 @@ V5.83 — 02/08/2026
 - Botão Voltar Android corrigido com confirmação em dois toques para sair na tela inicial.
 - Últimos lançamentos por grupo movidos para antes das manutenções com alertas cadastrados no Relatório Executivo.
 - Pacote KEY, BAT e APK atualizados.
+
+
+============================================================
+V5.85 — TOTALIZADORES LÍQUIDOS NO RELATÓRIO EXECUTIVO
+Data: 02/08/2026
+============================================================
+- Inseridos quatro cartões: custo líquido por km, diário, mensal e total.
+- Cartões posicionados após Receitas e antes de Despesas do período.
+- Bordas vermelhas identificam os valores consolidados.
+- Resultado líquido: Abastecimento + Manutenção + Administrativo − Receitas.
+- Versão Android atualizada para versionCode 584 e versionName 5.85.0.

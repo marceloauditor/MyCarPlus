@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.util.Base64;
 
 import androidx.core.content.FileProvider;
+import androidx.activity.OnBackPressedCallback;
 
 import com.getcapacitor.BridgeActivity;
 
@@ -30,6 +32,8 @@ public class MainActivity extends BridgeActivity {
 
     private WebView printWebView;
     private FrameLayout printContainer;
+    private long lastExitBackPressAt = 0L;
+    private static final long EXIT_CONFIRM_WINDOW_MS = 2200L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,45 @@ public class MainActivity extends BridgeActivity {
                 new ReportBridge(appWebView),
                 "MyCarNative"
         );
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handleMyCarBackPressed();
+            }
+        });
+    }
+
+
+    private void handleMyCarBackPressed() {
+        WebView appWebView = getBridge() != null ? getBridge().getWebView() : null;
+        if (appWebView == null) {
+            requestNativeAppExit();
+            return;
+        }
+
+        String script = "(function(){try{" +
+                "if(typeof window.myCarHandleAndroidBack==='function'){" +
+                "return window.myCarHandleAndroidBack()?'handled':'exit';}" +
+                "}catch(e){}return 'exit';})()";
+        appWebView.evaluateJavascript(script, result -> {
+            if (result != null && result.contains("handled")) {
+                lastExitBackPressAt = 0L;
+                return;
+            }
+            requestNativeAppExit();
+        });
+    }
+
+    private void requestNativeAppExit() {
+        long now = SystemClock.elapsedRealtime();
+        if (now - lastExitBackPressAt <= EXIT_CONFIRM_WINDOW_MS) {
+            lastExitBackPressAt = 0L;
+            finishAffinity();
+            return;
+        }
+        lastExitBackPressAt = now;
+        Toast.makeText(this, "Pressione novamente para sair do MyCar+.", Toast.LENGTH_SHORT).show();
     }
 
     @Override

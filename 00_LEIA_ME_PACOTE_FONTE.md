@@ -1,24 +1,27 @@
-# MyCar+ V5.83 KEY — pacote-fonte oficial
+# MyCar+ V5.85 KEY — pacote-fonte oficial
 
 Pacote completo para atualização da versão Web/PWA e Android.
 
 ## Identificação
 
-- Aplicação: **5.83.0**
-- Android `versionCode`: **583**
-- Android `versionName`: **5.83.0**
-- Cache PWA: **mycar-plus-v5-83**
+- Aplicação: **5.85.0**
+- Android `versionCode`: **584**
+- Android `versionName`: **5.85.0**
+- Cache PWA: **mycar-plus-v5-84**
 
-## Implantação da V5.83
+## Implantação da V5.85
 
-- botão ou gesto Voltar do Android corrigido na tela inicial;
-- primeiro toque exibe “Pressione novamente para sair do MyCar+.”;
-- segundo toque, dentro de 2,2 segundos, encerra o aplicativo pelo plugin nativo;
-- telas internas, diálogos e relatórios continuam sendo fechados antes da saída;
-- seção “Últimos lançamentos por grupo” posicionada antes de “Manutenções com alertas cadastrados” no Relatório Executivo;
-- preservadas todas as melhorias da V5.82.
+- quatro cartões de custo líquido no Relatório Executivo;
+- indicadores por km, diário, mensal e total;
+- consolidação das despesas de Abastecimento, Manutenção e Administrativo, menos Receitas;
+- bordas vermelhas nos quatro cartões totalizadores;
+- cartões posicionados após Receitas e antes de Despesas do período;
+- removida a repetição dos indicadores líquidos no resumo inferior;
+- preservadas as correções da V5.83 para o botão Voltar do Android e para a ordem das seções do relatório.
 
 ## Arquivos para atualização
 
-- `MYCAR_PLUS_V5_83_KEY.zip`
-- `ATUALIZAR_MYCAR_V5_83_KEY.bat`
+- `MYCAR_PLUS_V5_84_KEY.zip`
+- `ATUALIZAR_MYCAR_V5_84_KEY.bat`
+
+O BAT cria backup, atualiza a fonte, sincroniza Web e Android, valida a coesão, atualiza o GitHub, abre o Android Studio e gera o APK debug em Downloads.

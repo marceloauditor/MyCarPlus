@@ -1033,3 +1033,30 @@ html[data-theme="light"] .context-bottom-sheet{background:#fff}html[data-theme="
 }
 @media(max-height:660px){.entry-observation textarea{height:34px!important;min-height:34px!important}.entry-vehicle-line{display:none}.entry-current-km-field small{font-size:.56rem}.entry-one-screen{gap:4px}}
 
+
+
+/* MyCar+ V5.85 — composição dos custos com hierarquia visual aprimorada */
+.composition-cost-card{padding:14px!important;overflow:hidden}
+.composition-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.composition-card-head h3{margin:0!important;color:#fff!important;font-size:.96rem!important;font-weight:850!important;letter-spacing:0!important;text-transform:none!important}
+.composition-card-head p{margin:4px 0 0;color:#9fb9ca;font-size:.7rem;line-height:1.35}
+.composition-card-body{display:grid;gap:4px}
+.composition-row{margin:5px 0 8px}
+.composition-row>div:first-child{align-items:baseline}
+.composition-row>div:first-child span{font-weight:750;color:#e7f3fa}
+.composition-row>div:first-child strong{font-size:.7rem;color:#c7dce9;text-align:right;font-weight:750}
+.composition-row .insight-track{height:9px;background:#1d425b}
+.composition-row .insight-track i{background:var(--composition-color,#2ca9ff)}
+.composition-card-total{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:11px;border-top:1px solid #31556e}
+.composition-card-total span{color:#a9c3d3;font-size:.75rem;font-weight:750}
+.composition-card-total strong{color:#fff;font-size:1rem}
+.composition-empty{margin:3px 0 1px;padding:12px;border:1px dashed #31556e;border-radius:10px;text-align:center}
+html[data-theme="light"] .composition-card-head h3{color:#152c3f!important}
+html[data-theme="light"] .composition-card-head p,html[data-theme="light"] .composition-card-total span{color:#607786!important}
+html[data-theme="light"] .composition-row>div:first-child span{color:#24475e!important}
+html[data-theme="light"] .composition-row>div:first-child strong{color:#516a7a!important}
+html[data-theme="light"] .composition-row .insight-track{background:#e2ebf1}
+html[data-theme="light"] .composition-card-total{border-color:#cbd8e1}
+html[data-theme="light"] .composition-card-total strong{color:#152c3f!important}
+html[data-theme="light"] .composition-empty{border-color:#cbd8e1;color:#607786!important}
+@media(max-width:420px){.composition-row>div:first-child{display:grid;grid-template-columns:1fr}.composition-row>div:first-child strong{text-align:left;margin-top:2px}.composition-card-total strong{font-size:.92rem}}
