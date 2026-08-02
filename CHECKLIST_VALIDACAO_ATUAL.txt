@@ -1,17 +1,19 @@
-MYCARPLUS V5.82 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.83 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
-[ ] ZIP e BAT V5.82 na pasta Downloads
+[ ] ZIP e BAT V5.83 na pasta Downloads
 [ ] Backup criado pelo BAT
 [ ] Fonte copiada para o projeto
 [ ] npm install concluído
 [ ] Fonte sincronizada raiz → www → Android
 [ ] Validação de coesão aprovada
-[ ] APK debug gerado
-[ ] Versão 5.82 visível no aplicativo
-[ ] Android versionCode 582 e versionName 5.82.0 conferidos
-[ ] Valores das barras do Relatório Executivo visíveis em preto
-[ ] Incluir novo fornecedor em verde ao final da lista dos quatro grupos
-[ ] Incluir novo item de manutenção em verde ao final da lista
-[ ] Incluir novo item administrativo em verde ao final da lista
-[ ] Cadastro rápido retorna ao lançamento sem perder os dados
+[ ] APK debug gerado pelo BAT no Windows
+[ ] Versão 5.83 visível no aplicativo
+[ ] Android versionCode 583 e versionName 5.83.0 conferidos
+[ ] Em tela interna, Voltar retorna à tela anterior
+[ ] Com diálogo ou relatório aberto, Voltar fecha primeiro o elemento ativo
+[ ] Na tela inicial, primeiro Voltar exibe a mensagem de confirmação
+[ ] Na tela inicial, segundo Voltar encerra o aplicativo
+[ ] “Últimos lançamentos por grupo” aparece antes de “Manutenções com alertas cadastrados”
+[ ] Valores das barras do Relatório Executivo permanecem visíveis em preto
+[ ] Ações verdes de inclusão permanecem ao final das listas
 [ ] Impressão e compartilhamento do relatório testados

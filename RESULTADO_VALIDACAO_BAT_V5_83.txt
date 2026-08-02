@@ -1,0 +1,22 @@
+MYCAR+ V5.83 KEY — VALIDAÇÃO ESTRUTURAL DO BAT
+Data: 02/08/2026
+
+RESULTADO: APROVADO EM VALIDAÇÃO ESTÁTICA
+
+Arquivo: ATUALIZAR_MYCAR_V5_83_KEY.bat
+
+Itens conferidos:
+- versão configurada como 5.83;
+- ZIP esperado: MYCAR_PLUS_V5_83_KEY.zip;
+- pasta interna: MYCAR_PLUS_V5_83_KEY;
+- criação de backup antes da atualização;
+- atualização da fonte do projeto;
+- sincronização Web/Android;
+- execução de validate:cohesion;
+- atualização do GitHub;
+- abertura do Android Studio;
+- geração e cópia do APK debug;
+- inexistência de dependência de arquivo PS1 externo;
+- codificação UTF-8 compatível com Windows CMD/PowerShell.
+
+Observação: a execução final do BAT ocorrerá no computador Windows do usuário.

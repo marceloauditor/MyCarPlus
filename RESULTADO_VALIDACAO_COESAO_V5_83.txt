@@ -1,0 +1,24 @@
+MYCAR+ V5.83 KEY — RESULTADO DA VALIDAÇÃO DE COESÃO
+Data: 02/08/2026
+
+RESULTADO: APROVADA
+
+Versão da aplicação: 5.83.0
+Android versionCode: 583
+Android versionName: 5.83.0
+Cache PWA: mycar-plus-v5-83
+
+Verificações executadas:
+- sintaxe JavaScript de app.js aprovada por node --check;
+- sintaxe de report-manager.js e validate-cohesion.js aprovada;
+- validação funcional automatizada aprovada;
+- 30 arquivos comparados por SHA-256 na cadeia raiz → www → Android;
+- botão Voltar Android usa App.exitApp somente após confirmação em dois toques;
+- diálogos e páginas internas continuam com prioridade no retorno;
+- “Últimos lançamentos por grupo” aparece antes de “Manutenções com alertas cadastrados”;
+- versões Web/PWA e Android coerentes.
+
+Saída do validador:
+VALIDAÇÃO DE COESÃO: APROVADA
+Versão: 5.83.0 | Android code: 583 | Cache: mycar-plus-v5-83
+30 arquivos conferidos na cadeia raiz → www → Android.

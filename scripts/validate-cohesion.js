@@ -90,7 +90,7 @@ assert(/insight-grid-score-first/.test(app) && /insight-score-card/.test(app) &&
 assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição dos custos</h3>') && app.indexOf('<h3>Utilização</h3>') < app.indexOf('<h3>Composição dos custos</h3>'), 'MyCar Score e Utilização devem aparecer antes da Composição dos custos.');
 assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
-// Gráficos, período efetivo, manual, tela Sobre e painel — V5.82.
+// Gráficos, período efetivo, manual, tela Sobre e painel — versão atual.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
@@ -128,7 +128,7 @@ assert(/if \(key === "diesel"\) return "#1f8a70"/.test(app), 'Linha Diesel deve 
 assert(/showPointValues:\s*false/.test(app), 'Linhas específicas não devem mostrar valores fixos nos pontos.');
 assert(!/Álcool|álcool|Alcool|alcool/.test(app + html), 'A interface não deve utilizar a palavra substituída por Etanol.');
 
-// Lançamentos compactos e seletores em folha inferior — V5.82.
+// Lançamentos compactos e seletores em folha inferior — versão atual.
 assert(html.includes('entry-dialog-one-screen') && styles.includes('entry-top-grid'), 'Tela compacta de lançamento em uma única visualização ausente.');
 assert(/entry-top-grid[\s\S]*entry-date-field[\s\S]*entry-current-km-field/.test(html), 'Data e hodômetro atual não estão no novo formato de dois campos.');
 assert(/Último hodômetro:[\s\S]*id="lastKm"/.test(html), 'Último hodômetro não está apresentado como informação auxiliar menor.');
@@ -158,6 +158,9 @@ assert(/Indicadores principais de consumo/.test(app) && /Somente etanol/.test(ap
 assert(/Média diária[\s\S]*Média mensal[\s\S]*Último ano[\s\S]*Total acumulado/.test(app), 'Indicadores financeiros diário, mensal, anual e total ausentes.');
 assert(/chartCards = \[/.test(app) && /Cinco itens com maior valor acumulado/.test(app), 'Conjunto completo de gráficos do aplicativo ausente no Executivo.');
 assert(/slice\(0, 3\)/.test(app), 'Últimos lançamentos por grupo não estão limitados aos três mais recentes.');
+assert(app.indexOf('Últimos lançamentos por grupo') < app.indexOf('Manutenções com alertas cadastrados'), 'Últimos lançamentos por grupo devem aparecer antes das manutenções com alertas cadastrados.');
+assert(/appPlugin\.exitApp\(\)/.test(app), 'Saída nativa do Android pelo botão Voltar ausente.');
+assert(/Pressione novamente para sair do MyCar\+\./.test(app), 'Confirmação em dois toques para sair do Android ausente.');
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');

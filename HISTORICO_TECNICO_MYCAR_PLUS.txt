@@ -207,3 +207,9 @@ V5.81 — 02/08/2026
 - Criados indicadores financeiros diário, mensal, anual e total para os quatro grupos.
 - Incorporados os oito gráficos do app, leitura executiva, alertas e três últimos lançamentos por grupo.
 - Versão atualizada para 5.81.0, Android code 581 e cache PWA mycar-plus-v5-81.
+
+
+V5.83 — 02/08/2026
+- Botão Voltar Android corrigido com confirmação em dois toques para sair na tela inicial.
+- Últimos lançamentos por grupo movidos para antes das manutenções com alertas cadastrados no Relatório Executivo.
+- Pacote KEY, BAT e APK atualizados.

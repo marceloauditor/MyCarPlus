@@ -5,7 +5,7 @@ Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, des
 ## Versões
 
 - Aplicação: **5.81.0**
-- Android: `versionCode 581` / `versionName 5.81.0`
+- Android: `versionCode 583` / `versionName 5.83.0`
 - Cache PWA: `mycar-plus-v5-81`
 
 ## Melhorias da V5.81
