@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.78</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.79</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -487,17 +487,17 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V5.78</h3>
+<h3>Manual de utilização — MyCar+ V5.79</h3>
 <p>Controle de abastecimentos, manutenções, despesas administrativas, receitas, relatórios, gráficos, alertas técnicos e sincronização entre Android e Web.</p>
 <details open><summary>1. Visão geral</summary><p>O MyCar+ organiza os dados por veículo. A seleção feita na tela inicial controla lançamentos, indicadores, relatórios, gráficos, alertas e análise inteligente. O Painel inteligente prioriza seis indicadores, nesta ordem: custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Logo abaixo aparecem as Tendências. Composição dos custos, Utilização e MyCar Score permanecem disponíveis ao continuar a rolagem. Use a mesma Conta Google no Android e na Web para manter os dados sincronizados pelo Firebase.</p></details>
 <details><summary>2. Seleção do veículo</summary><p>A tela inicial mostra somente o veículo selecionado em uma barra compacta. Toque na barra para abrir a lista com rolagem, localize o veículo e toque nele. São exibidos apenas o nome e o status Ativo ou Inativo.</p></details>
 <details><summary>3. Veículos ativos e inativos</summary><p>Veículos ativos aceitam novos lançamentos e alertas. Veículos inativos permanecem disponíveis para consulta do histórico, relatórios e gráficos, mas não geram indicação vermelha de alertas vencidos. Inativar um veículo não apaga seus dados.</p></details>
 <details><summary>4. Cadastros</summary><p>No menu superior, abra Cadastros para incluir, alterar ou excluir itens, motoristas, veículos, fornecedores e formas de pagamento. Os itens são vinculados aos grupos Abastecimento, Manutenção, Administrativo ou Receita.</p></details>
-<details><summary>5. Lançamentos</summary><p>Na guia Lançar, escolha Abastecimento, Manutenção, Administrativo, Receita ou Movimentos. A tela foi compactada para que as cinco opções fiquem visíveis com menos rolagem.</p></details>
-<details><summary>6. Abastecimentos</summary><p>Informe data, hodômetro, item, fornecedor, preço por litro e valor total. Os litros, a distância entre abastecimentos e o consumo são calculados quando os dados necessários estiverem preenchidos.</p></details>
+<details><summary>5. Lançamentos</summary><p>Na guia Lançar, escolha Abastecimento, Manutenção, Administrativo, Receita ou Movimentos. Cada grupo abre uma tela compacta com os campos principais organizados em uma única visualização.</p></details>
+<details><summary>6. Abastecimentos</summary><p>Informe data, hodômetro atual, combustível, preço por litro e valor total. O último hodômetro aparece para referência, os litros são calculados automaticamente, Etanol é sugerido quando cadastrado e o botão “+” permite lançar outro combustível. Posto e motorista são opcionais.</p></details>
 <details><summary>7. Manutenções</summary><p>Informe item, fornecedor, valor, data e hodômetro. Esses dados alimentam o relatório executivo, inclusive o último valor, o fornecedor e a próxima referência dos alertas técnicos.</p></details>
 <details><summary>8. Administrativo e receitas</summary><p>Use Administrativo para despesas não relacionadas diretamente a combustível ou manutenção. Use Receita para entradas vinculadas ao veículo. Cada grupo lista somente os itens compatíveis.</p></details>
-<details><summary>9. Cadastro rápido</summary><p>Durante o lançamento, abra a lista de Item, Motorista ou Fornecedor e use o botão verde “＋ Novo”. Salvar retorna ao lançamento e seleciona o novo cadastro. Cancelar, X ou Voltar retorna sem apagar os dados já preenchidos.</p></details>
+<details><summary>9. Cadastro rápido</summary><p>Durante o lançamento, toque na linha para escolher uma opção cadastrada. Use o botão verde “+” ao lado de Posto/Fornecedor, Motorista ou Forma de pagamento/recebimento para incluir um novo cadastro sem perder o lançamento.</p></details>
 <details><summary>10. Movimentos</summary><p>Consulte, pesquise, altere ou exclua movimentos. Os filtros permitem localizar registros por data, descrição, item, grupo ou fornecedor. Exclusões são sincronizadas com os demais dispositivos.</p></details>
 <details><summary>11. Gráficos</summary><p>A guia Gráficos utiliza, por padrão, o período do último ano, ajustado à primeira e à última movimentação disponíveis do veículo. Em períodos menores que um ano, consumo e custo diário são exibidos por mês; em períodos de um ano ou mais, por ano. O consumo apresenta uma linha Geral vermelha, Gasolina laranja, Etanol azul, Diesel verde e linhas adicionais com cores distintas para outros combustíveis. Somente a linha Geral mostra valores fixos nos pontos; períodos sem dados não são convertidos em consumo zero. A evolução financeira é acumulada. O hodômetro mantém todos os registros reais na linha e identifica no eixo somente o primeiro mês, o mês central e o último mês, com os anos correspondentes. Os gráficos de custo por quilômetro, custo médio diário por grupo e custo total por grupo apresentam três barras individuais e uma quarta barra laranja com o somatório dos custos de combustível, administrativo e manutenção. As receitas não compõem essa barra consolidada.</p></details>
 <details><summary>12. Relatórios</summary><p>Na tela inicial, escolha o demonstrativo. Depois informe o período e use o botão verde-claro para gerar o Relatório Executivo, o relatório por Inteligência Artificial ou a exportação XLSX. Quando as datas informadas ultrapassam o histórico disponível, o período é ajustado aos registros do veículo selecionado.</p></details>
@@ -524,7 +524,7 @@
 <div class="about-card">
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
-<p><strong>Versão:</strong> 5.78</p>
+<p><strong>Versão:</strong> 5.79</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -632,104 +632,55 @@
 </div>
 </div>
 </dialog>
-<dialog id="entryDialog" class="compact-dialog">
-<form method="dialog" id="entryForm" class="sectioned-form">
+<dialog id="entryDialog" class="compact-dialog entry-dialog-one-screen">
+<form method="dialog" id="entryForm" class="sectioned-form entry-one-screen-form">
 <input type="hidden" name="movementId">
 <input type="hidden" name="latitude">
 <input type="hidden" name="longitude">
 <input type="hidden" name="precisaoGps">
-<div class="dialog-head">
-<div>
+<select name="grupo" required hidden></select>
+<input name="incluirIndicadores" type="checkbox" checked hidden>
+<div class="dialog-head entry-dialog-head">
+<div class="entry-title-block">
 <small id="entryGroupEyebrow">Lançamentos</small>
 <h2 id="entryTitle">Novo movimento</h2>
+<div class="entry-vehicle-line"><span id="entryVehicleName">Veículo selecionado</span><button type="button" id="changeEntryGroup">Trocar grupo</button></div>
 </div>
 <button value="cancel" aria-label="Fechar">×</button>
 </div>
-<div class="form-scroll">
-<section class="form-section always-open">
-<h3>
-<span>1</span> Dados do movimento</h3>
-<div class="section-body">
-<div class="entry-group-context">
-<small>Grupo selecionado</small>
-<strong id="entryGroupName">—</strong>
-<button type="button" id="changeEntryGroup">Trocar</button>
+<div class="form-scroll entry-one-screen">
+<div class="entry-top-grid">
+<label>Data *<input name="data" type="date" required></label>
+<div class="entry-readonly-field"><span>Hod. Último</span><strong id="lastKm">—</strong></div>
+<label>Hod. Atual *<input name="km" type="text" inputmode="numeric" required></label>
 </div>
-<div class="vehicle-auto">
-<small>Veículo do movimento</small>
-<strong id="entryVehicleName">Definido automaticamente pelo cadastro padrão</strong>
+<div class="entry-hidden-context" aria-hidden="true">
+<strong id="entryGroupName">—</strong><small id="entryOptionalSummary"></small><small id="groupLockHelp"></small><small id="kmRule"></small><div id="fuelFields" hidden></div>
 </div>
-<select name="grupo" required hidden>
-</select>
-<div class="compact-grid">
-<label>Data *<input name="data" type="date" required>
-</label>
-<label>Hodômetro atual *<input name="km" type="text" inputmode="numeric" required>
-</label>
-</div>
-<div class="km-reference">
-<small>Último hodômetro</small>
-<strong id="lastKm">—</strong>
-</div>
-<small id="groupLockHelp" class="field-help">Todos os itens devem pertencer ao Grupo escolhido.</small>
-<small id="kmRule" class="field-help">
-</small>
-</div>
+<section class="entry-items-card">
+<div id="movementItems" class="movement-items"></div>
+<div class="movement-total" hidden><span>Total do movimento</span><strong id="movementTotal">R$ 0,00</strong></div>
 </section>
-<section class="form-section always-open">
-<h3>
-<span>2</span> Itens do movimento</h3>
-<div class="section-body">
-<div id="movementItems" class="movement-items">
+<div id="tankCompleteField" class="entry-tank-row">
+<label><span><input name="tanqueCompleto" type="checkbox" checked> Tanque completo</span><small>Padrão: completo</small></label>
+<button type="button" id="addMovementItem" class="entry-add-fuel" aria-label="Lançar outro combustível" title="Lançar outro combustível">＋</button>
 </div>
-<button type="button" id="addMovementItem" class="add-movement-item">
-<span>＋</span> Adicionar item</button>
-<div class="movement-total">
-<span>Total do movimento</span>
-<strong id="movementTotal">R$ 0,00</strong>
-</div>
-<div id="fuelFields" hidden>
-<small class="field-help">Em abastecimentos, informe também o preço por litro.</small>
-</div>
-</div>
+<section class="entry-lookup-list">
+<label class="entry-lookup-row"><span id="entrySupplierLabel">Fornecedor</span><div class="context-field entry-select-plus"><select name="fornecedor" class="no-select-arrow"></select><button type="button" class="entry-quick-add" data-register-type="FORNECEDOR" aria-label="Cadastrar fornecedor">＋</button></div><small id="entrySupplierHint">Não obrigatório</small></label>
+<label class="entry-lookup-row"><span>Motorista</span><div class="context-field entry-select-plus"><select name="motorista" class="no-select-arrow"></select><button type="button" class="entry-quick-add" data-register-type="MOTORISTA" aria-label="Cadastrar motorista">＋</button></div><small>Não obrigatório</small></label>
+<label class="entry-lookup-row"><span id="entryPaymentLabel">Forma de pagamento</span><div class="context-field entry-select-plus"><select name="formaPagamento" class="no-select-arrow"></select><button type="button" class="entry-quick-add" data-register-type="FORMA_PAGAMENTO" aria-label="Cadastrar forma de pagamento">＋</button></div></label>
 </section>
-<details class="form-section optional-section">
-<summary>
-<span class="section-number">3</span>
-<span>
-<b>Detalhes opcionais</b>
-<small id="entryOptionalSummary">Motorista, local, pagamento e observação</small>
-</span>
-</summary>
-<div class="section-body">
-<label>Motorista<div class="context-field"><select name="motorista"></select><button type="button" class="context-open" data-context-type="MOTORISTA" aria-label="Consultar motoristas">›</button></div></label>
-<label>
-<span id="entrySupplierLabel">Fornecedor / local</span>
-<div class="context-field"><select name="fornecedor"></select><button type="button" class="context-open" data-context-type="FORNECEDOR" aria-label="Consultar fornecedores">›</button></div>
-</label>
-<div class="gps-actions">
-<button type="button" id="useCurrentLocation" class="secondary">⌖ Usar localização atual</button>
-<small id="entryGpsStatus" class="field-help">Localização opcional. O GPS é acionado somente ao tocar no botão.</small>
-<a id="openEntryMap" class="map-link" target="_blank" rel="noopener" hidden>Abrir no mapa</a>
+<div class="entry-location-row">
+<button type="button" id="useCurrentLocation" class="secondary">⌖ Usar localização</button>
+<small id="entryGpsStatus">Localização opcional.</small>
+<a id="openEntryMap" class="map-link" target="_blank" rel="noopener" hidden>Abrir mapa</a>
 </div>
-<label>Forma de pagamento<select name="formaPagamento">
-</select>
-</label>
-<label id="tankCompleteField" class="check-field">
-<input name="tanqueCompleto" type="checkbox" checked> Tanque completo</label>
-<label class="check-field">
-<input name="incluirIndicadores" type="checkbox" checked> Incluir nos indicadores</label>
-<label>Observação<textarea name="observacao">
-</textarea>
-</label>
-</div>
-</details>
-<p id="formError" class="form-error">
-</p>
+<label class="entry-observation">Observações <small>(opcional)</small><textarea name="observacao" rows="2" placeholder="Digite uma observação..."></textarea></label>
+<p id="formError" class="form-error"></p>
 </div>
 <div class="form-footer">
 <button class="form-cancel" value="cancel">Cancelar</button>
-<button class="primary" value="default">Salvar movimento</button>
+<button class="primary" value="default">Salvar</button>
 </div>
 </form>
 </dialog>

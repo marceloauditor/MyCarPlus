@@ -1,0 +1,15 @@
+PACOTE MYCAR_PLUS_V5_79_KEY
+
+VALIDAÇÃO CONCLUÍDA
+1. APP_VERSION 5.79 conferido.
+2. package.json e package-lock.json em 5.79.0.
+3. Android versionCode 579 e versionName 5.79.0.
+4. Cache PWA mycar-plus-v5-79.
+5. Novas telas dos quatro grupos implantadas.
+6. Valor R$ 0,00 aceito.
+7. Data local corrigida.
+8. Novo logotipo otimizado aplicado.
+9. Capas separadas removidas do fluxo de manual e relatórios.
+10. Coesão raiz, www e Android aprovada.
+11. BAT V5.79 aprovado por validação estática.
+12. Build APK não executado neste ambiente por indisponibilidade de acesso ao servidor do Gradle; o BAT permanece configurado para gerar o APK no computador do usuário.

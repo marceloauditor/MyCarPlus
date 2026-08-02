@@ -1,84 +1,59 @@
-MYCARPLUS V5.78 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.79 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
 [ ] Backup do projeto anterior realizado
-[ ] Pacote MYCAR_PLUS_V5_78_KEY.zip localizado na pasta Downloads
-[ ] ATUALIZAR_MYCAR_V5_78_KEY.bat executado
+[ ] Pacote MYCAR_PLUS_V5_79_KEY.zip localizado na pasta Downloads
+[ ] ATUALIZAR_MYCAR_V5_79_KEY.bat executado
 [ ] npm.cmd install executado sem erros
 [ ] npm.cmd run sync:web executado sem erros
-[ ] npm.cmd run sync:android executado sem erros
+[ ] npx.cmd cap sync android executado sem erros
 [ ] npm.cmd run validate:cohesion aprovado
-[ ] Tela inicial e versão 5.76 conferidas
-[ ] Cabeçalho MyCar+ aparece abaixo da hora e dos ícones do Android
-[ ] Relatório Executivo abre dentro do aplicativo
-[ ] Relatório Executivo apresenta somente Fechar e Compartilhar ao final
-[ ] Fechar retorna à tela anterior e preserva veículo, período e filtros
-[ ] Compartilhar gera arquivo HTML e abre WhatsApp, e-mail e outros aplicativos
-[ ] Relatório de Inteligência usa o mesmo fluxo responsivo do Relatório Executivo
-[ ] Botões Imprimir e Salvar PDF removidos dos relatórios Executivo e de Inteligência
-[ ] MainActivity.java inicia com package br.com.marceloauditor.mycarplus;
-[ ] MainActivity.java contém public void onDestroy()
-[ ] Cadastros testados: incluir, alterar, salvar, cancelar, fechar, Esc e Voltar
-[ ] Lançamento salvo retorna à tela de origem
-[ ] Edição de lançamento antigo com múltiplos itens testada
-[ ] Alertas técnicos testados: incluir, alterar, ativar, desativar e excluir
-[ ] Exclusão de alerta preserva o histórico técnico
-[ ] Histórico técnico do veículo selecionado testado
-[ ] Exportação XLSX inclui as bases técnicas
+[ ] Versão 5.79 visível no aplicativo
+[ ] Android versionCode 579 e versionName 5.79.0 conferidos
+[ ] Cache PWA mycar-plus-v5-79 conferido
+
+TELAS DE LANÇAMENTO
+[ ] Abastecimento abre em tela compacta com Data, Hod. Último e Hod. Atual
+[ ] Etanol aparece como padrão quando cadastrado
+[ ] Combustível abre as opções ao tocar na linha e não mostra seta
+[ ] Preço/L, Total e Litros aparecem somente em Abastecimento
+[ ] Tanque completo inicia marcado
+[ ] Botão + permite incluir outro combustível
+[ ] Posto, Motorista e Forma de pagamento possuem cadastro rápido pelo botão +
+[ ] Administrativo mostra Item/Categoria e somente o campo Valor
+[ ] Manutenção mostra Tipo de manutenção e somente o campo Valor
+[ ] Receita mostra Tipo de receita e somente o campo Valor
+[ ] Nos grupos não combustíveis aparece Fornecedor e não aparece Tanque completo
+[ ] Forma de recebimento aparece em Receita
+[ ] Campos principais ficam visíveis em uma única visualização no celular padrão
+
+REGRAS CORRIGIDAS
+[ ] Abastecimento aceita valor total R$ 0,00 com preço por litro válido
+[ ] Manutenção aceita valor R$ 0,00
+[ ] Administrativo aceita valor R$ 0,00
+[ ] Receita aceita valor R$ 0,00
+[ ] Novo lançamento abre com a data local do dia, sem avançar para amanhã
+[ ] Edição de lançamentos antigos continua funcionando
+[ ] Lançamento com mais de um combustível salva e calcula litros separadamente
+
+LOGOTIPO E DOCUMENTOS
+[ ] Novo logotipo aparece no cabeçalho do app
+[ ] Novo logotipo aparece como ícone Web/PWA
+[ ] Novo logotipo aparece como ícone Android
+[ ] Manual não possui capa separada e usa o logotipo no cabeçalho
+[ ] Relatório Executivo não gera arquivo de capa separado
+[ ] Relatório de Inteligência não gera arquivo de capa separado
+[ ] Relatórios e manual mantêm versão, veículo/período e demais metadados
+[ ] Imagens otimizadas apresentam redução de tamanho sem perda visual relevante
+
+VALIDAÇÃO GERAL
+[ ] Cadastros rápidos retornam ao lançamento e selecionam o novo cadastro
+[ ] Cancelar, X, Esc e Voltar não salvam alterações indevidas
+[ ] Relatórios abrem dentro do aplicativo
+[ ] Compartilhamento gera somente o documento HTML solicitado
+[ ] Alertas técnicos permanecem restritos ao veículo selecionado
+[ ] Exportação XLSX continua funcionando
 [ ] Contraste conferido nos temas claro, escuro e automático
-[ ] APK de teste gerado e instalado no dispositivo
+[ ] APK debug gerado pelo BAT no computador do usuário
 [ ] Login e sincronização Firebase testados
-[ ] git status revisado antes do commit
-[ ] Relatórios conferidos em tela estreita sem corte das laterais
-[ ] Tabelas dos relatórios exibidas como cartões no celular
-
-[ ] Custo médio diário termina no último mês com lançamentos, sem queda artificial para zero
-[ ] Evolução financeira exibe as três legendas: Custo bruto, Receitas e Custo líquido
-[ ] Identificação do veículo em Relatórios e Gráficos está compacta e sem opção de troca
-[ ] Ranking apresenta somente os 5 itens de maior valor acumulado
-[ ] Custo por grupo e por KM apresenta a quarta barra laranja Total dos custos
-[ ] Custo médio diário por grupo apresenta a quarta barra laranja Total dos custos
-[ ] Custo total por grupo apresenta a quarta barra laranja Total dos custos
-[ ] Gráficos e relatórios iniciam com o período do último ano ajustado aos registros
-[ ] Manual possui capa, versão, desenvolvedor, criação e data de geração sem truncamento
-[ ] Consumo Geral aparece em vermelho e mantém os valores nos pontos
-[ ] Gasolina aparece em laranja sem valores fixos nos pontos
-[ ] Etanol aparece em azul sem valores fixos nos pontos
-[ ] Diesel aparece em verde quando houver registros
-[ ] Demais combustíveis aparecem com cores distintas
-[ ] Mês sem determinado combustível não cai para zero
-[ ] Hodômetro apresenta apenas primeiro mês, mês central e último mês no eixo
-[ ] Todos os pontos reais do hodômetro permanecem na linha
-
-[ ] BAT V5.78 executado sem arquivo PS1 externo
-[ ] Tela de alertas mostra somente o veículo selecionado
-[ ] Grupo do alerta permanece fixo em MANUTENÇÃO
-[ ] Veículo inativo não gera aviso ativo nem aceita novo alerta
-[ ] Exclusão exige confirmação e não apaga histórico técnico
-[ ] Troca do veículo selecionado atualiza imediatamente alertas e histórico
-
-
-VALIDAÇÃO FUNCIONAL DO NOVO ALERTA TÉCNICO — V5.52
-[ ] Veículo, placa e KM atual exibidos no topo
-[ ] Critérios Data, KM e Data e KM selecionáveis
-[ ] Vida útil em meses e KM recalcula a previsão
-[ ] Base de cálculo preenchida pelo último lançamento ou posição atual
-[ ] Status Vencido muda automaticamente conforme a previsão
-[ ] Excluir preserva o histórico técnico
-[ ] Cancelar fecha sem salvar e Salvar retorna à lista
-
-[ ] Período anterior à primeira movimentação ajustado corretamente
-[ ] Período posterior à última movimentação ajustado corretamente
-[ ] Escala Y do hodômetro legível em períodos curtos e longos
-[ ] Tela Sobre validada em celular estreito
-
-[ ] Título exibe apenas Painel inteligente
-[ ] Avaliação permanece ao lado do título
-[ ] Seis cartões aparecem na ordem aprovada
-[ ] Tendências aparecem antes das seções complementares
-[ ] Cartões Última distância e Destaques não aparecem
-[ ] Composição, Utilização e MyCar Score permanecem após Tendências
-
-[ ] MyCar Score aparece antes de Composição dos custos
-[ ] Utilização permanece na área complementar
-[ ] Composição dos custos aparece abaixo em largura total
-[ ] Conteúdo e cálculos dos três cartões permanecem inalterados
+[ ] GitHub atualizado sem erros
+[ ] BAT executado sem depender de arquivo PS1 externo

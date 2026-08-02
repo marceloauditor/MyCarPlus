@@ -122,26 +122,8 @@
       return false;
     }
 
-    let coverFile = null;
-    try {
-      if (typeof state.coverFactory === "function") {
-        coverFile = await state.coverFactory(reportName);
-      }
-    } catch (error) {
-      console.error("Falha ao gerar a capa do relatório:", error);
-    }
-
     const bridge = nativeBridge();
     if (isNative() && bridge) {
-      if (coverFile && typeof bridge.shareHtmlWithCover === "function") {
-        try {
-          const coverBase64 = await fileToBase64(coverFile);
-          bridge.shareHtmlWithCover(reportName, reportHtml, coverFile.name, coverBase64);
-          return true;
-        } catch (error) {
-          console.error("Falha no compartilhamento com capa:", error);
-        }
-      }
       if (typeof bridge.shareHtml === "function") {
         try {
           bridge.shareHtml(reportName, reportHtml);
@@ -156,7 +138,7 @@
 
     const safeName = reportName.replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/_+/g, "_") || "MyCarPlus_Relatorio";
     const htmlFile = new File([reportHtml], `${safeName}.html`, { type: "text/html;charset=utf-8" });
-    const files = coverFile ? [coverFile, htmlFile] : [htmlFile];
+    const files = [htmlFile];
     try {
       if (navigator.share && navigator.canShare?.({ files })) {
         await navigator.share({ title: reportName.replaceAll("_", " "), files });

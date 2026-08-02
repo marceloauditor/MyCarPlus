@@ -183,3 +183,10 @@ V5.63 — Nova identidade visual oficial
 
 
 V5.64 - Período padrão de 6 meses nas guias Relatórios e Gráficos; retirada dos botões de limpeza/restauração; compartilhamento de capa PNG + HTML para relatórios Executivo e IA.
+
+V5.79 — 02/08/2026
+- Telas compactas dos quatro grupos implantadas.
+- Valor zero liberado.
+- Data local corrigida.
+- Novo logotipo otimizado aplicado ao app, manual e relatórios.
+- Capas separadas removidas do manual e dos relatórios.

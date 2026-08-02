@@ -1,0 +1,14 @@
+VALIDAÇÃO DE COESÃO V5.79: APROVADA
+
+- Versão Web/PWA: 5.79.0
+- Android versionCode: 579
+- Android versionName: 5.79.0
+- Cache PWA: mycar-plus-v5-79
+- Tela compacta de lançamento identificada.
+- Etanol configurado como seleção inicial preferencial.
+- Valor zero permitido em todos os grupos.
+- Data local do lançamento corrigida.
+- Cadastro rápido de pagamento incluído.
+- Capa separada dos relatórios desativada.
+- Manual sem capa separada e com logotipo no cabeçalho.
+- 30 arquivos idênticos entre raiz, www e Android.

@@ -90,7 +90,7 @@ assert(/insight-grid-score-first/.test(app) && /insight-score-card/.test(app) &&
 assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição dos custos</h3>') && app.indexOf('<h3>Utilização</h3>') < app.indexOf('<h3>Composição dos custos</h3>'), 'MyCar Score e Utilização devem aparecer antes da Composição dos custos.');
 assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
-// Gráficos, período efetivo, manual, tela Sobre e painel — V5.78.
+// Gráficos, período efetivo, manual, tela Sobre e painel — V5.79.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
@@ -116,9 +116,9 @@ assert(/totalLabels:\s*consolidatedLabels/.test(app) && /totalValues:\s*\[\.\.\.
 assert(html.includes('Custo médio diário por grupo e total') && html.includes('Custos por grupo e total consolidado'), 'Títulos dos gráficos consolidados não foram atualizados.');
 assert(/start\.setMonth\(start\.getMonth\(\) - 12\)/.test(app), 'Gráficos não usam o último ano como período padrão.');
 assert(html.includes('Padrão: período do último ano, ajustado aos registros disponíveis.'), 'Texto do período padrão anual ausente.');
-assert(/class=\"manual-cover\"/.test(app) && /class=\"manual-meta\"/.test(app), 'Capa do Manual de Ajuda ausente.');
+assert(!/<section class=\"manual-cover\">/.test(app) && /<main class=\"manual\">/.test(app), 'A capa separada do Manual de Ajuda ainda está presente.');
 assert(/Desenvolvedor/.test(app) && /Criação do sistema/.test(app) && /Geração do documento/.test(app), 'Metadados completos do manual ausentes.');
-assert(/break-after:page/.test(app) && /page-break-after:always/.test(app), 'Quebra de página após a capa do manual ausente.');
+assert(/manual-brand[\s\S]*REPORT_LOGO_DATA_URI/.test(app), 'Logotipo do app ausente no cabeçalho do manual.');
 assert(/function\s+fuelSeriesIdentity\s*\(/.test(app) && /function\s+drawFuelConsumptionChart\s*\(/.test(app), 'Gráfico multilinha de consumo ausente.');
 assert(/key:\s*"geral"[\s\S]*color:\s*fuelSeriesColor\("geral"\)[\s\S]*showPointValues:\s*true/.test(app), 'Linha Geral ou valores fixos da linha geral ausentes.');
 assert(/if \(key === "geral"\) return "#d94b4b"/.test(app), 'Linha Geral deve ser vermelha.');
@@ -127,6 +127,15 @@ assert(/if \(key === "etanol"\) return "#246b9e"/.test(app), 'Linha Etanol deve 
 assert(/if \(key === "diesel"\) return "#1f8a70"/.test(app), 'Linha Diesel deve ser verde.');
 assert(/showPointValues:\s*false/.test(app), 'Linhas específicas não devem mostrar valores fixos nos pontos.');
 assert(!/Álcool|álcool|Alcool|alcool/.test(app + html), 'A interface não deve utilizar a palavra substituída por Etanol.');
+
+// Lançamentos compactos e regras da V5.79.
+assert(html.includes('entry-dialog-one-screen') && styles.includes('entry-top-grid'), 'Tela compacta de lançamento em uma única visualização ausente.');
+assert(html.includes('id="tankCompleteField"') && html.includes('id="addMovementItem"'), 'Tanque completo ou botão para outro combustível ausente.');
+assert(/normalizeText\(r\.item\)\.includes\("etanol"\)/.test(app), 'Etanol não está configurado como combustível inicial preferencial.');
+assert(/row\.preco > 0 && row\.valor >= 0/.test(app), 'Abastecimento ainda não aceita valor total zero.');
+assert(/function\s+localDateISO\s*\(/.test(app) && /: localDateISO\(\);/.test(app), 'Data local do lançamento não foi corrigida.');
+assert(/data-register-type="FORMA_PAGAMENTO"/.test(html) && /FORMA_PAGAMENTO/.test(app), 'Cadastro rápido da forma de pagamento ausente.');
+assert(!/coverFile = await state\.coverFactory/.test(reportManager), 'Gerenciador ainda gera capa separada para relatórios.');
 
 // Relatórios e compartilhamento.
 assert(/openReportDocument\s*\(/.test(app), 'Visualizador interno de relatórios ausente.');
