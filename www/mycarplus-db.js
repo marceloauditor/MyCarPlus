@@ -176,6 +176,10 @@ window.MyCarPlusDB = (() => {
         longitude:r.longitude === "" ? "" : Number(r.longitude),
         precisao_gps_m:r.precisao_gps_m === "" ? "" : Number(r.precisao_gps_m),
         localizacao_confirmada:r.localizacao_confirmada || "",
+        rateio_ativo:bool(r.rateio_ativo),
+        rateio_qtd_meses:r.rateio_qtd_meses === "" ? null : Number(r.rateio_qtd_meses),
+        rateio_competencia_inicial:r.rateio_competencia_inicial || null,
+        rateio_valor_base_centavos:r.rateio_valor_base_centavos === "" ? null : Number(r.rateio_valor_base_centavos),
         veiculo:vehicle.nome || r.veiculo_id, veiculo_nome:vehicle.nome || r.veiculo_id,
         motorista:driver.nome || "", fornecedor:supplier.nome || "", local:supplier.nome || "",
         litros:r.quantidade_litros === "" ? "" : Number(r.quantidade_litros),
@@ -301,10 +305,14 @@ window.MyCarPlusDB = (() => {
       ,m.longitude === "" || m.longitude == null ? "" : Number(m.longitude)
       ,m.precisao_gps_m === "" || m.precisao_gps_m == null ? "" : Number(m.precisao_gps_m)
       ,m.localizacao_confirmada || (m.latitude !== "" && m.latitude != null ? "SIM" : "NAO")
+      ,yes(!!m.rateio_ativo)
+      ,m.rateio_qtd_meses == null ? "" : Number(m.rateio_qtd_meses)
+      ,m.rateio_competencia_inicial || ""
+      ,m.rateio_valor_base_centavos == null ? "" : Number(m.rateio_valor_base_centavos)
     ]);
 
     zip.file(map.Movimentacoes, worksheet("MOVIMENTAÇÕES","Coleção Firebase sugerida: users/{uid}/movimentacoes",
-      ["id","movimento_id","ordem_item","veiculo_id","motorista_id","fornecedor_id","data_hora","hodometro_km","grupo","item_id","valor","quantidade_litros","preco_unitario","tanque_completo","forma_pagamento","observacao","status_migracao","origem_dado","incluir_indicadores","lote_reconstrucao_id","latitude","longitude","precisao_gps_m","localizacao_confirmada"], movementRows));
+      ["id","movimento_id","ordem_item","veiculo_id","motorista_id","fornecedor_id","data_hora","hodometro_km","grupo","item_id","valor","quantidade_litros","preco_unitario","tanque_completo","forma_pagamento","observacao","status_migracao","origem_dado","incluir_indicadores","lote_reconstrucao_id","latitude","longitude","precisao_gps_m","localizacao_confirmada","rateio_ativo","rateio_qtd_meses","rateio_competencia_inicial","rateio_valor_base_centavos"], movementRows));
     zip.file(map.Veiculos, worksheet("CADASTRO DE VEÍCULOS","Coleção Firebase sugerida: users/{uid}/veiculos",
       ["id","nome","placa","ano_fabricacao","ano_modelo","motorizacao","consumo_ref_etanol_cidade_km_l","consumo_ref_etanol_estrada_km_l","consumo_ref_gasolina_cidade_km_l","consumo_ref_gasolina_estrada_km_l","consumo_ref_diesel_cidade_km_l","consumo_ref_diesel_estrada_km_l","hodometro_inicial_km","ativo","padrao","criado_em","atualizado_em","capacidade_tanque_litros"], vehicleRows));
     zip.file(map.Motoristas, worksheet("CADASTRO DE MOTORISTAS","Coleção Firebase sugerida: users/{uid}/motoristas",

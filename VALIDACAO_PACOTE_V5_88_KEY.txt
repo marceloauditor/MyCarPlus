@@ -1,0 +1,14 @@
+MYCAR+ V5.88 KEY — VALIDAÇÃO DO PACOTE
+
+APROVADO:
+- Sintaxe JavaScript de app.js e mycarplus-db.js.
+- Coesão da cadeia raiz -> www -> Android: 30 arquivos conferidos.
+- Versão da aplicação: 5.88.0.
+- Android versionCode: 588.
+- Cache PWA: mycar-plus-v5-88.
+- Rateio restrito a Manutenção e Administrativo.
+- Pagador aplicado ao lançamento de Receita.
+- Campos de rateio incluídos no XLSX.
+
+OBSERVAÇÃO:
+- A compilação local do APK não foi concluída neste ambiente porque o Gradle Wrapper não estava disponível no cache. O BAT executará a compilação no computador do usuário após sincronizar o Android.

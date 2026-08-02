@@ -158,6 +158,10 @@ assert(/Indicadores principais de consumo/.test(app) && /Somente etanol/.test(ap
 assert(/Média diária[\s\S]*Média mensal[\s\S]*Último ano[\s\S]*Total acumulado/.test(app), 'Indicadores financeiros diário, mensal, anual e total ausentes.');
 assert(/Custo líquido por km[\s\S]*Custo líquido diário[\s\S]*Custo líquido mensal[\s\S]*Custo líquido total/.test(app), 'Quatro cartões totalizadores de custo líquido ausentes ou fora da ordem.');
 assert(/net-totalizers/.test(app) && /net-totalizer/.test(app), 'Estrutura dos cartões totalizadores líquidos ausente.');
+assert(/item-rate-button/.test(app + styles) && /rateio_qtd_meses/.test(app), 'Rateio por item de Manutenção e Administrativo ausente.');
+assert(/Custos por Competência/.test(app) && /competenceDetails/.test(app), 'Seção de custos por competência ausente no Relatório Executivo.');
+assert(/group === "RECEITA" \? "Pagador"/.test(app), 'Fornecedor não foi renomeado para Pagador no lançamento de Receita.');
+assert(/rateio_competencia_inicial/.test(db) && /rateio_valor_base_centavos/.test(db), 'Campos de rateio ausentes na exportação/importação XLSX.');
 assert(/net-totalizers \.net-totalizer\{border:2px solid var\(--red\)/.test(app), 'Bordas vermelhas dos totalizadores líquidos ausentes.');
 assert(app.indexOf('${financialCards}') < app.indexOf('${netTotalizerCards}') && app.indexOf('${netTotalizerCards}') < app.indexOf('Despesas do período'), 'Totalizadores líquidos devem ficar após Receitas e antes de Despesas do período.');
 assert(/periodNetDaily\s*=\s*periodNet\s*\/\s*inclusiveDays/.test(app) && /periodNetMonthly\s*=\s*periodNetDaily\s*\*\s*30\.44/.test(app), 'Cálculos diário e mensal do custo líquido não seguem a proposta aprovada.');
