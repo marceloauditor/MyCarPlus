@@ -90,7 +90,7 @@ assert(/insight-grid-score-first/.test(app) && /insight-score-card/.test(app) &&
 assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição dos custos</h3>') && app.indexOf('<h3>Utilização</h3>') < app.indexOf('<h3>Composição dos custos</h3>'), 'MyCar Score e Utilização devem aparecer antes da Composição dos custos.');
 assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
-// Gráficos, período efetivo, manual, tela Sobre e painel — V5.81.
+// Gráficos, período efetivo, manual, tela Sobre e painel — V5.82.
 assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
@@ -128,7 +128,7 @@ assert(/if \(key === "diesel"\) return "#1f8a70"/.test(app), 'Linha Diesel deve 
 assert(/showPointValues:\s*false/.test(app), 'Linhas específicas não devem mostrar valores fixos nos pontos.');
 assert(!/Álcool|álcool|Alcool|alcool/.test(app + html), 'A interface não deve utilizar a palavra substituída por Etanol.');
 
-// Lançamentos compactos e seletores em folha inferior — V5.81.
+// Lançamentos compactos e seletores em folha inferior — V5.82.
 assert(html.includes('entry-dialog-one-screen') && styles.includes('entry-top-grid'), 'Tela compacta de lançamento em uma única visualização ausente.');
 assert(/entry-top-grid[\s\S]*entry-date-field[\s\S]*entry-current-km-field/.test(html), 'Data e hodômetro atual não estão no novo formato de dois campos.');
 assert(/Último hodômetro:[\s\S]*id="lastKm"/.test(html), 'Último hodômetro não está apresentado como informação auxiliar menor.');
@@ -145,10 +145,13 @@ assert(!/entry-quick-add|data-register-type="MOTORISTA"/.test(html), 'Botões de
 assert(/SALVAR LANÇAMENTO/.test(html), 'Botão exclusivo SALVAR LANÇAMENTO ausente.');
 assert(!/coverFile = await state\.coverFactory/.test(reportManager), 'Gerenciador ainda gera capa separada para relatórios.');
 assert(!/Selecione uma opção cadastrada\./.test(app), 'A instrução redundante ainda aparece nas listas de seleção dos lançamentos.');
-assert(/if \(group === "MANUTENÇÃO"\) return "＋ Cadastrar novo tipo de manutenção"/.test(app), 'Cadastro rápido de tipo de manutenção ausente.');
-assert(/if \(group === "ADMINISTRATIVO"\) return "＋ Cadastrar novo item administrativo"/.test(app), 'Cadastro rápido de item administrativo ausente.');
-assert(/return "＋ Cadastrar novo tipo de receita"/.test(app), 'Cadastro rápido de tipo de receita ausente.');
-assert(/type === "FORNECEDOR"[\s\S]*Cadastrar novo fornecedor/.test(app), 'Cadastro rápido de fornecedor ausente nas telas de lançamento.');
+assert(/if \(group === "MANUTENÇÃO"\) return "＋ Incluir novo item de manutenção"/.test(app), 'Cadastro rápido de tipo de manutenção ausente.');
+assert(/if \(group === "ADMINISTRATIVO"\) return "＋ Incluir novo item administrativo"/.test(app), 'Cadastro rápido de item administrativo ausente.');
+assert(/return "＋ Incluir novo tipo de receita"/.test(app), 'Cadastro rápido de tipo de receita ausente.');
+assert(/type === "FORNECEDOR"[\s\S]*Incluir novo fornecedor/.test(app), 'Cadastro rápido de fornecedor ausente nas telas de lançamento.');
+assert(/selectorList\.appendChild\(newButton\)/.test(app), 'A ação verde de inclusão não está posicionada ao final da lista rolável.');
+assert(/context-register-new[^}]*border:\s*1px solid #23b36f/.test(styles) && /background:\s*rgba\(35,179,111,\.14\)/.test(styles), 'Destaque verde da ação Incluir novo ausente.');
+assert(/valueTextColor:\s*"#111111"/.test(app) && /options\.valueTextColor \|\| "#ffffff"/.test(app), 'Valores das barras do Relatório Executivo não foram fixados em preto.');
 assert(/Relatório Executivo contínuo/.test(app) && /<main class="report">/.test(app), 'Relatório Executivo contínuo ausente.');
 assert(!/Página 1 de 2|Página 2 de 2/.test(app), 'Relatório Executivo ainda possui paginação fixa em duas páginas.');
 assert(/Indicadores principais de consumo/.test(app) && /Somente etanol/.test(app) && /Somente gasolina/.test(app), 'Cards de consumo geral, Etanol e Gasolina ausentes.');

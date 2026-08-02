@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.81</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.82</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -487,7 +487,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V5.81</h3>
+<h3>Manual de utilização — MyCar+ V5.82</h3>
 <p>Controle de abastecimentos, manutenções, despesas administrativas, receitas, relatórios, gráficos, alertas técnicos e sincronização entre Android e Web.</p>
 <details open><summary>1. Visão geral</summary><p>O MyCar+ organiza os dados por veículo. A seleção feita na tela inicial controla lançamentos, indicadores, relatórios, gráficos, alertas e análise inteligente. O Painel inteligente prioriza seis indicadores, nesta ordem: custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Logo abaixo aparecem as Tendências. Composição dos custos, Utilização e MyCar Score permanecem disponíveis ao continuar a rolagem. Use a mesma Conta Google no Android e na Web para manter os dados sincronizados pelo Firebase.</p></details>
 <details><summary>2. Seleção do veículo</summary><p>A tela inicial mostra somente o veículo selecionado em uma barra compacta. Toque na barra para abrir a lista com rolagem, localize o veículo e toque nele. São exibidos apenas o nome e o status Ativo ou Inativo.</p></details>
@@ -495,9 +495,9 @@
 <details><summary>4. Cadastros</summary><p>No menu superior, abra Cadastros para incluir, alterar ou excluir itens, motoristas, veículos, fornecedores e formas de pagamento. Os itens são vinculados aos grupos Abastecimento, Manutenção, Administrativo ou Receita.</p></details>
 <details><summary>5. Lançamentos</summary><p>Na guia Lançar, escolha Abastecimento, Manutenção, Administrativo, Receita ou Movimentos. Cada grupo abre uma tela compacta com os campos principais organizados em uma única visualização.</p></details>
 <details><summary>6. Abastecimentos</summary><p>Informe data, hodômetro atual, combustível, preço por litro e valor total. O último hodômetro aparece para referência, os litros são calculados automaticamente e Etanol é sugerido quando cadastrado. Use “Adicionar outro combustível” para registrar mais de um combustível no mesmo abastecimento. Posto e motorista são opcionais.</p></details>
-<details><summary>7. Manutenções</summary><p>Informe item, fornecedor, valor, data e hodômetro. Ao abrir a lista de tipos de manutenção, a opção “Cadastrar novo tipo de manutenção” aparece ao final. A lista de fornecedores também permite cadastrar um novo fornecedor sem perder os dados já digitados.</p></details>
+<details><summary>7. Manutenções</summary><p>Informe item, fornecedor, valor, data e hodômetro. Ao abrir a lista de tipos de manutenção, a opção verde “Incluir novo item de manutenção” aparece ao final. A lista de fornecedores também apresenta, em verde, “Incluir novo fornecedor” sem perder os dados já digitados.</p></details>
 <details><summary>8. Administrativo e receitas</summary><p>Use Administrativo para despesas não relacionadas diretamente a combustível ou manutenção. Use Receita para entradas vinculadas ao veículo. Cada grupo lista somente os itens compatíveis e oferece, ao final da lista, a opção de cadastrar um novo item do próprio grupo.</p></details>
-<details><summary>9. Cadastro rápido</summary><p>Durante o lançamento, toque no campo para abrir a lista. A lista não repete instruções desnecessárias e apresenta, ao final, a ação “Cadastrar novo...” quando o cadastro rápido for permitido. Isso vale para combustíveis, itens de manutenção, itens administrativos, tipos de receita e fornecedores. Motorista permite somente selecionar um cadastro existente.</p></details>
+<details><summary>9. Cadastro rápido</summary><p>Durante o lançamento, toque no campo para abrir a lista. A lista não repete instruções desnecessárias e apresenta, ao final, uma ação verde “Incluir novo...” quando o cadastro rápido for permitido. Isso vale para combustíveis, itens de manutenção, itens administrativos, tipos de receita e fornecedores. Motorista permite somente selecionar um cadastro existente.</p></details>
 <details><summary>10. Movimentos</summary><p>Consulte, pesquise, altere ou exclua movimentos. Os filtros permitem localizar registros por data, descrição, item, grupo ou fornecedor. Exclusões são sincronizadas com os demais dispositivos.</p></details>
 <details><summary>11. Gráficos</summary><p>A guia Gráficos utiliza, por padrão, o período do último ano, ajustado à primeira e à última movimentação disponíveis do veículo. Em períodos menores que um ano, consumo e custo diário são exibidos por mês; em períodos de um ano ou mais, por ano. O consumo apresenta uma linha Geral vermelha, Gasolina laranja, Etanol azul, Diesel verde e linhas adicionais com cores distintas para outros combustíveis. Somente a linha Geral mostra valores fixos nos pontos; períodos sem dados não são convertidos em consumo zero. A evolução financeira é acumulada. O hodômetro mantém todos os registros reais na linha e identifica no eixo somente o primeiro mês, o mês central e o último mês, com os anos correspondentes. Os gráficos de custo por quilômetro, custo médio diário por grupo e custo total por grupo apresentam três barras individuais e uma quarta barra laranja com o somatório dos custos de combustível, administrativo e manutenção. As receitas não compõem essa barra consolidada.</p></details>
 <details><summary>12. Relatórios</summary><p>Na tela inicial, escolha o demonstrativo. Depois informe o período e use o botão verde-claro para gerar o Relatório Executivo, o relatório por Inteligência Artificial ou a exportação XLSX. Quando as datas informadas ultrapassam o histórico disponível, o período é ajustado aos registros do veículo selecionado.</p></details>
@@ -524,7 +524,7 @@
 <div class="about-card">
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
-<p><strong>Versão:</strong> 5.81</p>
+<p><strong>Versão:</strong> 5.82</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -705,7 +705,7 @@
 <label class="register-search context-selector-search" hidden><span>⌕</span><input id="contextSelectorSearch" type="search" placeholder="Pesquisar..."></label>
 <p id="contextSelectorHint" class="field-help" hidden></p>
 <div id="contextSelectorList" class="context-selector-list"></div>
-<button type="button" id="newContextRegister" class="context-register-new">＋ Cadastrar novo</button>
+<button type="button" id="newContextRegister" class="context-register-new">＋ Incluir novo</button>
 <button type="button" id="cancelContextSelector" hidden>Voltar ao lançamento</button>
 </div>
 </dialog>

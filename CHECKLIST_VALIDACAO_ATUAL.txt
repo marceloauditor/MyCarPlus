@@ -1,20 +1,17 @@
-MYCARPLUS V5.81 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.82 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
-[ ] ZIP e BAT V5.81 na pasta Downloads
+[ ] ZIP e BAT V5.82 na pasta Downloads
 [ ] Backup criado pelo BAT
 [ ] Fonte copiada para o projeto
 [ ] npm install concluído
 [ ] Fonte sincronizada raiz → www → Android
 [ ] Validação de coesão aprovada
 [ ] APK debug gerado
-[ ] Versão 5.81 visível no aplicativo
-[ ] Android versionCode 581 e versionName 5.81.0 conferidos
-[ ] Listas sem a frase redundante
-[ ] Cadastro de novo item disponível em todos os grupos
-[ ] Cadastro de novo fornecedor disponível em todos os grupos
-[ ] Relatório Executivo contínuo e sem quebra fixa
-[ ] Cards de consumo geral, Etanol e Gasolina conferidos
-[ ] Indicadores financeiros dos quatro grupos conferidos
-[ ] Oito gráficos exibidos dois a dois
-[ ] Alertas e três últimos lançamentos por grupo conferidos
-[ ] Impressão e compartilhamento testados
+[ ] Versão 5.82 visível no aplicativo
+[ ] Android versionCode 582 e versionName 5.82.0 conferidos
+[ ] Valores das barras do Relatório Executivo visíveis em preto
+[ ] Incluir novo fornecedor em verde ao final da lista dos quatro grupos
+[ ] Incluir novo item de manutenção em verde ao final da lista
+[ ] Incluir novo item administrativo em verde ao final da lista
+[ ] Cadastro rápido retorna ao lançamento sem perder os dados
+[ ] Impressão e compartilhamento do relatório testados

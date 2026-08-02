@@ -1,0 +1,14 @@
+MYCAR+ V5.82 KEY — VALIDAÇÃO DO PACOTE
+
+[OK] Estrutura completa do projeto
+[OK] Fonte raiz atualizada
+[OK] Pasta www sincronizada
+[OK] Assets públicos do Android sincronizados
+[OK] app.js com sintaxe válida
+[OK] versão 5.82.0
+[OK] Android versionCode 582
+[OK] Cache PWA mycar-plus-v5-82
+[OK] BAT V5.82 incluído
+[OK] Relatório Executivo com valores das barras em preto
+[OK] Ações verdes de inclusão ao final das listas
+[OK] Validação de coesão aprovada

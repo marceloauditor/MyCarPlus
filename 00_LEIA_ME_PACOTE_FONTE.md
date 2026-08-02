@@ -1,25 +1,24 @@
-# MyCar+ V5.81 KEY — pacote-fonte oficial
+# MyCar+ V5.82 KEY — pacote-fonte oficial
 
 Pacote completo para atualização da versão Web/PWA e Android.
 
 ## Identificação
 
-- Aplicação: **5.81.0**
-- Android `versionCode`: **581**
-- Android `versionName`: **5.81.0**
-- Cache PWA: **mycar-plus-v5-81**
+- Aplicação: **5.82.0**
+- Android `versionCode`: **582**
+- Android `versionName`: **5.82.0**
+- Cache PWA: **mycar-plus-v5-82**
 
-## Implantação da V5.81
+## Implantação da V5.82
 
-- listas de seleção sem instrução redundante;
-- cadastro rápido de itens em todos os grupos;
-- cadastro rápido de fornecedores em todas as telas de lançamento;
-- Relatório Executivo contínuo;
-- novos cards de consumo e indicadores financeiros;
-- oito gráficos com descrição;
-- alertas de manutenção e últimos lançamentos por grupo.
+- valores numéricos sobre as barras do Relatório Executivo em preto;
+- ação verde de inclusão posicionada ao final da própria lista de seleção;
+- inclusão de novo fornecedor disponível em Abastecimento, Manutenção, Administrativo e Receita;
+- inclusão de novo item de manutenção disponível na lista de Manutenção;
+- inclusão de novo item administrativo disponível na lista do grupo Administrativo;
+- preservação do cadastro rápido e retorno ao lançamento em andamento.
 
 ## Arquivos para atualização
 
-- `MYCAR_PLUS_V5_81_KEY.zip`
-- `ATUALIZAR_MYCAR_V5_81_KEY.bat`
+- `MYCAR_PLUS_V5_82_KEY.zip`
+- `ATUALIZAR_MYCAR_V5_82_KEY.bat`
