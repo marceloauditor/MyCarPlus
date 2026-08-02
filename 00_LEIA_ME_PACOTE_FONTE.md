@@ -1,27 +1,25 @@
-# MyCar+ V5.80 KEY — pacote-fonte oficial
+# MyCar+ V5.81 KEY — pacote-fonte oficial
 
-Este pacote contém a fonte consolidada para Web/PWA e Android.
+Pacote completo para atualização da versão Web/PWA e Android.
 
-## Versões
+## Identificação
 
-- Aplicação: **5.80.0**
-- Android `versionCode`: **580**
-- Android `versionName`: **5.80.0**
-- Cache PWA: **mycar-plus-v5-80**
+- Aplicação: **5.81.0**
+- Android `versionCode`: **581**
+- Android `versionName`: **5.81.0**
+- Cache PWA: **mycar-plus-v5-81**
 
-## Implantação da V5.80
+## Implantação da V5.81
 
-A versão implanta o novo fluxo compacto de lançamento:
+- listas de seleção sem instrução redundante;
+- cadastro rápido de itens em todos os grupos;
+- cadastro rápido de fornecedores em todas as telas de lançamento;
+- Relatório Executivo contínuo;
+- novos cards de consumo e indicadores financeiros;
+- oito gráficos com descrição;
+- alertas de manutenção e últimos lançamentos por grupo.
 
-- dois campos superiores: Data e Hodômetro atual;
-- último hodômetro em texto auxiliar;
-- seletores em folha inferior;
-- cadastro de novas opções dentro da lista de seleção;
-- motorista somente selecionável;
-- botão exclusivo SALVAR LANÇAMENTO;
-- ação textual para adicionar outro combustível.
+## Arquivos para atualização
 
-Arquivos principais de atualização:
-
-- `MYCAR_PLUS_V5_80_KEY.zip`
-- `ATUALIZAR_MYCAR_V5_80_KEY.bat`
+- `MYCAR_PLUS_V5_81_KEY.zip`
+- `ATUALIZAR_MYCAR_V5_81_KEY.bat`

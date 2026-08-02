@@ -972,7 +972,7 @@ html[data-theme="light"] .smart-dashboard-compact .insight-grid-composition-wide
   color:#5c7080!important;
 }
 
-/* MyCar+ V5.80 — fluxo compacto de lançamentos e seletores em folha inferior */
+/* MyCar+ V5.81 — fluxo compacto de lançamentos e seletores em folha inferior */
 .entry-dialog-one-screen{width:min(96vw,590px);max-height:96dvh;border-radius:22px;overflow:hidden}
 .entry-one-screen-form{height:min(96dvh,900px);max-height:96dvh}
 .entry-dialog-head{padding:10px 14px!important;min-height:62px}

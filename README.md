@@ -1,24 +1,25 @@
-# MyCar+ V5.80
+# MyCar+ V5.81
 
-Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas e receitas do veículo.
+Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas, receitas e alertas técnicos de veículos.
 
-## Identificação da versão
+## Versões
 
-- Aplicação: **5.80.0**
-- Android: `versionCode 580` / `versionName 5.80.0`
-- Cache PWA: `mycar-plus-v5-80`
+- Aplicação: **5.81.0**
+- Android: `versionCode 581` / `versionName 5.81.0`
+- Cache PWA: `mycar-plus-v5-81`
 
-## Melhorias da V5.80
+## Melhorias da V5.81
 
-- Data e hodômetro atual ampliados e apresentados lado a lado em todos os grupos.
-- Último hodômetro exibido como informação auxiliar menor abaixo do hodômetro atual.
-- Tela de abastecimento com a opção **Completo** e a ação textual **Adicionar outro combustível**.
-- Motorista movido para antes das observações e sem botão de cadastro rápido.
-- Campos de item, combustível, fornecedor/posto e pagamento/recebimento abrem uma folha inferior de seleção.
-- A opção de cadastrar um novo registro aparece somente dentro da lista de seleção, evitando confusão com o salvamento do lançamento.
-- Botão exclusivo **SALVAR LANÇAMENTO** no rodapé.
-- Mantidas as correções da V5.79: valor R$ 0,00, data local correta e nova identidade visual.
+- Listas de seleção mais limpas, sem texto redundante.
+- Cadastro rápido de item nos quatro grupos de lançamento.
+- Cadastro rápido de fornecedor em todos os grupos.
+- Relatório Executivo contínuo e sem paginação fixa.
+- Cards de consumo geral, Etanol e Gasolina.
+- Indicadores financeiros diário, mensal, anual e acumulado.
+- Leitura executiva ampliada.
+- Oito gráficos do aplicativo incorporados ao relatório.
+- Alertas de manutenção e três últimos lançamentos por grupo.
 
 ## Atualização
 
-Coloque `MYCAR_PLUS_V5_80_KEY.zip` e `ATUALIZAR_MYCAR_V5_80_KEY.bat` na pasta Downloads e execute o BAT pelo PowerShell ou Explorador de Arquivos.
+Coloque `MYCAR_PLUS_V5_81_KEY.zip` e `ATUALIZAR_MYCAR_V5_81_KEY.bat` na pasta Downloads e execute o BAT pelo PowerShell ou Explorador de Arquivos.

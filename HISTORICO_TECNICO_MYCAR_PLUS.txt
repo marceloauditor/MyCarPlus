@@ -197,3 +197,13 @@ V5.80 — 02/08/2026
 - Motorista mantido somente como seleção.
 - Data e hodômetro atual ampliados; último hodômetro passou a informação auxiliar.
 - Opção de abastecimento simplificada para Completo e Adicionar outro combustível.
+
+V5.81 — 02/08/2026
+- Removida a instrução redundante das listas de seleção dos lançamentos.
+- Cadastro rápido de itens padronizado para Abastecimento, Manutenção, Administrativo e Receita.
+- Cadastro rápido de fornecedores disponibilizado em todas as telas de lançamento.
+- Relatório Executivo convertido em documento contínuo.
+- Criados indicadores de consumo geral, Etanol e Gasolina para atual, último mês, último ano e total.
+- Criados indicadores financeiros diário, mensal, anual e total para os quatro grupos.
+- Incorporados os oito gráficos do app, leitura executiva, alertas e três últimos lançamentos por grupo.
+- Versão atualizada para 5.81.0, Android code 581 e cache PWA mycar-plus-v5-81.

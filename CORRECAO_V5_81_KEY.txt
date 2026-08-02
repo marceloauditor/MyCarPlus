@@ -1,0 +1,10 @@
+MYCAR+ V5.81 KEY
+
+- Retirada a frase redundante das listas de seleção dos lançamentos.
+- Cadastro rápido de itens disponibilizado para todos os grupos.
+- Cadastro rápido de fornecedor disponibilizado em todas as telas de lançamento.
+- Relatório Executivo convertido para fluxo contínuo.
+- Inclusão dos novos cards de consumo e indicadores financeiros.
+- Inclusão dos oito gráficos do aplicativo com descrição.
+- Inclusão da leitura executiva ampliada, alertas e três últimos lançamentos por grupo.
+- Versão atualizada para 5.81.0.

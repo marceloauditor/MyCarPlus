@@ -1,19 +1,20 @@
-MYCARPLUS V5.80 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
+MYCARPLUS V5.81 — CHECKLIST DE IMPLANTAÇÃO, INSTALAÇÃO E COESÃO
 
-[ ] ZIP e BAT V5.80 na pasta Downloads
-[ ] Backup automático criado pelo BAT
-[ ] Fonte Web sincronizada
-[ ] Fonte Android sincronizada
+[ ] ZIP e BAT V5.81 na pasta Downloads
+[ ] Backup criado pelo BAT
+[ ] Fonte copiada para o projeto
+[ ] npm install concluído
+[ ] Fonte sincronizada raiz → www → Android
 [ ] Validação de coesão aprovada
-[ ] GitHub atualizado
-[ ] Android Studio aberto
 [ ] APK debug gerado
-[ ] Versão 5.80 visível no aplicativo
-[ ] Android versionCode 580 e versionName 5.80.0 conferidos
-[ ] Data e Hodômetro atual maiores nos quatro grupos
-[ ] Último hodômetro exibido abaixo do hodômetro atual
-[ ] Folha inferior abre ao tocar em item, fornecedor e pagamento
-[ ] “Cadastrar novo...” aparece dentro da folha inferior
-[ ] Motorista não apresenta cadastro rápido
-[ ] Abastecimento apresenta “Completo” e “Adicionar outro combustível”
-[ ] Botão SALVAR LANÇAMENTO funciona
+[ ] Versão 5.81 visível no aplicativo
+[ ] Android versionCode 581 e versionName 5.81.0 conferidos
+[ ] Listas sem a frase redundante
+[ ] Cadastro de novo item disponível em todos os grupos
+[ ] Cadastro de novo fornecedor disponível em todos os grupos
+[ ] Relatório Executivo contínuo e sem quebra fixa
+[ ] Cards de consumo geral, Etanol e Gasolina conferidos
+[ ] Indicadores financeiros dos quatro grupos conferidos
+[ ] Oito gráficos exibidos dois a dois
+[ ] Alertas e três últimos lançamentos por grupo conferidos
+[ ] Impressão e compartilhamento testados
