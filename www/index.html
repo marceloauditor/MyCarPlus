@@ -27,7 +27,7 @@
 <header>
 <div class="header-brand-block">
 <img class="header-brand-logo" src="mycar-plus-logo.png" alt="MyCar+">
-<div class="header-status-row"><span class="app-version" id="homeVersion">v5.88</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
+<div class="header-status-row"><span class="app-version" id="homeVersion">v5.90</span><button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="home-cloud-label">Status online</span><span class="cloud-dot offline"></span></button></div>
 </div>
 <div class="header-actions"><button type="button" id="homeAlertIndicator" class="home-alert-indicator safe" aria-label="Alertas técnicos em dia" title="Alertas técnicos em dia"><span class="home-alert-symbol">!</span><b id="homeAlertCount" hidden>0</b></button><div class="header-menu-wrap">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -524,7 +524,7 @@
 <div class="about-card">
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
 <h3>MyCar+</h3>
-<p><strong>Versão:</strong> 5.88</p>
+<p><strong>Versão:</strong> 5.90</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -687,12 +687,26 @@
 <a id="openEntryMap" class="map-link" target="_blank" rel="noopener" hidden>Abrir mapa</a>
 </div>
 <label class="entry-observation">Observações <small>(opcional)</small><textarea name="observacao" rows="2" placeholder="Digite uma observação..."></textarea></label>
-<p id="formError" class="form-error"></p>
+<p id="formError" class="form-error" role="alert" aria-live="assertive"></p>
 </div>
 <div class="form-footer entry-save-footer">
 <button class="form-cancel" value="cancel" hidden>Cancelar</button>
 <button class="primary entry-save-launch" value="default">SALVAR LANÇAMENTO</button>
 </div>
+</form>
+</dialog>
+<dialog id="rateDialog" class="rate-dialog">
+<form method="dialog" id="rateForm" class="rate-form">
+<div class="rate-head"><span class="rate-badge">R</span><div><small>CUSTO POR COMPETÊNCIA</small><h2>Ratear valor</h2></div><button type="button" id="closeRateDialog" aria-label="Fechar">×</button></div>
+<div class="rate-body">
+<p class="rate-instruction">Informe a quantidade de meses para ratear este valor.</p><p class="rate-limit">Permitido de <strong>02 a 120 meses</strong>.</p>
+<div class="rate-item-value"><span>Valor do item</span><strong id="rateItemValue">R$ 0,00</strong></div>
+<label class="rate-months-label" for="rateMonths">Quantidade de meses</label>
+<div class="rate-stepper"><button type="button" id="rateMinus" aria-label="Diminuir um mês">−</button><input id="rateMonths" name="months" type="number" inputmode="numeric" min="2" max="120" step="1" value="12" required><button type="button" id="ratePlus" aria-label="Aumentar um mês">＋</button></div>
+<div class="rate-preview" aria-live="polite"><small>RESUMO DO RATEIO</small><div><span>Início</span><strong id="rateStart">—</strong></div><div><span>Término</span><strong id="rateEnd">—</strong></div><div><span>Parcela mensal</span><strong id="rateInstallment">R$ 0,00</strong></div><p>A diferença de centavos será ajustada na última parcela.</p></div>
+<p id="rateError" class="form-error" role="alert"></p>
+</div>
+<div class="rate-actions"><button type="button" id="removeRate" class="rate-remove">Remover rateio</button><button type="button" id="cancelRate" class="rate-cancel">Cancelar</button><button type="submit" class="rate-confirm">Confirmar rateio</button></div>
 </form>
 </dialog>
 <dialog id="contextSelectorDialog" class="compact-dialog context-selector-dialog">

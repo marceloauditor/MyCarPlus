@@ -1,14 +1,14 @@
-# MyCar+ V5.88
+# MyCar+ V5.89
 
 Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas, receitas e alertas técnicos de veículos.
 
 ## Versões
 
-- Aplicação: **5.88.0**
-- Android: `versionCode 588` / `versionName 5.88.0`
-- Cache PWA: `mycar-plus-v5-88`
+- Aplicação: **5.89.0**
+- Android: `versionCode 589` / `versionName 5.89.0`
+- Cache PWA: `mycar-plus-v5-89`
 
-## Melhorias da V5.88
+## Melhorias da V5.89
 
 - Rateio por competência no valor de cada item de Manutenção e Administrativo.
 - Seção Custos por Competência no Relatório Executivo.
