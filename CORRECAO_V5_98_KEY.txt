@@ -1,0 +1,1 @@
+V5.98: consolidação da listagem de rateio por lançamento, com progresso, total pago e saldo.

@@ -1,0 +1,11 @@
+VALIDAÇÃO DO PACOTE MYCAR+ V5.98 KEY
+
+[OK] APP_VERSION 5.98 na fonte.
+[OK] package.json 5.98.0.
+[OK] Android versionCode 598 e versionName 5.98.0.
+[OK] Cache Web mycar-plus-v5-98.
+[OK] Tabela consolidada: um registro por lançamento rateado.
+[OK] Progresso acumulado no formato parcelas pagas/total (ex.: 8/12).
+[OK] Total pago acumulado até a data final do relatório.
+[OK] Saldo preservado.
+[OK] Coesão aprovada em 30 arquivos raiz → www → Android.
