@@ -1,17 +1,10 @@
-CHECKLIST DE VALIDAÇÃO ATUAL — MYCAR+ V5.95 KEY
+CHECKLIST DE VALIDAÇÃO — MYCAR+ V5.87
 
-[OK] APP_VERSION 5.95
-[OK] package.json 5.95.0
-[OK] Android versionCode 595
-[OK] Android versionName 5.95.0
-[OK] Cache PWA mycar-plus-v5-95
-[OK] Raiz, www e assets Android sincronizados
-[OK] JavaScript sem erro de sintaxe
-[OK] Relatório Executivo processado de forma assíncrona
-[OK] Oito gráficos preservados
-[OK] Densidade dos gráficos limitada a 1,5 no relatório
-[OK] Indicador de andamento implementado
-[OK] Proteção contra clique repetido implementada
-[OK] Tratamento de erro implementado
-[OK] Regras de período, hodômetro e rateio preservadas
-[OK] BAT V5.95 configurado
+[ ] Card da tela inicial exibe “Composição dos Grupos”.
+[ ] Não existe subtítulo ou texto sobreposto no cabeçalho do card.
+[ ] Grupos aparecem em ordem: Abastecimento, Administrativo, Manutenção e Receitas.
+[ ] Percentuais não exibem a expressão “das despesas”.
+[ ] Receitas são deduzidas do total.
+[ ] Rodapé apresenta Custo líquido.
+[ ] Tela inicial funciona nos temas claro e escuro.
+[ ] Botão Voltar do Android sai após dois toques na tela inicial.
