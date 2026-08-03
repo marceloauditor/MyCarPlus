@@ -1,0 +1,15 @@
+RESULTADO DA VALIDAÇÃO DE COESÃO — MYCAR+ V5.95
+Data: 03/08/2026
+
+STATUS: APROVADA
+
+- Aplicação: 5.95.0
+- Android versionCode: 595
+- Android versionName: 5.95.0
+- Cache PWA: mycar-plus-v5-95
+- 30 arquivos conferidos na cadeia raiz → www → Android.
+- JavaScript validado sem erros de sintaxe nas três cópias.
+- Geração assíncrona do Relatório Executivo confirmada.
+- Limite de densidade das imagens do relatório confirmado em 1,5.
+- Indicador de andamento e proteção contra cliques repetidos confirmados.
+- Regras de período, hodômetro e rateio não foram alteradas.

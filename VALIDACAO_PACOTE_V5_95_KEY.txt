@@ -1,0 +1,28 @@
+MYCAR+ V5.95 KEY - REGISTRO DE VALIDACAO
+Data: 03/08/2026
+
+Escopo:
+- correção do travamento do Relatório Executivo;
+- processamento assíncrono e sequencial dos gráficos;
+- limite de resolução exclusivo para imagens do relatório;
+- indicador de andamento e bloqueio de duplo clique;
+- tratamento seguro de falhas;
+- atualização de versão;
+- sincronização raiz, Web e Android;
+- geração de ZIP e BAT.
+
+Critérios funcionais:
+- regra de período efetivo preservada;
+- regra de hodômetro preservada;
+- rateio e apropriação por competência preservados;
+- conteúdo e oito gráficos do relatório preservados;
+- abertura Web preservada com janela previamente autorizada;
+- visualizador Android preservado.
+
+Validação técnica:
+- JavaScript: aprovado nas três cópias;
+- coesão raiz, Web e Android: aprovada;
+- 30 arquivos conferidos;
+- versão: 5.95.0;
+- Android versionCode: 595;
+- cache PWA: mycar-plus-v5-95.

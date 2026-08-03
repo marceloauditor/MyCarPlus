@@ -1,0 +1,11 @@
+MYCAR+ V5.95 KEY
+
+Correção: Relatório Executivo travava após a confirmação das datas.
+
+Ajustes:
+- processamento assíncrono dos gráficos;
+- limite de resolução das imagens do relatório;
+- indicador de andamento;
+- prevenção de duplo clique;
+- tratamento seguro de falhas;
+- preservação das regras de período, hodômetro e rateio.
