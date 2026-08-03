@@ -10,14 +10,26 @@ if (!match) {
   console.error('package.json possui versão inválida. Use o formato X.Y.Z.');
   process.exit(1);
 }
-const appVersion = `${match[1]}.${match[2]}`;
+// O package.json normaliza 6.00.0 para 6.0.0. A versão de exibição oficial
+// deve ser obtida de APP_VERSION para preservar dois dígitos após o ponto.
+const appPreview = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
+const appMatch = appPreview.match(/APP_VERSION\s*=\s*["'](\d+)\.(\d+)["']/);
+if (!appMatch) {
+  console.error('APP_VERSION não foi localizada em app.js.');
+  process.exit(1);
+}
+const appVersion = `${appMatch[1]}.${appMatch[2]}`;
+const major = appMatch[1];
+const minorDisplay = appMatch[2].padStart(2, '0');
+const androidVersionName = `${major}.${minorDisplay}.0`;
 const expected = {
   semver,
   app: appVersion,
-  versionCode: `${match[1]}${match[2].padStart(2, '0')}`,
-  cache: `mycar-plus-v${match[1]}-${match[2]}`,
-  batch: `ATUALIZAR_MYCAR_V${match[1]}_${match[2]}_KEY.bat`,
-  zip: `MYCAR_PLUS_V${match[1]}_${match[2]}_KEY.zip`,
+  androidVersionName,
+  versionCode: `${major}${minorDisplay}`,
+  cache: `mycar-plus-v${major}-${minorDisplay}`,
+  batch: `ATUALIZAR_MYCAR_V${major}_${minorDisplay}_KEY.bat`,
+  zip: `MYCAR_PLUS_V${major}_${minorDisplay}_KEY.zip`,
 };
 const failures = [];
 
@@ -51,7 +63,7 @@ assert(new RegExp(`APP_VERSION\\s*=\\s*["']${expected.app.replace('.', '\\.')}`)
 assert(html.includes(`v${expected.app}`), `Versão visível v${expected.app} ausente.`);
 assert(html.includes(`<strong>Versão:</strong> ${expected.app}`), `Versão ${expected.app} ausente na tela Sobre.`);
 assert(new RegExp(`versionCode\\s+${expected.versionCode}\\b`).test(gradle), `versionCode deve ser ${expected.versionCode}.`);
-assert(gradle.includes(`versionName "${expected.semver}"`), `versionName deve ser ${expected.semver}.`);
+assert(gradle.includes(`versionName "${expected.androidVersionName}"`), `versionName deve ser ${expected.androidVersionName}.`);
 assert(sw.includes(expected.cache), `Cache PWA deve ser ${expected.cache}.`);
 
 // Exclusividade do novo modelo de alertas.
