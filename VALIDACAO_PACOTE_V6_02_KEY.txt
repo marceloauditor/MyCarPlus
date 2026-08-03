@@ -1,0 +1,7 @@
+VALIDAÇÃO DO PACOTE MYCAR+ V6.02 KEY
+- APP_VERSION: 6.02
+- Android versionCode: 602
+- Android versionName: 6.02.0
+- Cache Web: mycar-plus-v6-02
+- Correção: instalação npm resiliente e resolução do strip-ansi.
+- Menu lateral corrigido preservado.
