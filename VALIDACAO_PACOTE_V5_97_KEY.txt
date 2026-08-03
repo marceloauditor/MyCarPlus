@@ -1,0 +1,8 @@
+MYCAR+ V5.97 KEY
+- APP_VERSION 5.97
+- package 5.97.0
+- Android versionCode 597
+- Android versionName 5.97.0
+- Service Worker mycar-plus-v5-97
+- Rateio com competência única por lançamento
+- Parcelas detalhadas abaixo dos cartões
