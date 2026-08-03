@@ -1,0 +1,16 @@
+MYCAR+ V5.93 KEY - REGISTRO DE VALIDACAO
+Data: 03/08/2026
+
+Escopo:
+- identidade visual colorida;
+- rateio por datas reais de referência;
+- atualização de versão;
+- sincronização Web/Android;
+- geração de ZIP, BAT e APK debug.
+
+Critérios funcionais:
+- nenhuma parcela além da quantidade gravada;
+- soma das parcelas igual ao valor original;
+- diferença de centavos somente na última parcela;
+- regra de hodômetro não alterada;
+- identificador Android e estrutura de dados preservados.
