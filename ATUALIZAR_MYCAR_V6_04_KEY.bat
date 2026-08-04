@@ -1,0 +1,393 @@
+@echo off
+setlocal EnableExtensions EnableDelayedExpansion
+chcp 65001 >nul
+title Atualizacao MyCar+ V6.04 KEY
+
+set "VERSAO=6.04"
+set "ZIP_PREFIX=MYCAR_PLUS_V6_04_KEY"
+set "ZIP_ESPERADO=MYCAR_PLUS_V6_04_KEY.zip"
+set "PASTA_INTERNA=MYCAR_PLUS_V6_04_KEY"
+set "PROJETO=%USERPROFILE%\Documents\GitHub\MyCarPlus"
+set "DOWNLOADS=%USERPROFILE%\Downloads"
+set "WORKTEMP=%DOWNLOADS%\MYCAR_PLUS_V6_04_KEY_TEMP"
+set "LOG=%DOWNLOADS%\ATUALIZACAO_MYCAR_V6_04_KEY_LOG.txt"
+set "APK_DESTINO=%DOWNLOADS%\MYCAR_PLUS_V6_04_KEY_DEBUG.apk"
+set "STUDIO=C:\Program Files\Android\Android Studio\bin\studio64.exe"
+
+> "%LOG%" echo ============================================================
+>>"%LOG%" echo ATUALIZACAO MYCAR+ V6.04 KEY
+>>"%LOG%" echo Inicio: %DATE% %TIME%
+>>"%LOG%" echo Projeto: %PROJETO%
+>>"%LOG%" echo ============================================================
+
+echo.
+echo ============================================================
+echo ATUALIZACAO MYCAR+ V6.04 KEY
+echo ============================================================
+
+set "ZIP="
+for /f "delims=" %%F in ('dir /b /a-d /o-d "%DOWNLOADS%\%ZIP_PREFIX%*.zip" 2^>nul') do (
+    if not defined ZIP set "ZIP=%DOWNLOADS%\%%F"
+)
+if not defined ZIP (
+    echo [ERRO] ZIP %ZIP_ESPERADO% nao encontrado em Downloads.
+    >>"%LOG%" echo [ERRO] ZIP nao encontrado.
+    goto :fim_erro
+)
+echo [OK] ZIP selecionado: %ZIP%
+>>"%LOG%" echo ZIP: %ZIP%
+
+where node.exe >>"%LOG%" 2>&1 || goto :erro_node
+where npm.cmd >>"%LOG%" 2>&1 || goto :erro_npm
+where git.exe >>"%LOG%" 2>&1 || goto :erro_git
+
+if not exist "%PROJETO%\package.json" (
+    echo [ERRO] Projeto nao encontrado: %PROJETO%
+    >>"%LOG%" echo [ERRO] Projeto nao encontrado.
+    goto :fim_erro
+)
+
+set "STAMP=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%"
+set "STAMP=%STAMP: =0%"
+set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V6_04_%STAMP%"
+
+echo.
+echo [1/10] Criando backup...
+robocopy "%PROJETO%" "%BACKUP%" /E /R:2 /W:2 ^
+ /XD ".git" "node_modules" "android\.gradle" "android\build" "android\app\build" >>"%LOG%"
+if errorlevel 8 goto :erro_backup
+echo [OK] Backup criado.
+
+echo.
+echo [2/10] Extraindo pacote...
+if exist "%WORKTEMP%" rmdir /S /Q "%WORKTEMP%"
+mkdir "%WORKTEMP%"
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+ "Expand-Archive -LiteralPath '%ZIP%' -DestinationPath '%WORKTEMP%' -Force" >>"%LOG%" 2>&1
+if errorlevel 1 goto :erro_extracao
+
+set "FONTE=%WORKTEMP%\%PASTA_INTERNA%"
+if not exist "%FONTE%\package.json" (
+    for /f "delims=" %%D in ('dir /b /ad "%WORKTEMP%" 2^>nul') do (
+        if exist "%WORKTEMP%\%%D\package.json" set "FONTE=%WORKTEMP%\%%D"
+    )
+)
+if not exist "%FONTE%\package.json" goto :erro_fonte
+echo [OK] Fonte: %FONTE%
+>>"%LOG%" echo Fonte: %FONTE%
+
+echo.
+echo [3/10] Limpando residuos antigos do projeto Android...
+set "LX=%PROJETO%\android\app\src\main\java\br\com\marceloauditor\mycarplus\lx"
+if exist "%LX%" (
+    >>"%LOG%" echo Excluindo pasta residual: %LX%
+    rmdir /S /Q "%LX%" >>"%LOG%" 2>&1
+)
+for /d /r "%PROJETO%\android\app\src\main\java" %%D in (
+    MYCAR_PLUS_V5_57_TEMP
+    MYCAR_PLUS_V5_58_TEMP
+    MYCAR_PLUS_V5_59_TEMP
+    MYCAR_PLUS_V5_60_TEMP
+    MYCAR_PLUS_V5_61_TEMP
+    MYCAR_PLUS_V5_62_TEMP
+    MYCAR_PLUS_V5_63_TEMP
+    MYCAR_PLUS_V5_64_TEMP
+    MYCAR_PLUS_V5_65_TEMP
+    MYCAR_PLUS_V5_66_TEMP
+    MYCAR_PLUS_V5_67_TEMP
+    MYCAR_PLUS_V5_68_TEMP
+    MYCAR_PLUS_V5_69_TEMP
+    MYCAR_PLUS_V5_70_TEMP
+    MYCAR_PLUS_V5_71_TEMP
+    MYCAR_PLUS_V5_72_TEMP
+    MYCAR_PLUS_V5_73_TEMP
+    MYCAR_PLUS_V5_74_TEMP
+    MYCAR_PLUS_V5_75_TEMP
+    MYCAR_PLUS_V5_76_TEMP
+    MYCAR_PLUS_V5_77_TEMP
+    MYCAR_PLUS_V5_78_TEMP
+    MYCAR_PLUS_V5_79_TEMP
+    MYCAR_PLUS_V5_80_TEMP
+    MYCAR_PLUS_V5_81_TEMP
+    MYCAR_PLUS_V5_82_TEMP
+    MYCAR_PLUS_V5_83_TEMP
+    MYCAR_PLUS_V5_84_TEMP
+    MYCAR_PLUS_V5_85_TEMP
+    MYCAR_PLUS_V5_86_TEMP
+    MYCAR_PLUS_V5_87_TEMP
+    MYCAR_PLUS_V5_88_TEMP
+    MYCAR_PLUS_V5_89_TEMP
+    MYCAR_PLUS_V5_90_TEMP
+    MYCAR_PLUS_V5_91_TEMP
+    MYCAR_PLUS_V5_92_TEMP
+    MYCAR_PLUS_V5_92_TEMP
+    MYCAR_PLUS_V5_70_MASTER
+    MYCAR_PLUS_V5_71_MASTER
+    MYCAR_PLUS_V5_72_MASTER
+    MYCAR_PLUS_V5_73_MASTER
+    MYCAR_PLUS_V5_74_MASTER
+    MYCAR_PLUS_V5_75_MASTER
+    MYCAR_PLUS_V5_76_MASTER
+    MYCAR_PLUS_V5_77_MASTER
+    MYCAR_PLUS_V5_78_MASTER
+    MYCAR_PLUS_V5_79_MASTER
+    MYCAR_PLUS_V5_80_MASTER
+    MYCAR_PLUS_V5_81_MASTER
+    MYCAR_PLUS_V5_82_MASTER
+    MYCAR_PLUS_V5_83_MASTER
+    MYCAR_PLUS_V5_84_MASTER
+    MYCAR_PLUS_V5_85_MASTER
+    MYCAR_PLUS_V5_86_MASTER
+    MYCAR_PLUS_V5_87_MASTER
+    MYCAR_PLUS_V5_88_MASTER
+    MYCAR_PLUS_V5_89_MASTER
+    MYCAR_PLUS_V5_90_MASTER
+    MYCAR_PLUS_V5_91_MASTER
+    MYCAR_PLUS_V5_92_MASTER
+    MYCAR_PLUS_V5_92_MASTER
+    MYCAR_PLUS_V5_70_TREE
+    MYCAR_PLUS_V5_71_TREE
+    MYCAR_PLUS_V5_72_TREE
+    MYCAR_PLUS_V5_73_TREE
+    MYCAR_PLUS_V5_74_TREE
+    MYCAR_PLUS_V5_75_TREE
+    MYCAR_PLUS_V5_76_TREE
+    MYCAR_PLUS_V5_77_TREE
+    MYCAR_PLUS_V5_78_TREE
+    MYCAR_PLUS_V5_79_TREE
+    MYCAR_PLUS_V5_80_TREE
+    MYCAR_PLUS_V5_81_TREE
+    MYCAR_PLUS_V5_82_TREE
+    MYCAR_PLUS_V5_83_TREE
+    MYCAR_PLUS_V5_84_TREE
+    MYCAR_PLUS_V5_85_TREE
+    MYCAR_PLUS_V5_86_TREE
+    MYCAR_PLUS_V5_87_TREE
+    MYCAR_PLUS_V5_88_TREE
+    MYCAR_PLUS_V5_89_TREE
+    MYCAR_PLUS_V5_90_TREE
+    MYCAR_PLUS_V5_91_TREE
+    MYCAR_PLUS_V5_92_TREE
+    MYCAR_PLUS_V5_92_TREE
+    MYCAR_PLUS_V5_70_KEY
+    MYCAR_PLUS_V5_71_KEY
+    MYCAR_PLUS_V5_72_KEY
+    MYCAR_PLUS_V5_73_KEY
+    MYCAR_PLUS_V5_74_KEY
+    MYCAR_PLUS_V5_75_KEY
+    MYCAR_PLUS_V5_76_KEY
+    MYCAR_PLUS_V5_77_KEY
+    MYCAR_PLUS_V5_78_KEY
+    MYCAR_PLUS_V5_79_KEY
+    MYCAR_PLUS_V5_80_KEY
+    MYCAR_PLUS_V5_81_KEY
+    MYCAR_PLUS_V5_82_KEY
+    MYCAR_PLUS_V5_83_KEY
+    MYCAR_PLUS_V5_84_KEY
+    MYCAR_PLUS_V5_85_KEY
+    MYCAR_PLUS_V5_86_KEY
+    MYCAR_PLUS_V5_87_KEY
+    MYCAR_PLUS_V5_88_KEY
+    MYCAR_PLUS_V5_89_KEY
+    MYCAR_PLUS_V5_90_KEY
+    MYCAR_PLUS_V5_91_KEY
+    MYCAR_PLUS_V5_92_KEY
+    MYCAR_PLUS_V5_92_KEY
+) do (
+    if exist "%%~fD" rmdir /S /Q "%%~fD" >>"%LOG%" 2>&1
+)
+echo [OK] Residuos removidos.
+
+echo.
+echo [4/10] Atualizando a fonte local...
+robocopy "%FONTE%" "%PROJETO%" /E /R:2 /W:2 ^
+ /XD ".git" "node_modules" "android\.gradle" "android\build" "android\app\build" ^
+ /XF "local.properties" "*_LOG.txt" >>"%LOG%"
+if errorlevel 8 goto :erro_copia
+echo [OK] Fonte atualizada.
+
+cd /d "%PROJETO%"
+
+echo.
+echo [5/10] Validando e instalando dependencias...
+call npm.cmd config set registry https://registry.npmjs.org/ >>"%LOG%" 2>&1
+call npm.cmd cache verify >>"%LOG%" 2>&1
+
+set "DEPENDENCIAS_OK="
+if exist "%PROJETO%\node_modules\@capacitor\cli\package.json" (
+    call npx.cmd cap --version >>"%LOG%" 2>&1
+    if not errorlevel 1 set "DEPENDENCIAS_OK=1"
+)
+
+if defined DEPENDENCIAS_OK (
+    echo [OK] Dependencias existentes validadas; reinstalacao dispensada.
+    >>"%LOG%" echo [OK] node_modules existente e Capacitor funcional.
+) else (
+    echo [INFO] Executando npm ci pelo lock do pacote...
+    call npm.cmd ci --prefer-offline --no-audit --no-fund >>"%LOG%" 2>&1
+    if errorlevel 1 (
+        echo [AVISO] npm ci falhou. Limpando cache e tentando instalacao de contingencia...
+        >>"%LOG%" echo [AVISO] npm ci falhou; iniciando contingencia.
+        call npm.cmd cache clean --force >>"%LOG%" 2>&1
+        call npm.cmd install --legacy-peer-deps --no-audit --no-fund >>"%LOG%" 2>&1
+        if errorlevel 1 goto :erro_npm_install
+    )
+    echo [OK] Dependencias instaladas.
+)
+
+echo.
+echo [6/10] Sincronizando Web e Android...
+call npm.cmd run sync:web >>"%LOG%" 2>&1
+if errorlevel 1 goto :erro_web
+call npx.cmd cap sync android >>"%LOG%" 2>&1
+if errorlevel 1 goto :erro_android
+echo [OK] Web e Android sincronizados.
+
+findstr /C:"APP_VERSION = ""6.04""" "%PROJETO%\app.js" >nul || goto :erro_versao
+findstr /C:"APP_VERSION = ""6.04""" "%PROJETO%\www\app.js" >nul || goto :erro_versao
+findstr /C:"APP_VERSION = ""6.04""" "%PROJETO%\android\app\src\main\assets\public\app.js" >nul || goto :erro_versao
+findstr /C:"mycar-plus-v6-03" "%PROJETO%\www\sw.js" >nul || goto :erro_versao
+echo [OK] Versao 6.04 confirmada na fonte, Web e Android.
+>>"%LOG%" echo [OK] Versao 6.04 confirmada nas tres camadas.
+
+echo.
+echo [7/10] Validando coesao funcional...
+call npm.cmd run validate:cohesion >>"%LOG%" 2>&1
+if errorlevel 1 goto :erro_coesao
+echo [OK] Coesao funcional aprovada.
+
+echo.
+echo [8/10] Atualizando GitHub...
+git add . >>"%LOG%" 2>&1
+git diff --cached --quiet
+if errorlevel 1 (
+    git commit -m "Atualiza MyCar+ para V6.04 KEY" >>"%LOG%" 2>&1
+    if errorlevel 1 goto :erro_commit
+    git push >>"%LOG%" 2>&1
+    if errorlevel 1 goto :erro_push
+    for /f "delims=" %%H in ('git rev-parse HEAD') do set "LOCAL_HEAD=%%H"
+    for /f "tokens=1" %%H in ('git ls-remote origin HEAD') do set "REMOTE_HEAD=%%H"
+    if /I not "!LOCAL_HEAD!"=="!REMOTE_HEAD!" goto :erro_verificacao_git
+    echo [OK] GitHub atualizado e commit remoto confirmado.
+    >>"%LOG%" echo [OK] Commit remoto confirmado: !REMOTE_HEAD!
+) else (
+    echo [INFO] Nenhuma alteracao nova para enviar ao GitHub.
+    >>"%LOG%" echo [INFO] Nenhuma alteracao nova para commit.
+)
+
+echo.
+echo [9/10] Abrindo Android Studio e sincronizando o projeto...
+if exist "%STUDIO%" (
+    start "" "%STUDIO%" "%PROJETO%\android"
+    echo [OK] Android Studio aberto.
+    >>"%LOG%" echo [OK] Android Studio aberto: %STUDIO%
+) else (
+    call npx.cmd cap open android >>"%LOG%" 2>&1
+    if errorlevel 1 (
+        echo [AVISO] Nao foi possivel abrir o Android Studio automaticamente.
+        >>"%LOG%" echo [AVISO] Android Studio nao localizado.
+    ) else (
+        echo [OK] Android Studio aberto pelo Capacitor.
+    )
+)
+
+echo.
+echo [10/10] Gerando APK debug novo...
+if exist "%APK_DESTINO%" del /F /Q "%APK_DESTINO%" >>"%LOG%" 2>&1
+findstr /C:"versionCode 604" "%PROJETO%\android\app\build.gradle" >nul || goto :erro_versao
+findstr /C:"versionName ""6.04.0""" "%PROJETO%\android\app\build.gradle" >nul || goto :erro_versao
+if exist "%PROJETO%\android\app\build" rmdir /S /Q "%PROJETO%\android\app\build" >>"%LOG%" 2>&1
+if exist "%PROJETO%\android\build" rmdir /S /Q "%PROJETO%\android\build" >>"%LOG%" 2>&1
+pushd "%PROJETO%\android"
+call gradlew.bat assembleDebug >>"%LOG%" 2>&1
+set "BUILD_RESULT=%ERRORLEVEL%"
+popd
+
+if not "%BUILD_RESULT%"=="0" (
+    echo [ERRO] O APK nao foi gerado. GitHub e Android Studio ja foram atualizados.
+    >>"%LOG%" echo [ERRO] Build APK falhou, codigo %BUILD_RESULT%.
+    goto :fim_erro
+)
+
+set "APK_ORIGEM=%PROJETO%\android\app\build\outputs\apk\debug\app-debug.apk"
+if not exist "%APK_ORIGEM%" goto :erro_apk
+copy /Y "%APK_ORIGEM%" "%APK_DESTINO%" >>"%LOG%" 2>&1
+echo [OK] APK: %APK_DESTINO%
+>>"%LOG%" echo APK: %APK_DESTINO%
+
+if exist "%WORKTEMP%" rmdir /S /Q "%WORKTEMP%"
+
+echo.
+echo ============================================================
+echo ATUALIZACAO V6.04 KEY CONCLUIDA COM SUCESSO
+echo GitHub atualizado.
+echo Android Studio aberto.
+echo APK: %APK_DESTINO%
+echo Log: %LOG%
+echo ============================================================
+>>"%LOG%" echo [OK] Atualizacao concluida em %DATE% %TIME%.
+pause
+exit /b 0
+
+:erro_node
+echo [ERRO] Node.js nao encontrado.
+goto :fim_erro
+:erro_npm
+echo [ERRO] npm.cmd nao encontrado.
+goto :fim_erro
+:erro_git
+echo [ERRO] Git nao encontrado.
+goto :fim_erro
+:erro_backup
+echo [ERRO] Falha ao criar backup.
+goto :fim_erro
+:erro_extracao
+echo [ERRO] Falha ao extrair o ZIP.
+goto :fim_erro
+:erro_fonte
+echo [ERRO] Pasta interna KEY nao localizada.
+goto :fim_erro
+:erro_copia
+echo [ERRO] Falha ao copiar a fonte.
+goto :fim_erro
+:erro_npm_install
+echo [ERRO] Nao foi possivel validar ou instalar as dependencias npm.
+goto :fim_erro
+:erro_web
+echo [ERRO] Sincronizacao Web falhou.
+goto :fim_erro
+:erro_android
+echo [ERRO] Sincronizacao Android falhou.
+goto :fim_erro
+:erro_coesao
+echo [ERRO] Coesao funcional reprovada.
+goto :fim_erro
+:erro_commit
+echo [ERRO] Falha no commit Git.
+goto :fim_erro
+:erro_push
+echo [ERRO] Falha no git push.
+goto :fim_erro
+:erro_apk
+echo [ERRO] Build terminou, mas o APK nao foi localizado.
+goto :fim_erro
+:erro_versao
+echo [ERRO] A versao 6.04 nao foi confirmada em todas as camadas.
+>>"%LOG%" echo [ERRO] Divergencia de versao entre fonte, Web ou Android.
+goto :fim_erro
+:erro_verificacao_git
+echo [ERRO] O commit local nao foi confirmado no GitHub remoto.
+>>"%LOG%" echo [ERRO] HEAD local !LOCAL_HEAD! diferente do remoto !REMOTE_HEAD!.
+goto :fim_erro
+
+:fim_erro
+>>"%LOG%" echo [ERRO] Atualizacao interrompida em %DATE% %TIME%.
+echo.
+echo ============================================================
+echo PROCESSO INTERROMPIDO
+echo Consulte o log:
+echo %LOG%
+echo ============================================================
+if exist "%WORKTEMP%" rmdir /S /Q "%WORKTEMP%"
+pause
+exit /b 1
