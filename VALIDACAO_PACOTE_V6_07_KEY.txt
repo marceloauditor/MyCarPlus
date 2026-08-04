@@ -1,0 +1,30 @@
+VALIDAÇÃO DO PACOTE — MYCAR+ V6.07
+
+STATUS DA FONTE: APROVADA
+
+VERSÕES
+- Aplicativo/Web/PWA: 6.07
+- npm: 6.7.0
+- Android versionCode: 607
+- Android versionName: 6.07.0
+- Cache PWA: mycar-plus-v6-07
+
+VALIDAÇÕES EXECUTADAS
+- Sintaxe de app.js, ai-logic.js e scripts Node: aprovada.
+- Coesão funcional: aprovada.
+- 31 arquivos idênticos entre raiz, www e Android.
+- Checklist de montagem: 19 verificações aprovadas.
+- Manifesto SHA-256: 181 hashes conferidos.
+- Logotipos PNG carregados integralmente: aprovados.
+- BAT: CRLF, sem findstr legado e sem rótulos ausentes.
+- Objeto executive_report enviado à IA: aprovado.
+- Remoção da regra de anomalia pela média global: aprovada.
+- Filtro de evidências e bloqueio de duplicidade sem candidato exato: aprovados.
+- Identidade “Análise Inteligente Veicular”: aprovada.
+- Dica MyCar+ local e aleatória: aprovada.
+
+COMPILAÇÃO LOCAL
+A tentativa de compilar o APK neste ambiente não foi concluída porque o Gradle Wrapper tentou baixar gradle-8.11.1-all.zip e o ambiente não possui acesso à internet. O BAT V6.07 mantém a compilação obrigatória no computador do usuário antes do commit e do envio ao GitHub.
+
+VALIDAÇÃO DO ZIP FINAL
+APROVADA. O ZIP foi extraído novamente, não apresentou arquivo corrompido e repetiu as 19 verificações com aprovação.

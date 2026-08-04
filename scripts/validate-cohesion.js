@@ -28,8 +28,8 @@ const expected = {
   androidVersionName,
   versionCode: `${major}${minorDisplay}`,
   cache: `mycar-plus-v${major}-${minorDisplay}`,
-  batch: `ATUALIZAR_MYCAR_V${major}_${minorDisplay}_KEY_R2.bat`,
-  zip: `MYCAR_PLUS_V${major}_${minorDisplay}_KEY_R2.zip`,
+  batch: `ATUALIZAR_MYCAR_V${major}_${minorDisplay}_KEY.bat`,
+  zip: `MYCAR_PLUS_V${major}_${minorDisplay}_KEY.zip`,
 };
 const failures = [];
 
@@ -66,13 +66,13 @@ assert(new RegExp(`versionCode\\s+${expected.versionCode}\\b`).test(gradle), `ve
 assert(gradle.includes(`versionName "${expected.androidVersionName}"`), `versionName deve ser ${expected.androidVersionName}.`);
 assert(sw.includes(expected.cache), `Cache PWA deve ser ${expected.cache}.`);
 
-// Consolidação V6.06.
+// Consolidação V6.07.
 assert(!html.includes('class="home-vehicle-head compact"') && !html.includes('<small>Veículo</small>'), 'Identificação duplicada de veículo ainda aparece na página inicial.');
 assert(/class="mycar-history-card"/.test(app) && /<span>Histórico<\/span>/.test(app), 'Cartão final de histórico em duas linhas ausente.');
 assert(/function\s+formatHistoryDuration\s*\(/.test(app), 'Cálculo dinâmico do histórico do veículo ausente.');
 assert(/<b>Placa:<\/b>/.test(app) && /<b>Histórico no MyCar\+:<\/b>/.test(app), 'Placa e histórico não foram incluídos nos dois relatórios.');
-assert(/num\(value,\s*3\)/.test(app) && /num\(k\.fuel\.consumption_km_l,3\)/.test(app), 'Consumo dos relatórios deve usar três casas decimais.');
-assert(html.includes('class="about-identity-row"') && html.includes('class="about-app-logo"') && html.includes('about-logo.png?v=606') && html.includes("icon-192.png?v=606"), 'Logotipo resiliente ao lado do desenvolvedor ausente na tela Informações.');
+assert(/num\(value,\s*3\)/.test(app) && /executive\.consumption\.general\.total_history\.consumption_km_l,3/.test(app), 'Consumo dos relatórios deve usar três casas decimais.');
+assert(html.includes('class="about-identity-row"') && html.includes('class="about-app-logo"') && html.includes(`about-logo.png?v=${expected.versionCode}`) && html.includes(`icon-192.png?v=${expected.versionCode}`), 'Logotipo resiliente ao lado do desenvolvedor ausente na tela Informações.');
 assert(styles.includes('.mycar-history-card') && /flex-direction:\s*column/.test(styles) && /white-space:\s*normal/.test(styles), 'Cartão de histórico não está configurado em duas linhas com quebra segura.');
 const reportLogoMatch = app.match(/REPORT_LOGO_DATA_URI\s*=\s*"data:image\/png;base64,([^"]+)"/);
 assert(Boolean(reportLogoMatch), 'Logotipo embutido dos relatórios ausente.');
@@ -85,6 +85,21 @@ if (reportLogoMatch) {
 }
 assert(fs.existsSync(path.join(root, 'about-logo.png')), 'about-logo.png ausente.');
 assert(sw.includes('about-logo.png'), 'about-logo.png ausente do cache PWA.');
+
+// Análise Inteligente Veicular V6.07.
+assert(/function\s+buildExecutiveIntelligenceData\s*\(/.test(app), 'Motor estruturado dos indicadores do Relatório Executivo não foi criado para a IA.');
+assert(/executive_report:\s*executiveReport/.test(app), 'Indicadores estruturados do Relatório Executivo não são enviados à IA.');
+assert(/schema_version:\s*2/.test(app), 'Schema 2 da Análise Inteligente ausente.');
+assert(/exact_duplicate_candidates/.test(app + read('ai-logic.js')), 'Evidência objetiva de duplicidade ausente.');
+assert(!/avgValue\s*\*\s*2\.5/.test(app), 'Regra antiga de valor atípico pela média global ainda está ativa.');
+assert(/dates_or_high_values_alone_do_not_prove_duplicate/.test(app), 'Regra de proibição de inferência de duplicidade não foi enviada.');
+assert(/Não mencione possível duplicidade/.test(read('ai-logic.js')), 'Prompt ainda permite inferência de duplicidade sem evidência.');
+assert(/function\s+evidenceExists\s*\(/.test(read('ai-logic.js')), 'Validação local dos caminhos de evidência ausente.');
+assert(/AUTOMOTIVE_TIPS/.test(app) && /9\. Dica MyCar\+/.test(app), 'Biblioteca ou seção final Dica MyCar+ ausente.');
+assert(/Análise Inteligente de Gestão Veicular/.test(app + html), 'Nova identidade da Análise Inteligente ausente.');
+assert(!/<small>Saúde veicular<\/small>/.test(app), 'Pontuação genérica de saúde veicular ainda aparece na análise.');
+assert(/<small>Status de manutenção<\/small>/.test(app), 'Status de manutenção não substituiu a pontuação genérica.');
+assert(/Confiança dos dados/.test(app), 'Confiança local dos dados não aparece na análise.');
 
 // Exclusividade do novo modelo de alertas.
 assert(!/TECHNICAL_ITEMS|technicalParameters|alertHistory|Historico_Alertas|Parametros_Tecnicos|technicalKey|chave_tecnica/.test(app + db), 'O modelo antigo de alertas ainda está presente no código.');
@@ -211,7 +226,7 @@ assert(/id="reportPrintButton"[^>]*>Imprimir</.test(app), 'Botão Imprimir do Ex
 assert(/id="aiReportPrint"[^>]*>Imprimir</.test(app), 'Botão Imprimir da IA ausente.');
 assert(/function printHtml\(\)\{var html=printableDocument\(\)/.test(app), 'Impressão do Executivo não usa o HTML completo.');
 assert(/MyCarReportManager\.print\('RELATORIO_EXECUTIVO_MYCAR_PLUS',html\)/.test(app), 'Executivo não usa o gerenciador central de impressão.');
-assert(/MyCarReportManager\.print\('RELATORIO_IA_MYCAR_PLUS',html\)/.test(app), 'Relatório IA não usa o gerenciador central de impressão.');
+assert(/MyCarReportManager\.print\('ANALISE_INTELIGENTE_MYCAR_PLUS',html\)/.test(app), 'Análise Inteligente não usa o gerenciador central de impressão.');
 assert(/bridge\.printHtml\(reportName, reportHtml\)/.test(reportManager), 'Gerenciador central não chama a ponte nativa printHtml.');
 
 // Android.

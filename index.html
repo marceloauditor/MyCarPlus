@@ -28,7 +28,7 @@
 <div class="header-menu-wrap header-menu-leading">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
 <div id="headerMenu" class="header-menu" hidden>
-<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.06</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
+<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.07</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
 <small class="menu-group-title">OPERAÇÃO</small>
 <button data-menu-page="cadastros">⚙ Cadastros e parâmetros</button>
 <button data-menu-page="alertas">⚠ Alertas e manutenção</button>
@@ -49,7 +49,7 @@
 <div id="headerMenuBackdrop" class="header-menu-backdrop" hidden></div>
 <div class="header-brand-block">
 <div class="mycar-wordmark header-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></div>
-<span class="app-version" id="homeVersion">v6.06</span>
+<span class="app-version" id="homeVersion">v6.07</span>
 </div>
 <div class="header-actions">
 <button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="cloud-dot offline"></span></button>
@@ -152,7 +152,7 @@
     <h3 class="report-menu-title">Escolha o demonstrativo</h3>
     <div class="report-guide-actions">
       <button id="exportPdf" type="button" class="report-guide-action report-guide-action-blue">GERAR RELATÓRIO EXECUTIVO</button>
-      <button id="reportAiButton" type="button" class="report-guide-action report-guide-action-orange">GERAR RELATÓRIO POR I.A.</button>
+      <button id="reportAiButton" type="button" class="report-guide-action report-guide-action-orange">GERAR ANÁLISE INTELIGENTE</button>
       <button id="exportXlsx" type="button" class="report-guide-action report-guide-action-red">GERAR RELATÓRIO XLSX</button>
     </div>
     <button type="button" id="reportBackButton" class="report-guide-back" data-back>Voltar</button>
@@ -184,7 +184,7 @@
 <div class="page-title ai-guide-page-title">
   <div>
     <small>MyCar+ Intelligence</small>
-    <h2>Relatório por I.A.</h2>
+    <h2>Análise Inteligente Veicular</h2>
   </div>
   <button type="button" class="page-back ai-guide-top-back" data-back aria-label="Voltar">Voltar</button>
 </div>
@@ -219,19 +219,19 @@
 
   <div class="ai-guide-online-notice">
     <span class="ai-guide-online-dot">●</span>
-    <div><strong>Internet necessária</strong><small>Os dados são enviados de forma consolidada somente para interpretação.</small></div>
+    <div><strong>Internet necessária</strong><small>Os indicadores estruturados do Relatório Executivo são enviados somente para interpretação.</small></div>
   </div>
 
   <p id="aiFormError" class="form-error ai-guide-error" role="alert"></p>
   <div id="aiProgress" class="ai-progress ai-guide-progress" hidden role="status" aria-live="polite">
     <span></span><p><strong>Calculando análise inteligente…</strong><small>Processando indicadores e preparando o relatório.</small></p>
   </div>
-  <button id="generateAiAnalysis" class="ai-guide-generate" type="submit">GERAR RELATÓRIO POR I.A.</button>
+  <button id="generateAiAnalysis" class="ai-guide-generate" type="submit">GERAR ANÁLISE INTELIGENTE</button>
   <button type="button" class="ai-guide-back" data-back>Voltar</button>
 </form>
 
 <article id="aiResult" class="ai-result ai-guide-result" hidden>
-  <div class="ai-result-head"><div><small>RELATÓRIO GERADO</small><h3>Relatório Executivo de Gestão Veicular com Inteligência Artificial</h3></div><span id="aiConfidence" class="insight-badge">—</span></div>
+  <div class="ai-result-head"><div><small>ANÁLISE GERADA</small><h3>Análise Inteligente de Gestão Veicular</h3></div><span id="aiConfidence" class="insight-badge">—</span></div>
   <div id="aiReportContent"></div>
   <div class="export ai-result-actions"><button type="button" id="viewAiReport">Visualizar relatório completo</button><button type="button" id="newAiAnalysis">Nova análise</button><button type="button" id="closeAiResult">Fechar</button></div>
 </article>
@@ -490,7 +490,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V6.06</h3>
+<h3>Manual de utilização — MyCar+ V6.07</h3>
 <p>Guia completo dos cadastros, lançamentos, rateios, indicadores, relatórios, gráficos, alertas, sincronização e proteção dos dados do veículo.</p>
 <details open><summary>1. Visão geral e veículo selecionado</summary><p>O MyCar+ organiza todas as informações por veículo. A seleção da tela inicial controla lançamentos, indicadores, relatórios, gráficos e alertas. Veículos ativos aceitam novos registros; veículos inativos preservam todo o histórico para consulta, mas não geram novos alertas vencidos. Inativar um veículo não exclui seus dados.</p></details>
 <details><summary>2. Painel inteligente</summary><p>O painel apresenta custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Abaixo ficam Tendências, MyCar Score, Utilização e Composição dos Grupos. Na composição, Abastecimento, Administrativo e Manutenção formam as despesas; Receitas aparecem separadamente e são subtraídas no Custo líquido.</p></details>
@@ -505,10 +505,10 @@
 <details><summary>11. Rateio por competência</summary><p>O rateio está disponível somente em itens de Manutenção e Administrativo. Toque em R, informe de 02 a 120 meses e confira a prévia de competência inicial, final e parcela mensal. O mês do lançamento é a primeira competência. Diferenças de centavos são ajustadas na última parcela. Toque novamente em R ✓ para consultar, alterar ou remover. O movimento original continua registrado pelo valor integral; o sistema não cria movimentos mensais artificiais.</p></details>
 <details><summary>12. Movimentos</summary><p>Consulte, pesquise, altere ou exclua registros por data, descrição, item, grupo, fornecedor ou pagador. A edição de valor ou quantidade de meses recalcula o rateio. A exclusão do movimento também remove o rateio vinculado, sem afetar outros movimentos.</p></details>
 <details><summary>13. Alertas técnicos</summary><p>Use “Incluir Alerta” para programar manutenção por data, quilometragem ou ambos. O alerta pertence ao veículo e deve estar vinculado a um item cadastrado. É possível consultar, alterar e excluir. Excluir o alerta remove apenas a programação: o histórico real de manutenção é preservado.</p></details>
-<details><summary>14. Guia Relatórios e período</summary><p>O período padrão corresponde aos três meses anteriores e pode ser alterado ou limpo. O aplicativo ajusta datas fora do histórico disponível e informa o período efetivamente utilizado. Os botões geram Relatório Executivo, Relatório por Inteligência Artificial e arquivo XLSX para o veículo selecionado.</p></details>
+<details><summary>14. Guia Relatórios e período</summary><p>O período padrão corresponde aos três meses anteriores e pode ser alterado ou limpo. O aplicativo ajusta datas fora do histórico disponível e informa o período efetivamente utilizado. Os botões geram Relatório Executivo, Análise Inteligente Veicular e arquivo XLSX para o veículo selecionado.</p></details>
 <details><summary>15. Relatório Executivo</summary><p>O documento é contínuo, sem quebras artificiais. Reúne identificação do veículo e período; indicadores de consumo geral, Etanol e Gasolina; indicadores financeiros realizados; totalizadores líquidos; despesas do período; Custos por Competência; leitura executiva; gráficos; últimos três lançamentos de cada grupo; e manutenções que possuem alertas cadastrados. Os botões permitem fechar, compartilhar e imprimir ou salvar em PDF.</p></details>
 <details><summary>16. Custos por Competência</summary><p>Esta seção substitui o valor integral dos itens rateados pelas parcelas incluídas no período do relatório. Itens não rateados e receitas entram integralmente. São mostrados custo líquido por km, diário, mensal e total, além do detalhamento do valor original, competências consideradas, valor apropriado e saldo futuro. A visão financeira realizada continua separada e preserva o valor efetivamente pago.</p></details>
-<details><summary>17. Relatório por Inteligência Artificial</summary><p>A análise considera somente o veículo e o período escolhidos e depende de Internet. Revise o período e os dados antes de gerar. O relatório pode ser fechado, compartilhado, impresso ou salvo em PDF e não altera os lançamentos que serviram de base.</p></details>
+<details><summary>17. Análise Inteligente Veicular</summary><p>A análise usa os mesmos indicadores estruturados do Relatório Executivo, considera somente o veículo e o período escolhidos e depende de Internet. A IA interpreta evidências, limitações e tendências, enquanto os totais permanecem calculados pelo MyCar+. Ao final é apresentada uma Dica MyCar+ selecionada de uma biblioteca revisada do aplicativo. A análise não altera os lançamentos.</p></details>
 <details><summary>18. Relatório XLSX</summary><p>A exportação contém os cadastros, movimentos do período, campos de rateio e dados técnicos necessários à conferência. As competências são derivadas do item original; não são exportadas como movimentos fictícios. O arquivo serve para análise e auditoria, enquanto o backup JSON é o formato recomendado para restauração completa.</p></details>
 <details><summary>19. Gráficos</summary><p>O período padrão é o último ano, ajustado aos registros. Os gráficos abrangem consumo geral e por combustível, hodômetro, evolução financeira, custo por quilômetro, custo médio diário por grupo, custos por grupo e total consolidado e os cinco itens com maior valor. Em períodos sem dados não é criado consumo zero. A evolução financeira é acumulada; o hodômetro mantém os registros reais; e a barra laranja “Total dos custos” soma Abastecimento, Administrativo e Manutenção, sem incluir Receitas.</p></details>
 <details><summary>20. Sincronização e Firebase</summary><p>A sincronização ocorre por registro entre Android, Web e Firebase. “0 pendências” indica que os dados locais foram confirmados na nuvem. Use a mesma Conta Google nos dispositivos. Em Sobre o MyCar+, consulte última sincronização, enviados, recebidos, pendências e eventos técnicos. Não desinstale o aplicativo enquanto houver pendências.</p></details>
@@ -528,10 +528,10 @@
 <div class="about-card">
 <div class="about-identity-row">
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
-<img class="about-app-logo" src="about-logo.png?v=606" alt="Logotipo do MyCar+" onerror="this.onerror=null;this.src='icon-192.png?v=606'">
+<img class="about-app-logo" src="about-logo.png?v=607" alt="Logotipo do MyCar+" onerror="this.onerror=null;this.src='icon-192.png?v=607'">
 </div>
 <h3 class="mycar-wordmark about-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></h3>
-<p><strong>Versão:</strong> 6.06</p>
+<p><strong>Versão:</strong> 6.07</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>

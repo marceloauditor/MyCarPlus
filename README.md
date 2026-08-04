@@ -1,29 +1,16 @@
-# MyCar+ V6.06
+# MyCar+ V6.07
 
-Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas, receitas, alertas técnicos e relatórios veiculares.
+Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas e indicadores de gestão veicular.
 
-## Identificação da versão
+## Demonstrativos
 
-- Aplicação/Web/PWA: **6.06**
-- Pacote npm: **6.6.0**
-- Android: `versionCode 606` / `versionName 6.06.0`
-- Cache PWA: `mycar-plus-v6-06`
+- **Relatório Executivo**: cálculos e indicadores produzidos localmente pelo MyCar+.
+- **Análise Inteligente Veicular**: interpretação por IA dos dados estruturados do Relatório Executivo, com evidências, limitações e plano de ação.
 
-## Consolidação V6.06
+A Análise Inteligente recebe indicadores em JSON, e não o HTML do relatório. A dica final é selecionada localmente em uma biblioteca revisada.
 
-- Seleção do veículo sem identificação duplicada e sem placa na página inicial.
-- Cartão final com o tempo de histórico no MyCar+.
-- Placa e histórico nos relatórios Executivo e por I.A.
-- Consumo dos relatórios com três casas decimais.
-- Logotipos dos relatórios e da tela Informações revisados.
-- Pacote-fonte limpo, mantendo apenas documentos atuais e arquivos operacionais.
-- Base inicial `data/MyCarPlus.xlsx` preservada.
+## Atualização
 
-## Atualização no Windows
+Mantenha `MYCAR_PLUS_V6_07_KEY.zip` e `ATUALIZAR_MYCAR_V6_07_KEY.bat` na pasta Downloads. O atualizador valida o pacote antes do backup, sincroniza Web/Android, executa o checklist novamente, compila o APK e somente então atualiza o GitHub.
 
-Coloque estes dois arquivos em `Downloads` e execute o BAT:
-
-- `MYCAR_PLUS_V6_06_KEY.zip`
-- `ATUALIZAR_MYCAR_V6_06_KEY.bat`
-
-O BAT cria backup, valida a fonte, remove resíduos antigos, sincroniza Web/Android, compila o APK, atualiza o GitHub e abre o Android Studio.
+Versões: APP 6.07 · npm 6.7.0 · Android 607 / 6.07.0 · cache mycar-plus-v6-07.

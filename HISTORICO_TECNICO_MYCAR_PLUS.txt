@@ -265,3 +265,16 @@ V6.06 - 04/08/2026
 - Atualizador reestruturado com checklist identificável antes e depois da cópia.
 - Removidos testes findstr com aspas aninhadas que causaram reprovação genérica.
 - Diagnóstico persistente e manifesto SHA-256 incluídos no pacote.
+
+============================================================
+V6.07 — ANÁLISE INTELIGENTE COM DADOS EXECUTIVOS
+============================================================
+- Relatório de IA renomeado para Análise Inteligente Veicular.
+- Objeto executive_report compartilhado com a IA em formato estruturado.
+- Inclusão de utilização, consumo, financeiro, rateio, manutenção, alertas, top itens e qualidade dos dados.
+- Remoção da anomalia por média global de despesas.
+- Evidência obrigatória para pontos de atenção e recomendações.
+- Bloqueio de duplicidade sem candidato exato.
+- Confiança calculada localmente.
+- Dica MyCar+ local e revisada ao final do documento.
+- APP 6.07; npm 6.7.0; Android 607 / 6.07.0; cache mycar-plus-v6-07.

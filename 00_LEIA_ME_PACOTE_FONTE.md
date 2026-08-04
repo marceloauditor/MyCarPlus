@@ -1,37 +1,17 @@
-# MyCar+ V6.06 — Pacote-fonte KEY
+# MyCar+ V6.07 — pacote fonte
 
-Este pacote contém a fonte consolidada do MyCar+ V6.06 para Web/PWA e Android, com checklist automático de montagem e diagnóstico.
+Este pacote contém a fonte oficial da V6.07, a camada Web, o projeto Android, o atualizador e o checklist de diagnóstico.
 
-## Atualização recomendada
+## Mudança principal
 
-1. Coloque `MYCAR_PLUS_V6_06_KEY_R2.zip` e `ATUALIZAR_MYCAR_V6_06_KEY_R2.bat` em **Downloads**.
-2. Feche o Android Studio antes da atualização.
-3. Execute o BAT.
-4. O pacote será extraído e validado antes de qualquer alteração.
-5. Consulte `Downloads\DIAGNOSTICO_MYCAR_V6_06.txt` se a execução for interrompida.
-6. O GitHub somente será atualizado depois da validação, sincronização e compilação do APK.
+A **Análise Inteligente Veicular** passou a receber os indicadores estruturados calculados para o Relatório Executivo. O aplicativo envia dados e evidências em JSON; não envia o HTML do relatório.
 
-## Preservação de dados
+Também foram adicionados filtro de evidências, bloqueio de hipóteses de duplicidade sem comprovação, confiança calculada localmente e uma Dica MyCar+ selecionada no próprio aplicativo.
 
-- A base inicial antiga em `data/MyCarPlus.xlsx` permanece no pacote.
-- A base existente no Firebase não é substituída quando já existe.
-- `.git`, `node_modules`, `android/local.properties` e configurações locais são preservados.
+## Instalação
 
-## Arquivos de diagnóstico incluídos
+1. Coloque o ZIP e o BAT V6.07 na pasta Downloads.
+2. Execute `ATUALIZAR_MYCAR_V6_07_KEY.bat`.
+3. Em caso de interrupção, envie o log e o diagnóstico gerados em Downloads.
 
-- `CHECKLIST_MONTAGEM_E_DIAGNOSTICO_V6_06.md`;
-- `EXECUTAR_CHECKLIST_MONTAGEM_V6_06.bat`;
-- `scripts/check-update-package.js`;
-- `MANIFEST_SHA256_V6_06.txt`;
-- `VALIDACAO_PACOTE_V6_06_KEY.txt`.
-
-## Identificação
-
-- Aplicação/Web/PWA: 6.06
-- package.json: 6.6.0
-- Android: versionCode 606 / versionName 6.06.0
-- Cache PWA: mycar-plus-v6-06
-
-## Revisão do atualizador
-
-Este pacote contém o atualizador V6.06 revisão R2, com limpeza por caminhos absolutos e diagnóstico CHK-CLEAN corrigido.
+O atualizador não envia alterações ao GitHub antes de validar a fonte e compilar o APK.
