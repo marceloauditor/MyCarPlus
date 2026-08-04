@@ -1,10 +1,23 @@
-CHECKLIST DE VALIDAÇÃO — MYCAR+ V5.87
+CHECKLIST DE VALIDAÇÃO FUNCIONAL — MYCAR+ V6.06
 
-[ ] Card da tela inicial exibe “Composição dos Grupos”.
-[ ] Não existe subtítulo ou texto sobreposto no cabeçalho do card.
-[ ] Grupos aparecem em ordem: Abastecimento, Administrativo, Manutenção e Receitas.
-[ ] Percentuais não exibem a expressão “das despesas”.
-[ ] Receitas são deduzidas do total.
-[ ] Rodapé apresenta Custo líquido.
-[ ] Tela inicial funciona nos temas claro e escuro.
-[ ] Botão Voltar do Android sai após dois toques na tela inicial.
+[ ] Cabeçalho, tela Informações e menu exibem a versão 6.06.
+[ ] Página inicial mostra o veículo apenas uma vez e não mostra a placa.
+[ ] Cartão final exibe “Histórico” na primeira linha e o tempo na segunda.
+[ ] Tempo de histórico é calculado a partir do primeiro lançamento do veículo.
+[ ] Relatório Executivo mostra placa, histórico e logotipo completo.
+[ ] Relatório por I.A. mostra placa, histórico e logotipo completo.
+[ ] Consumo nos relatórios usa três casas decimais.
+[ ] Tela Informações mostra o logotipo ao lado da imagem do desenvolvedor.
+[ ] Fallback do logotipo funciona sem deixar espaço vazio.
+[ ] Temas claro e escuro mantêm contraste e alinhamento.
+[ ] Base inicial data/MyCarPlus.xlsx permanece no pacote.
+[ ] Firebase existente é carregado sem ser substituído pela base inicial.
+[ ] Checklist prévio aprova o ZIP antes do backup.
+[ ] Checklist posterior aprova raiz, Web e Android.
+[ ] DIAGNOSTICO_MYCAR_V6_06.txt registra cada teste separadamente.
+[ ] Validação de coesão aprova 31 arquivos na cadeia raiz → www → Android.
+[ ] APK MYCAR_PLUS_V6_06_KEY_DEBUG.apk é gerado em Downloads.
+
+[ ] Atualizador exibe revisão R2 no log.
+[ ] Limpeza remove BAT e validação operacionais da V6.05 antes da cópia.
+[ ] CHK-CLEAN-001 aprova o projeto após a sincronização.

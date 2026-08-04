@@ -1,6 +1,0 @@
-MYCAR+ V5.83 KEY
-
-1. Corrigido o ciclo que impedia o botão Voltar do Android de sair pela tela inicial.
-2. Implementada confirmação em dois toques para sair.
-3. Reordenadas as seções do Relatório Executivo: Últimos lançamentos por grupo antes de Manutenções com alertas cadastrados.
-4. Atualizadas as versões Web/PWA e Android.

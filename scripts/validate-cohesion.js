@@ -28,8 +28,8 @@ const expected = {
   androidVersionName,
   versionCode: `${major}${minorDisplay}`,
   cache: `mycar-plus-v${major}-${minorDisplay}`,
-  batch: `ATUALIZAR_MYCAR_V${major}_${minorDisplay}_KEY.bat`,
-  zip: `MYCAR_PLUS_V${major}_${minorDisplay}_KEY.zip`,
+  batch: `ATUALIZAR_MYCAR_V${major}_${minorDisplay}_KEY_R2.bat`,
+  zip: `MYCAR_PLUS_V${major}_${minorDisplay}_KEY_R2.zip`,
 };
 const failures = [];
 
@@ -65,6 +65,26 @@ assert(html.includes(`<strong>Versão:</strong> ${expected.app}`), `Versão ${ex
 assert(new RegExp(`versionCode\\s+${expected.versionCode}\\b`).test(gradle), `versionCode deve ser ${expected.versionCode}.`);
 assert(gradle.includes(`versionName "${expected.androidVersionName}"`), `versionName deve ser ${expected.androidVersionName}.`);
 assert(sw.includes(expected.cache), `Cache PWA deve ser ${expected.cache}.`);
+
+// Consolidação V6.06.
+assert(!html.includes('class="home-vehicle-head compact"') && !html.includes('<small>Veículo</small>'), 'Identificação duplicada de veículo ainda aparece na página inicial.');
+assert(/class="mycar-history-card"/.test(app) && /<span>Histórico<\/span>/.test(app), 'Cartão final de histórico em duas linhas ausente.');
+assert(/function\s+formatHistoryDuration\s*\(/.test(app), 'Cálculo dinâmico do histórico do veículo ausente.');
+assert(/<b>Placa:<\/b>/.test(app) && /<b>Histórico no MyCar\+:<\/b>/.test(app), 'Placa e histórico não foram incluídos nos dois relatórios.');
+assert(/num\(value,\s*3\)/.test(app) && /num\(k\.fuel\.consumption_km_l,3\)/.test(app), 'Consumo dos relatórios deve usar três casas decimais.');
+assert(html.includes('class="about-identity-row"') && html.includes('class="about-app-logo"') && html.includes('about-logo.png?v=606') && html.includes("icon-192.png?v=606"), 'Logotipo resiliente ao lado do desenvolvedor ausente na tela Informações.');
+assert(styles.includes('.mycar-history-card') && /flex-direction:\s*column/.test(styles) && /white-space:\s*normal/.test(styles), 'Cartão de histórico não está configurado em duas linhas com quebra segura.');
+const reportLogoMatch = app.match(/REPORT_LOGO_DATA_URI\s*=\s*"data:image\/png;base64,([^"]+)"/);
+assert(Boolean(reportLogoMatch), 'Logotipo embutido dos relatórios ausente.');
+if (reportLogoMatch) {
+  const decodedLogo = Buffer.from(reportLogoMatch[1], 'base64');
+  assert(decodedLogo.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])), 'Logotipo embutido dos relatórios não é PNG válido.');
+  const officialLogo = fs.readFileSync(path.join(root, 'report-logo.png'));
+  assert(decodedLogo.equals(officialLogo), 'Logotipo embutido não corresponde ao report-logo.png oficial.');
+  assert(decodedLogo.length < 60000, 'Logotipo embutido não foi otimizado para compartilhamento seguro.');
+}
+assert(fs.existsSync(path.join(root, 'about-logo.png')), 'about-logo.png ausente.');
+assert(sw.includes('about-logo.png'), 'about-logo.png ausente do cache PWA.');
 
 // Exclusividade do novo modelo de alertas.
 assert(!/TECHNICAL_ITEMS|technicalParameters|alertHistory|Historico_Alertas|Parametros_Tecnicos|technicalKey|chave_tecnica/.test(app + db), 'O modelo antigo de alertas ainda está presente no código.');
@@ -223,7 +243,7 @@ assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 ex
 const syncedFiles = [
   'index.html','styles.css','report-manager.js','app.js','mycarplus-db.js','cloud.js','ai-logic.js',
   'firebase-config.js','jszip.min.js','manifest.webmanifest','package.json','package-lock.json','capacitor.config.json','sw.js','icon.svg',
-  'icon-16.png','icon-32.png','icon-48.png','icon-72.png','icon-96.png','icon-128.png','icon-144.png','icon-180.png','icon-192.png','icon-256.png','icon-384.png','icon-512.png','mycar-plus-logo.png','desenvolvedor.png',
+  'icon-16.png','icon-32.png','icon-48.png','icon-72.png','icon-96.png','icon-128.png','icon-144.png','icon-180.png','icon-192.png','icon-256.png','icon-384.png','icon-512.png','mycar-plus-logo.png','desenvolvedor.png','about-logo.png',
   'data/MyCarPlus.xlsx',
 ];
 for (const rel of syncedFiles) {

@@ -1,6 +1,0 @@
-VALIDAÇÃO DO PACOTE MYCAR+ V6.01 KEY
-- APP_VERSION: 6.01
-- Android versionCode: 601
-- Android versionName: 6.01.0
-- Cache Web: mycar-plus-v6-01
-- Menu lateral corrigido para Web e Android.

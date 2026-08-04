@@ -1,5 +1,0 @@
-MYCAR+ V5.85 KEY
-
-- Correção nativa do botão Voltar do Android.
-- Melhoria visual do card Composição dos custos.
-- Versão 5.85.0 / versionCode 585.

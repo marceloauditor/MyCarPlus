@@ -1,7 +1,0 @@
-MYCAR+ V5.78 KEY
-
-Correção visual da tela inicial:
-- MyCar Score ocupa a posição anterior de Composição dos custos;
-- Composição dos custos ocupa a posição inferior anterior do MyCar Score;
-- Utilização permanece mantida;
-- cálculos e dados não foram alterados.

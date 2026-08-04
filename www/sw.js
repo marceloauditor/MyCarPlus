@@ -1,4 +1,4 @@
-const CACHE = "mycar-plus-v6-05";
+const CACHE = "mycar-plus-v6-06";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -17,6 +17,7 @@ const APP_SHELL = [
   "icon-192.png",
   "icon-512.png",
   "desenvolvedor.png",
+  "about-logo.png",
   "data/MyCarPlus.xlsx",
 ];
 

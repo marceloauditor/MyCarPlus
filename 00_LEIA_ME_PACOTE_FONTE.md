@@ -1,25 +1,37 @@
-# MyCar+ V5.87 KEY — pacote-fonte oficial
+# MyCar+ V6.06 — Pacote-fonte KEY
 
-Pacote completo para atualização da versão Web/PWA e Android.
+Este pacote contém a fonte consolidada do MyCar+ V6.06 para Web/PWA e Android, com checklist automático de montagem e diagnóstico.
+
+## Atualização recomendada
+
+1. Coloque `MYCAR_PLUS_V6_06_KEY_R2.zip` e `ATUALIZAR_MYCAR_V6_06_KEY_R2.bat` em **Downloads**.
+2. Feche o Android Studio antes da atualização.
+3. Execute o BAT.
+4. O pacote será extraído e validado antes de qualquer alteração.
+5. Consulte `Downloads\DIAGNOSTICO_MYCAR_V6_06.txt` se a execução for interrompida.
+6. O GitHub somente será atualizado depois da validação, sincronização e compilação do APK.
+
+## Preservação de dados
+
+- A base inicial antiga em `data/MyCarPlus.xlsx` permanece no pacote.
+- A base existente no Firebase não é substituída quando já existe.
+- `.git`, `node_modules`, `android/local.properties` e configurações locais são preservados.
+
+## Arquivos de diagnóstico incluídos
+
+- `CHECKLIST_MONTAGEM_E_DIAGNOSTICO_V6_06.md`;
+- `EXECUTAR_CHECKLIST_MONTAGEM_V6_06.bat`;
+- `scripts/check-update-package.js`;
+- `MANIFEST_SHA256_V6_06.txt`;
+- `VALIDACAO_PACOTE_V6_06_KEY.txt`.
 
 ## Identificação
 
-- Aplicação: **5.87.0**
-- Android `versionCode`: **587**
-- Android `versionName`: **5.87.0**
-- Cache PWA: **mycar-plus-v5-87**
+- Aplicação/Web/PWA: 6.06
+- package.json: 6.6.0
+- Android: versionCode 606 / versionName 6.06.0
+- Cache PWA: mycar-plus-v6-06
 
-## Implantação da V5.87
+## Revisão do atualizador
 
-- título **Composição dos Grupos** no último card da tela inicial;
-- grupos em ordem alfabética: Abastecimento, Administrativo, Manutenção e Receitas;
-- remoção da expressão “das despesas” nos percentuais;
-- custo líquido calculado por despesas dos três grupos menos Receitas;
-- preservação da correção nativa do botão Voltar do Android.
-
-## Arquivos para atualização
-
-- `MYCAR_PLUS_V5_87_KEY.zip`
-- `ATUALIZAR_MYCAR_V5_87_KEY.bat`
-
-O BAT cria backup, atualiza a fonte, sincroniza Web e Android, valida a coesão, atualiza o GitHub, abre o Android Studio e gera o APK debug em Downloads.
+Este pacote contém o atualizador V6.06 revisão R2, com limpeza por caminhos absolutos e diagnóstico CHK-CLEAN corrigido.

@@ -1,8 +1,0 @@
-MYCAR+ V5.84 KEY
-
-ALTERAÇÃO IMPLEMENTADA
-- Quatro cartões totalizadores líquidos incluídos no Relatório Executivo.
-- Posição: após Receitas e antes de Despesas do período.
-- Bordas vermelhas aplicadas aos quatro cartões.
-- Fórmula: despesas dos grupos menos receitas.
-- Versão atualizada para 5.84.0 / Android 584.

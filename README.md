@@ -1,25 +1,29 @@
-# MyCar+ V5.89
+# MyCar+ V6.06
 
-Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas, receitas e alertas técnicos de veículos.
+Aplicativo Web/PWA e Android para controle de abastecimentos, manutenções, despesas administrativas, receitas, alertas técnicos e relatórios veiculares.
 
-## Versões
+## Identificação da versão
 
-- Aplicação: **5.89.0**
-- Android: `versionCode 589` / `versionName 5.89.0`
-- Cache PWA: `mycar-plus-v5-89`
+- Aplicação/Web/PWA: **6.06**
+- Pacote npm: **6.6.0**
+- Android: `versionCode 606` / `versionName 6.06.0`
+- Cache PWA: `mycar-plus-v6-06`
 
-## Melhorias da V5.89
+## Consolidação V6.06
 
-- Rateio por competência no valor de cada item de Manutenção e Administrativo.
-- Seção Custos por Competência no Relatório Executivo.
-- Campo Fornecedor renomeado para Pagador nos lançamentos de Receita.
+- Seleção do veículo sem identificação duplicada e sem placa na página inicial.
+- Cartão final com o tempo de histórico no MyCar+.
+- Placa e histórico nos relatórios Executivo e por I.A.
+- Consumo dos relatórios com três casas decimais.
+- Logotipos dos relatórios e da tela Informações revisados.
+- Pacote-fonte limpo, mantendo apenas documentos atuais e arquivos operacionais.
+- Base inicial `data/MyCarPlus.xlsx` preservada.
 
-- Título do último card da tela inicial alterado para **Composição dos Grupos**.
-- Removida a expressão “das despesas” dos percentuais.
-- Grupos apresentados em ordem alfabética: Abastecimento, Administrativo, Manutenção e Receitas.
-- Mantida a apuração líquida: Abastecimento + Administrativo + Manutenção − Receitas.
-- Mantida a correção nativa do botão Voltar do Android.
+## Atualização no Windows
 
-## Atualização
+Coloque estes dois arquivos em `Downloads` e execute o BAT:
 
-Execute `ATUALIZAR_MYCAR_V5_88_KEY.bat` com o ZIP na pasta Downloads.
+- `MYCAR_PLUS_V6_06_KEY.zip`
+- `ATUALIZAR_MYCAR_V6_06_KEY.bat`
+
+O BAT cria backup, valida a fonte, remove resíduos antigos, sincroniza Web/Android, compila o APK, atualiza o GitHub e abre o Android Studio.

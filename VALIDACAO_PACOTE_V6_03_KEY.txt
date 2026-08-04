@@ -1,7 +1,0 @@
-VALIDAÇÃO DO PACOTE MYCAR+ V6.03 KEY
-- APP_VERSION: 6.03
-- Tela Sobre: 6.03
-- Cabeçalho do menu: 6.03
-- Android versionCode: 603
-- Android versionName: 6.03.0
-- Cache Web: mycar-plus-v6-03

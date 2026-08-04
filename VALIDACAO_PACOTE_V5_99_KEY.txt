@@ -1,7 +1,0 @@
-VALIDAÇÃO DO PACOTE MYCAR+ V5.99 KEY
-- Versão da aplicação: 5.99
-- Android versionCode: 599
-- Android versionName: 5.99.0
-- Cache Web: mycar-plus-v5-99
-- Resumo do rateio: parcelas e total somente dentro do período
-- Camadas: raiz, www e Android sincronizadas

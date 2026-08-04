@@ -1,5 +1,5 @@
 MYCAR+ — HISTÓRICO TÉCNICO CONSOLIDADO
-Atualizado em 31/07/2026
+Atualizado em 04/08/2026
 
 V4 — Estrutura de dados e relatórios
 - Tratamento do dataset veicular, relatório executivo em PDF e gráficos dinâmicos.
@@ -239,3 +239,29 @@ Data: 02/08/2026
 - Ordem alfabética: Abastecimento, Administrativo, Manutenção e Receitas.
 - Removida a expressão “das despesas” dos percentuais.
 - Fórmula líquida preservada: despesas dos três grupos menos Receitas.
+
+VERSÃO 6.04 — CONSOLIDAÇÃO FINAL
+Data: 04/08/2026
+
+- Seleção do veículo sem identificação duplicada e sem placa na página inicial.
+- Cartão final com tempo de histórico calculado dinamicamente.
+- Placa e histórico incluídos nos relatórios Executivo e por I.A.
+- Consumo dos relatórios apresentado com três casas decimais.
+- Logotipo embutido dos relatórios corrigido.
+- Logotipo do aplicativo colocado ao lado da imagem do desenvolvedor.
+- Cache PWA atualizado para mycar-plus-v6-04.
+- Android atualizado para versionCode 604 e versionName 6.04.0.
+- Pacote-fonte limpo, com a base inicial antiga preservada.
+- BAT corrigido para validar a V6.04 em todas as camadas antes do GitHub.
+
+
+V6.05 - 04/08/2026
+- Correção definitiva do logotipo incorporado aos relatórios.
+- Histórico da tela inicial organizado em duas linhas.
+- Logotipo da tela Sobre com arquivo exclusivo, cache-busting e fallback.
+
+
+V6.06 - 04/08/2026
+- Atualizador reestruturado com checklist identificável antes e depois da cópia.
+- Removidos testes findstr com aspas aninhadas que causaram reprovação genérica.
+- Diagnóstico persistente e manifesto SHA-256 incluídos no pacote.

@@ -1,5 +1,0 @@
-MYCAR+ V5.96 KEY
-
-Base funcional do Relatório Executivo: V5.92.
-Correção: retirada da materialização individual de parcelas introduzida na V5.93.
-Cabeçalho: Opção A, com título colorido, versão compacta e indicadores por símbolo.

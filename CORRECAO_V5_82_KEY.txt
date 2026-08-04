@@ -1,9 +1,0 @@
-MYCAR+ V5.82 KEY
-
-CORREÇÕES IMPLANTADAS
-
-1. Valores das barras do Relatório Executivo em preto.
-2. Ação verde Incluir novo fornecedor ao final das listas dos quatro grupos.
-3. Ação verde Incluir novo item de manutenção ao final da lista.
-4. Ação verde Incluir novo item administrativo ao final da lista.
-5. Versão atualizada para 5.82.0 / Android 582.

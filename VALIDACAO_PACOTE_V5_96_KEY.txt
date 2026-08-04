@@ -1,8 +1,0 @@
-MYCAR+ V5.96 KEY
-
-[OK] Versão web 5.96.0
-[OK] Android versionCode 596 / versionName 5.96
-[OK] Rateio do relatório restaurado ao modelo estável da V5.92
-[OK] Cabeçalho Opção A aplicado
-[OK] Textos online/alerta removidos visualmente
-[OK] Menu preservado no canto esquerdo

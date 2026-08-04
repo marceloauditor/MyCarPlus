@@ -1,7 +1,0 @@
-VALIDAÇÃO DO PACOTE MYCAR+ V6.00 KEY
-- Versão da aplicação: 6.00
-- Android versionCode: 600
-- Android versionName: 6.00.0
-- Cache Web: mycar-plus-v6-00
-- Recurso novo: painel de participação dos combustíveis no Relatório Executivo.
-- Correção: validador preserva a nomenclatura 6.00 em BAT, ZIP, cache e Android.

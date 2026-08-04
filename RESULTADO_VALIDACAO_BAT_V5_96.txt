@@ -1,6 +1,0 @@
-ATUALIZAR_MYCAR_V5_96_KEY.bat
-[OK] Nome do ZIP esperado: MYCAR_PLUS_V5_96_KEY.zip
-[OK] Pasta interna esperada: MYCAR_PLUS_V5_96_KEY
-[OK] Versão: 5.96
-[OK] Sincronização Web e Android prevista
-[OK] Compilação APK debug prevista no computador Windows com Android SDK

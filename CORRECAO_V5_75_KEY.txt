@@ -1,7 +1,0 @@
-MYCAR+ V5.75 KEY
-
-1. Total consolidado em laranja no custo médio diário por grupo.
-2. Total consolidado em laranja no custo total por grupo.
-3. Padrão de período do último ano ajustado aos registros.
-4. Manual com capa, desenvolvedor, criação do sistema e data de geração.
-5. Layout responsivo sem truncamento dos metadados.

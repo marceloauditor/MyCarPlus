@@ -63,7 +63,6 @@ dialog{background:#071f33;color:var(--ink);border:1px solid #28506c;box-shadow:0
 .category-cost-table .net-cost-row th,.category-cost-table .net-cost-row td{background:#0a3a32;color:#7be3ad;border-top-color:#36a875}
 .about-card{overflow:hidden}
 .developer-photo{box-sizing:border-box;aspect-ratio:1/1;overflow:hidden;object-position:center center;flex:0 0 auto}
-.about-images{display:flex;align-items:center;justify-content:center;gap:18px;margin:0 auto 12px}.about-images .developer-photo{margin:0!important}.about-logo{width:96px;height:96px;object-fit:contain;box-sizing:border-box;padding:7px;border-radius:18px;background:#fff;border:1px solid #2e98e8;box-shadow:0 8px 22px #0005}@media(max-width:560px){.about-logo{width:82px;height:82px}.about-images{gap:14px}}
 
 /* Filtros, menu e ajuda — v4.7 */
 .header-menu-wrap{position:relative}.header-menu{position:fixed;z-index:1201;left:0;right:auto;top:0;bottom:0;width:min(86vw,320px);padding:calc(10px + env(safe-area-inset-top)) 10px calc(12px + env(safe-area-inset-bottom));background:#08243a;border:0;border-right:1px solid #28506c;border-radius:0 18px 18px 0;box-shadow:12px 0 38px #0009;max-height:100dvh;overflow-y:auto;overscroll-behavior:contain}.header-menu[hidden]{display:none}.header-menu-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 8px 10px;border-bottom:1px solid #28506c;margin-bottom:4px}.header-menu-head div{display:flex;flex-direction:column}.header-menu-head strong{color:#fff;font-size:1.05rem}.header-menu-head small{color:#86a9c0;font-size:.72rem}.header-menu-head #headerMenuClose{display:grid;place-items:center;width:40px;height:40px;padding:0;border-radius:50%;font-size:27px;line-height:1;background:#103a59;color:#fff;text-align:center}.header-menu-backdrop{position:fixed;z-index:1200;inset:0;background:#020a10b8}.header-menu-backdrop[hidden]{display:none}body.header-menu-open{overflow:hidden}.header-menu button{display:block;width:100%;height:auto;padding:11px 12px;border-radius:9px;text-align:left;font-size:14px;background:transparent;color:#eef6ff}.header-menu button:hover{background:#103a59}.menu-group-title{display:block;padding:10px 12px 4px;color:#86a9c0;font-size:.64rem;font-weight:850;letter-spacing:.12em}.menu-group-title:first-of-type{padding-top:7px}
@@ -973,7 +972,6 @@ html[data-theme="light"] .smart-dashboard-compact .insight-grid-composition-wide
 html[data-theme="light"] .smart-dashboard-compact .insight-grid-composition-wide h3{
   color:#5c7080!important;
 }
-.mycar-history-card{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:11px 14px;border:1px solid #31556e;border-radius:12px;background:#0b2940;color:#d8e9f6;white-space:nowrap}.mycar-history-card span{color:#a9c6da}.mycar-history-card strong{color:#fff}@media(max-width:390px){.mycar-history-card{font-size:.86rem;padding:10px 8px;gap:4px}}html[data-theme="light"] .mycar-history-card{background:#fff;border-color:#c6d6e1;color:#152c3f}html[data-theme="light"] .mycar-history-card span{color:#5c7080}html[data-theme="light"] .mycar-history-card strong{color:#152c3f}
 
 /* MyCar+ V5.82 — fluxo compacto de lançamentos e seletores em folha inferior */
 .entry-dialog-one-screen{width:min(96vw,590px);max-height:96dvh;border-radius:22px;overflow:hidden}
@@ -1137,4 +1135,40 @@ header{display:flex;align-items:center;gap:12px;min-width:0}
   .header-wordmark{font-size:21px!important}
   header .app-version{font-size:8px!important;padding:2px 4px!important}
   .home-cloud-status,.home-alert-indicator,#menuBtn{width:30px!important;height:30px!important}
+}
+
+
+/* V6.05 — histórico em duas linhas e identidade resiliente da tela Sobre */
+.mycar-history-card{
+  margin-top:10px;
+  padding:11px 12px;
+  border:1px solid #31556e;
+  border-radius:12px;
+  background:#0b2539;
+  color:#eef6ff;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:4px;
+  width:100%;
+  min-width:0;
+  white-space:normal;
+  overflow:hidden;
+  font-size:clamp(.72rem,2.8vw,.88rem);
+  line-height:1.25;
+}
+.mycar-history-card span{display:block;width:100%;font-weight:650;color:#b9d0df}
+.mycar-history-card strong{display:block;width:100%;max-width:100%;font-size:clamp(.86rem,3.2vw,1rem);color:#fff;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.about-identity-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:0 auto 10px}
+.about-identity-row .developer-photo{margin:0!important}
+.about-app-logo{display:block!important;width:104px;height:104px;max-width:34vw;max-height:34vw;object-fit:contain;object-position:center;border-radius:22px;background:#082b70;box-shadow:0 8px 22px rgba(0,0,0,.32);flex:0 0 auto;opacity:1!important;visibility:visible!important}
+html[data-theme="light"] .mycar-history-card{background:#fff!important;border-color:#c6d6e1!important;color:#152c3f!important}
+html[data-theme="light"] .mycar-history-card span{color:#5f7484!important}
+html[data-theme="light"] .mycar-history-card strong{color:#12395b!important}
+@media(max-width:390px){
+  .mycar-history-card{padding:9px 10px;gap:6px;font-size:.68rem}
+  .mycar-history-card strong{font-size:.76rem}
+  .about-identity-row{gap:12px}
+  .about-app-logo{width:82px;height:82px;border-radius:18px}
 }

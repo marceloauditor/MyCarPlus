@@ -1,7 +1,0 @@
-MYCAR+ V5.77 KEY
-
-Correção da tela inicial:
-- seis cartões principais na ordem aprovada;
-- Tendências imediatamente abaixo;
-- Composição, Utilização e MyCar Score mantidos na rolagem;
-- última distância e Destaques eliminados.
