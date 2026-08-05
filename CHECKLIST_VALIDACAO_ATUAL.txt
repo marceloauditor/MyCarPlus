@@ -1,14 +1,17 @@
-MYCAR+ V6.09 — CHECKLIST ATUAL
+MYCAR+ V6.10 R2 — CHECKLIST ATUAL
 
-[ ] APP_VERSION 6.09
-[ ] package.json e package-lock.json 6.9.0
-[ ] Android 609 / 6.09.0
-[ ] Cache mycar-plus-v6-09
-[ ] Dica MyCar+ com fundo branco puro #FFFFFF
-[ ] Categoria, título e texto em preto puro #000000
-[ ] Regra específica para temas claro e escuro
-[ ] Transparência, gradiente e filtros neutralizados
-[ ] Proteção inline no relatório exibido e compartilhado
-[ ] styles.css network-first e referências v=609
+[ ] APP_VERSION 6.10
+[ ] package.json e package-lock.json 6.10.0
+[ ] Android 610 / 6.10.0
+[ ] Cache mycar-plus-v6-10
+[ ] Revisão do pacote R2
+[ ] Motor único carregado antes do app.js
+[ ] Todas as fórmulas dos indicadores e artefatos centralizadas
+[ ] Dias corridos inclusivos
+[ ] Custo por km, dia e mês padronizados
+[ ] Consumo ponderado com duas casas
+[ ] Agregações e rateio centralizados
+[ ] BAT ASCII sem BOM e CRLF
+[ ] ZIP estruturalmente válido
 [ ] Raiz, Web e Android idênticos
-[ ] APK Debug compilado pelo BAT no computador do usuário
+[ ] Manifesto SHA-256 conferido

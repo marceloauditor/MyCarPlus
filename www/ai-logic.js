@@ -139,6 +139,7 @@ REGRAS OBRIGATÓRIAS:
 8. A prioridade deve decorrer do risco ou impacto evidenciado, nunca da posição na lista.
 9. A confiança é calculada pelo aplicativo em executive_report.confidence; não crie outra classificação.
 10. Abastecimentos incompletos entram nos custos, mas não no consumo em km/L.
+11. Ao mencionar consumo, apresente km/L com exatamente duas casas decimais. Mantenha os cálculos recebidos sem arredondamento intermediário.
 
 Retorne exclusivamente JSON válido, sem markdown, com estas chaves:
 executive_summary (string), fuel_analysis (string), cost_analysis (string),

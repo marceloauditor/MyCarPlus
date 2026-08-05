@@ -1,39 +1,40 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 chcp 65001 >nul
-title Atualizacao MyCar+ V6.09 KEY
+title Atualizacao MyCar+ V6.10 R2 KEY
 
-set "VERSAO=6.09"
-set "VERSAO_SEM_PONTO=609"
-set "ZIP_PREFIX=MYCAR_PLUS_V6_09_KEY"
-set "ZIP_ESPERADO=MYCAR_PLUS_V6_09_KEY.zip"
-set "PASTA_INTERNA=MYCAR_PLUS_V6_09_KEY"
+set "VERSAO=6.10"
+set "VERSAO_SEM_PONTO=610"
+set "REVISAO=R2"
+set "ZIP_PREFIX=MYCAR_PLUS_V6_10_R2_KEY"
+set "ZIP_ESPERADO=MYCAR_PLUS_V6_10_R2_KEY.zip"
+set "PASTA_INTERNA=MYCAR_PLUS_V6_10_R2_KEY"
 set "PROJETO=%USERPROFILE%\Documents\GitHub\MyCarPlus"
 set "DOWNLOADS=%USERPROFILE%\Downloads"
-set "WORKTEMP=%DOWNLOADS%\MYCAR_PLUS_V6_09_KEY_TEMP"
-set "LOG=%DOWNLOADS%\ATUALIZACAO_MYCAR_V6_09_KEY_LOG.txt"
-set "DIAGNOSTICO=%DOWNLOADS%\DIAGNOSTICO_MYCAR_V6_09.txt"
-set "APK_DESTINO=%DOWNLOADS%\MYCAR_PLUS_V6_09_KEY_DEBUG.apk"
+set "WORKTEMP=%DOWNLOADS%\MYCAR_PLUS_V6_10_R2_KEY_TEMP"
+set "LOG=%DOWNLOADS%\ATUALIZACAO_MYCAR_V6_10_R2_KEY_LOG.txt"
+set "DIAGNOSTICO=%DOWNLOADS%\DIAGNOSTICO_MYCAR_V6_10_R2.txt"
+set "APK_DESTINO=%DOWNLOADS%\MYCAR_PLUS_V6_10_R2_KEY_DEBUG.apk"
 set "STUDIO=C:\Program Files\Android\Android Studio\bin\studio64.exe"
 set "STAGE=INICIALIZACAO"
 set "MOTIVO=Falha nao identificada"
 set "MODIFICOU_PROJETO=0"
 
 >"%LOG%" echo ============================================================
->>"%LOG%" echo ATUALIZACAO MYCAR+ V6.09 KEY - DICA MYCAR COM FUNDO BRANCO E TEXTO PRETO
+>>"%LOG%" echo ATUALIZACAO MYCAR+ V6.10 R2 KEY - CENTRALIZACAO TOTAL DAS FORMULAS
 >>"%LOG%" echo Inicio: %DATE% %TIME%
 >>"%LOG%" echo Projeto: %PROJETO%
 >>"%LOG%" echo Diagnostico: %DIAGNOSTICO%
 >>"%LOG%" echo ============================================================
 
 >"%DIAGNOSTICO%" echo ============================================================
->>"%DIAGNOSTICO%" echo DIAGNOSTICO MYCAR+ V6.09
+>>"%DIAGNOSTICO%" echo DIAGNOSTICO MYCAR+ V6.10 R2
 >>"%DIAGNOSTICO%" echo Inicio: %DATE% %TIME%
 >>"%DIAGNOSTICO%" echo ============================================================
 
 echo.
 echo ============================================================
-echo ATUALIZACAO MYCAR+ V6.09 KEY - DICA MYCAR COM FUNDO BRANCO E TEXTO PRETO
+echo ATUALIZACAO MYCAR+ V6.10 R2 KEY - CENTRALIZACAO TOTAL DAS FORMULAS
 echo ============================================================
 
 set "ZIP=%DOWNLOADS%\%ZIP_ESPERADO%"
@@ -71,10 +72,16 @@ if not exist "%PROJETO%\package.json" (
 
 set "STAMP=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%"
 set "STAMP=%STAMP: =0%"
-set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V6_09_%STAMP%"
+set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V6_10_R2_%STAMP%"
 
 echo.
-echo [1/12] Extraindo o pacote sem alterar o projeto...
+echo [1/12] Validando e extraindo o pacote sem alterar o projeto...
+set "STAGE=VALIDACAO_ZIP"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; $a=[System.IO.Compression.ZipFile]::OpenRead('%ZIP%'); if($a.Entries.Count -lt 10){$a.Dispose(); exit 2}; $a.Dispose(); exit 0" >>"%LOG%" 2>&1
+if errorlevel 1 (
+  set "MOTIVO=ZIP invalido, incompleto ou corrompido"
+  goto :fim_erro
+)
 set "STAGE=EXTRACAO_ZIP"
 if exist "%WORKTEMP%" rmdir /S /Q "%WORKTEMP%"
 mkdir "%WORKTEMP%"
@@ -139,29 +146,33 @@ del /F /Q "%PROJETO%\CHECKLIST_MONTAGEM_E_DIAGNOSTICO_V*.md" >>"%LOG%" 2>&1
 del /F /Q "%PROJETO%\MANIFEST_SHA256_V*.txt" >>"%LOG%" 2>&1
 del /F /Q "%PROJETO%\EXECUTAR_CHECKLIST_MONTAGEM_V*.bat" >>"%LOG%" 2>&1
 for /d /r "%PROJETO%\android\app\src\main\java" %%D in (MYCAR_PLUS_V*_TEMP MYCAR_PLUS_V*_MASTER MYCAR_PLUS_V*_TREE MYCAR_PLUS_V*_KEY) do if exist "%%~fD" rmdir /S /Q "%%~fD" >>"%LOG%" 2>&1
-if exist "%PROJETO%\ATUALIZAR_MYCAR_V6_08_KEY.bat" (
-  set "MOTIVO=Limpeza controlada nao removeu ATUALIZAR_MYCAR_V6_08_KEY.bat"
+if exist "%PROJETO%\ATUALIZAR_MYCAR_V6_09_KEY.bat" (
+  set "MOTIVO=Limpeza controlada nao removeu ATUALIZAR_MYCAR_V6_09_KEY.bat"
   goto :fim_erro
 )
-if exist "%PROJETO%\VALIDACAO_PACOTE_V6_08_KEY.txt" (
-  set "MOTIVO=Limpeza controlada nao removeu VALIDACAO_PACOTE_V6_08_KEY.txt"
+if exist "%PROJETO%\ATUALIZAR_MYCAR_V6_10_KEY.bat" (
+  set "MOTIVO=Limpeza controlada nao removeu ATUALIZAR_MYCAR_V6_10_KEY.bat"
   goto :fim_erro
 )
-if exist "%PROJETO%\MANIFEST_SHA256_V6_08.txt" (
-  set "MOTIVO=Limpeza controlada nao removeu MANIFEST_SHA256_V6_08.txt"
+if exist "%PROJETO%\VALIDACAO_PACOTE_V6_09_KEY.txt" (
+  set "MOTIVO=Limpeza controlada nao removeu VALIDACAO_PACOTE_V6_09_KEY.txt"
+  goto :fim_erro
+)
+if exist "%PROJETO%\MANIFEST_SHA256_V6_09.txt" (
+  set "MOTIVO=Limpeza controlada nao removeu MANIFEST_SHA256_V6_09.txt"
   goto :fim_erro
 )
 echo [OK] Limpeza controlada concluida.
 
 echo.
-echo [5/12] Copiando a V6.09 para o projeto...
+echo [5/12] Copiando a V6.10 R2 para o projeto...
 set "STAGE=COPIA_FONTE"
 set "MODIFICOU_PROJETO=1"
 robocopy "%FONTE%" "%PROJETO%" /E /R:2 /W:2 ^
  /XD "%FONTE%\.git" "%FONTE%\node_modules" "%FONTE%\android\.gradle" "%FONTE%\android\build" "%FONTE%\android\app\build" "%FONTE%\android\capacitor-cordova-android-plugins\build" ^
  /XF "local.properties" "*_LOG.txt" >>"%LOG%"
 if errorlevel 8 (
-  set "MOTIVO=Falha ao copiar a fonte V6.09"
+  set "MOTIVO=Falha ao copiar a fonte V6.10 R2"
   goto :fim_erro
 )
 echo [OK] Fonte atualizada.
@@ -189,7 +200,7 @@ if errorlevel 1 (
   goto :fim_erro
 )
 :dependencias_prontas
-echo [OK] Dependencias disponíveis.
+echo [OK] Dependencias disponiveis.
 
 echo.
 echo [7/12] Sincronizando raiz, Web e Android...
@@ -255,7 +266,7 @@ set "STAGE=GITHUB"
 git add . >>"%LOG%" 2>&1
 git diff --cached --quiet
 if not errorlevel 1 goto :sem_commit
-git commit -m "Atualiza MyCar+ para V6.09 - dica branca e preta com protecao de tema e cache" >>"%LOG%" 2>&1
+git commit -m "Atualiza MyCar+ V6.10 R2 - centraliza formulas e corrige BAT CRLF" >>"%LOG%" 2>&1
 if errorlevel 1 (
   set "MOTIVO=Falha ao criar commit Git"
   goto :fim_erro
@@ -297,10 +308,10 @@ if exist "%STUDIO%" (
 
 if exist "%WORKTEMP%" rmdir /S /Q "%WORKTEMP%"
 >>"%LOG%" echo [OK] Atualizacao concluida em %DATE% %TIME%.
->>"%DIAGNOSTICO%" echo [RESULTADO][OK] Atualizacao V6.09 concluida.
+>>"%DIAGNOSTICO%" echo [RESULTADO][OK] Atualizacao V6.10 R2 concluida.
 echo.
 echo ============================================================
-echo ATUALIZACAO V6.09 CONCLUIDA COM SUCESSO
+echo ATUALIZACAO V6.10 R2 CONCLUIDA COM SUCESSO
 echo APK: %APK_DESTINO%
 echo Log: %LOG%
 echo Diagnostico: %DIAGNOSTICO%

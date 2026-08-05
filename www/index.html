@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="styles.css?v=609">
+<link rel="stylesheet" href="styles.css?v=610">
 </head>
 <body>
 <div id="splashScreen" class="splash-screen" aria-label="Carregando MyCar+">
@@ -28,7 +28,7 @@
 <div class="header-menu-wrap header-menu-leading">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
 <div id="headerMenu" class="header-menu" hidden>
-<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.09</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
+<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.10</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
 <small class="menu-group-title">OPERAÇÃO</small>
 <button data-menu-page="cadastros">⚙ Cadastros e parâmetros</button>
 <button data-menu-page="alertas">⚠ Alertas e manutenção</button>
@@ -49,7 +49,7 @@
 <div id="headerMenuBackdrop" class="header-menu-backdrop" hidden></div>
 <div class="header-brand-block">
 <div class="mycar-wordmark header-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></div>
-<span class="app-version" id="homeVersion">v6.09</span>
+<span class="app-version" id="homeVersion">v6.10</span>
 </div>
 <div class="header-actions">
 <button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="cloud-dot offline"></span></button>
@@ -263,20 +263,20 @@
 </div>
 <h3 class="chart-section-title">Composição dos custos</h3>
 <div class="chart-card">
-<h3>Custo por grupo e custo total por quilômetro (R$/km)</h3>
-<p class="chart-note">Cada grupo é apresentado separadamente e a barra laranja consolida os três custos do período.</p>
+<h3>Custos por quilômetro: grupos, receitas, bruto e líquido (R$/km)</h3>
+<p class="chart-note">As barras conciliam despesas, receitas, custo bruto e custo líquido pela distância válida do período.</p>
 <canvas id="chartCategoryKm">
 </canvas>
 </div>
 <div class="chart-card">
-<h3>Custo médio diário por grupo e total (R$/dia)</h3>
-<p class="chart-note">Valor de cada grupo dividido pelos dias abrangidos. A barra laranja apresenta o custo médio diário consolidado.</p>
+<h3>Custos diários: grupos, receitas, bruto e líquido (R$/dia)</h3>
+<p class="chart-note">As barras conciliam despesas, receitas, custo bruto e custo líquido pelos dias corridos inclusivos.</p>
 <canvas id="chartCategoryDay">
 </canvas>
 </div>
 <div class="chart-card">
-<h3>Custos por grupo e total consolidado (R$)</h3>
-<p class="chart-note">Apresenta os custos acumulados de cada grupo. A barra laranja corresponde ao somatório dos três grupos no período.</p>
+<h3>Valores: grupos, receitas, bruto e líquido (R$)</h3>
+<p class="chart-note">Apresenta despesas, receitas, custo bruto e custo líquido para conciliação com os indicadores.</p>
 <canvas id="chartCategoryTotal">
 </canvas>
 </div>
@@ -478,10 +478,10 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V6.09</h3>
+<h3>Manual de utilização — MyCar+ V6.10</h3>
 <p>Guia completo dos cadastros, lançamentos, rateios, indicadores, relatórios, gráficos, alertas, sincronização e proteção dos dados do veículo.</p>
 <details open><summary>1. Visão geral e veículo selecionado</summary><p>O MyCar+ organiza todas as informações por veículo. A seleção da tela inicial controla lançamentos, indicadores, relatórios, gráficos e alertas. Veículos ativos aceitam novos registros; veículos inativos preservam todo o histórico para consulta, mas não geram novos alertas vencidos. Inativar um veículo não exclui seus dados.</p></details>
-<details><summary>2. Painel inteligente</summary><p>O painel apresenta custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Abaixo ficam Tendências, MyCar Score, Utilização e Composição dos Grupos. Na composição, Abastecimento, Administrativo e Manutenção formam as despesas; Receitas aparecem separadamente e são subtraídas no Custo líquido.</p></details>
+<details><summary>2. Painel inteligente</summary><p>O painel apresenta indicadores históricos de custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Custos usam dias corridos inclusivos; o consumo usa apenas ciclos completos com litros e distância maiores que zero. Abaixo ficam Tendências, MyCar Score, Utilização e Composição dos Grupos. Na composição, Abastecimento, Administrativo e Manutenção formam as despesas; Receitas aparecem separadamente e são subtraídas no Custo líquido.</p></details>
 <details><summary>3. Central de Cadastros</summary><p>Cadastre, consulte, altere ou exclua veículos, itens, fornecedores, motoristas e formas de pagamento. Cada item pertence exclusivamente a Abastecimento, Manutenção, Administrativo ou Receita. As listas são apresentadas em ordem alfabética, respeitam o veículo selecionado quando aplicável e não permitem usar item de outro grupo.</p></details>
 <details><summary>4. Cadastro rápido</summary><p>Nos lançamentos, as listas de itens e fornecedores exibem ao final a ação verde “Incluir novo...”. O novo cadastro é criado no grupo correto sem perder o que já foi digitado. Motorista permite apenas selecionar um cadastro existente. Em Receita, o fornecedor é apresentado ao usuário como Pagador.</p></details>
 <details><summary>5. Regras gerais dos lançamentos</summary><p>Na guia Lançar, escolha Abastecimento, Manutenção, Administrativo, Receita ou Movimentos. Informe data, hodômetro, item, valor e os demais campos do grupo. Um movimento pode conter vários itens. O aplicativo preserva os dados preenchidos quando encontra erro e só conclui após validar os campos obrigatórios.</p></details>
@@ -494,7 +494,7 @@
 <details><summary>12. Movimentos</summary><p>Consulte, pesquise, altere ou exclua registros por data, descrição, item, grupo, fornecedor ou pagador. A edição de valor ou quantidade de meses recalcula o rateio. A exclusão do movimento também remove o rateio vinculado, sem afetar outros movimentos.</p></details>
 <details><summary>13. Alertas técnicos</summary><p>Use “Incluir Alerta” para programar manutenção por data, quilometragem ou ambos. O alerta pertence ao veículo e deve estar vinculado a um item cadastrado. É possível consultar, alterar e excluir. Excluir o alerta remove apenas a programação: o histórico real de manutenção é preservado.</p></details>
 <details><summary>14. Guia Relatórios e período</summary><p>O período padrão corresponde aos três meses anteriores e pode ser alterado ou limpo. O aplicativo ajusta datas fora do histórico disponível e informa o período efetivamente utilizado. Os botões geram Relatório Executivo, Análise Inteligente Veicular e arquivo XLSX para o veículo selecionado.</p></details>
-<details><summary>15. Relatório Executivo</summary><p>O documento é contínuo, sem quebras artificiais. Reúne identificação do veículo e período; indicadores de consumo geral, Etanol e Gasolina; indicadores financeiros realizados; totalizadores líquidos; despesas do período; Custos por Competência; leitura executiva; gráficos; últimos três lançamentos de cada grupo; e manutenções que possuem alertas cadastrados. Os botões permitem fechar, compartilhar e imprimir ou salvar em PDF.</p></details>
+<details><summary>15. Relatório Executivo</summary><p>O documento é contínuo, sem quebras artificiais. Reúne identificação do veículo e período; indicadores de consumo geral, Etanol e Gasolina; indicadores financeiros realizados; totalizadores líquidos; despesas do período; Custos por Competência; leitura executiva; gráficos; últimos três lançamentos de cada grupo; e manutenções que possuem alertas cadastrados. Os botões permitem fechar, compartilhar e imprimir ou salvar em PDF. Consumos são exibidos com duas casas decimais, mantendo precisão integral no cálculo.</p></details>
 <details><summary>16. Custos por Competência</summary><p>Esta seção substitui o valor integral dos itens rateados pelas parcelas incluídas no período do relatório. Itens não rateados e receitas entram integralmente. São mostrados custo líquido por km, diário, mensal e total, além do detalhamento do valor original, competências consideradas, valor apropriado e saldo futuro. A visão financeira realizada continua separada e preserva o valor efetivamente pago.</p></details>
 <details><summary>17. Análise Inteligente Veicular</summary><p>A análise usa os mesmos indicadores estruturados do Relatório Executivo, considera somente o veículo e o período escolhidos e depende de Internet. A IA interpreta evidências, limitações e tendências, enquanto os totais permanecem calculados pelo MyCar+. Ao final é apresentada uma Dica MyCar+ selecionada de uma biblioteca revisada do aplicativo. A análise não altera os lançamentos.</p></details>
 <details><summary>18. Relatório XLSX</summary><p>A exportação contém os cadastros, movimentos do período, campos de rateio e dados técnicos necessários à conferência. As competências são derivadas do item original; não são exportadas como movimentos fictícios. O arquivo serve para análise e auditoria, enquanto o backup JSON é o formato recomendado para restauração completa.</p></details>
@@ -516,10 +516,10 @@
 <div class="about-card">
 <div class="about-identity-row">
 <img class="developer-photo" src="desenvolvedor.png" alt="Marcelo Ribeiro, desenvolvedor do aplicativo MyCar+">
-<img class="about-app-logo" src="about-logo.png?v=609" alt="Logotipo do MyCar+" onerror="this.onerror=null;this.src='icon-192.png?v=609'">
+<img class="about-app-logo" src="about-logo.png?v=610" alt="Logotipo do MyCar+" onerror="this.onerror=null;this.src='icon-192.png?v=610'">
 </div>
 <h3 class="mycar-wordmark about-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></h3>
-<p><strong>Versão:</strong> 6.09</p>
+<p><strong>Versão:</strong> 6.10</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -1006,16 +1006,17 @@
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js">
 </script>
-<script src="firebase-config.js?v=609">
+<script src="firebase-config.js?v=610">
 </script>
-<script type="module" src="ai-logic.js?v=609">
+<script type="module" src="ai-logic.js?v=610">
 </script>
-<script src="mycarplus-db.js?v=609">
+<script src="mycarplus-db.js?v=610">
 </script>
-<script src="report-manager.js?v=609"></script>
-<script src="app.js?v=609">
+<script src="report-manager.js?v=610"></script>
+<script src="indicator-calculations.js?v=610"></script>
+<script src="app.js?v=610">
 </script>
-<script src="cloud.js?v=609">
+<script src="cloud.js?v=610">
 </script>
 </body>
 </html>

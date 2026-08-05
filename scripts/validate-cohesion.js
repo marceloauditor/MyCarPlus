@@ -3,6 +3,8 @@ const path = require('path');
 const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
+const revision = fs.existsSync(path.join(root, 'PACKAGE_REVISION.txt')) ? fs.readFileSync(path.join(root, 'PACKAGE_REVISION.txt'), 'utf8').trim() : '';
+const revisionTag = revision ? `_${revision}` : '';
 const packagePreview = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 const semver = String(packagePreview.version || '').trim();
 const match = semver.match(/^(\d+)\.(\d+)\.(\d+)$/);
@@ -28,8 +30,8 @@ const expected = {
   androidVersionName,
   versionCode: `${major}${minorDisplay}`,
   cache: `mycar-plus-v${major}-${minorDisplay}`,
-  batch: `ATUALIZAR_MYCAR_V${major}_${minorDisplay}_KEY.bat`,
-  zip: `MYCAR_PLUS_V${major}_${minorDisplay}_KEY.zip`,
+  batch: `ATUALIZAR_MYCAR_V${major}_${minorDisplay}${revisionTag}_KEY.bat`,
+  zip: `MYCAR_PLUS_V${major}_${minorDisplay}${revisionTag}_KEY.zip`,
 };
 const failures = [];
 
@@ -51,6 +53,7 @@ function hash(file) {
 const pkg = JSON.parse(read('package.json') || '{}');
 const app = read('app.js');
 const reportManager = read('report-manager.js');
+const indicatorCalc = read('indicator-calculations.js');
 const db = read('mycarplus-db.js');
 const html = read('index.html');
 const styles = read('styles.css');
@@ -59,6 +62,7 @@ const gradle = read('android/app/build.gradle');
 const batch = read(expected.batch);
 
 assert(pkg.version === expected.semver, `package.json deve estar em ${expected.semver}.`);
+assert(revision === 'R2', 'PACKAGE_REVISION.txt deve indicar R2.');
 assert(new RegExp(`APP_VERSION\\s*=\\s*["']${expected.app.replace('.', '\\.')}`).test(app), `APP_VERSION deve ser ${expected.app}.`);
 assert(html.includes(`v${expected.app}`), `Versão visível v${expected.app} ausente.`);
 assert(html.includes(`<strong>Versão:</strong> ${expected.app}`), `Versão ${expected.app} ausente na tela Sobre.`);
@@ -66,12 +70,31 @@ assert(new RegExp(`versionCode\\s+${expected.versionCode}\\b`).test(gradle), `ve
 assert(gradle.includes(`versionName "${expected.androidVersionName}"`), `versionName deve ser ${expected.androidVersionName}.`);
 assert(sw.includes(expected.cache), `Cache PWA deve ser ${expected.cache}.`);
 
-// Consolidação V6.09.
+assert(html.includes(`indicator-calculations.js?v=${expected.versionCode}`), 'Motor de indicadores não foi carregado antes do app.');
+const centralFunctions = [
+  'dashboardIndicators','financialIndicators','financialTotals','netCost','competenceNetCost','groupFinancialRows',
+  'sumValues','aggregateValuesBy','aggregateRecordsBy','aggregateSignedValuesBy','signedMovementValue',
+  'movementConsumption','latestFuelConsumption','consumptionSummary','detailedConsumptionSummary','fuelParticipation',
+  'aggregateFuelBy','categoryCostMetrics','valuesPerDistance','valuesPerDay','percentage','percentageChange',
+  'perDay','annualProjection','litersFromValuePrice','installmentPreview','allocationSchedule'
+];
+for (const name of centralFunctions) {
+  assert(new RegExp(`function\\s+${name}\\s*\\(`).test(indicatorCalc), `Função central ausente: ${name}.`);
+  assert(app.includes(`IndicatorCalc.${name}`), `app.js não consome a função central ${name}.`);
+}
+assert(/if \(format === "consumption"\) return num\(value, 2\)/.test(app), 'Gráficos de consumo não usam duas casas.');
+assert((app.match(/IndicatorCalc\.groupFinancialRows/g) || []).length >= 2, 'Relatório e IA não compartilham as médias por grupo.');
+assert((app.match(/IndicatorCalc\.allocationSchedule/g) || []).length >= 2, 'Relatório e IA não compartilham o rateio central.');
+assert(!/periodTotal\s*\/\s*inclusiveDays/.test(app), 'Média por grupo duplicada fora do motor central.');
+assert(!/periodGross\s*-\s*rateioOriginalInPeriod/.test(app), 'Custo por competência duplicado fora do motor central.');
+
+
+// Consolidação V6.10 — indicadores padronizados.
 assert(!html.includes('class="home-vehicle-head compact"') && !html.includes('<small>Veículo</small>'), 'Identificação duplicada de veículo ainda aparece na página inicial.');
 assert(/class="mycar-history-card"/.test(app) && /<span>Histórico<\/span>/.test(app), 'Cartão final de histórico em duas linhas ausente.');
 assert(/function\s+formatHistoryDuration\s*\(/.test(app), 'Cálculo dinâmico do histórico do veículo ausente.');
 assert(/<b>Placa:<\/b>/.test(app) && /<b>Histórico no MyCar\+:<\/b>/.test(app), 'Placa e histórico não foram incluídos nos dois relatórios.');
-assert(/num\(value,\s*3\)/.test(app) && /executive\.consumption\.general\.total_history\.consumption_km_l,3/.test(app), 'Consumo dos relatórios deve usar três casas decimais.');
+assert(/num\(value,\s*2\)/.test(app) && /executive\.consumption\.general\.total_history\.consumption_km_l,2/.test(app), 'Consumo dos relatórios e IA deve usar duas casas decimais.');
 assert(html.includes('class="about-identity-row"') && html.includes('class="about-app-logo"') && html.includes(`about-logo.png?v=${expected.versionCode}`) && html.includes(`icon-192.png?v=${expected.versionCode}`), 'Logotipo resiliente ao lado do desenvolvedor ausente na tela Informações.');
 assert(styles.includes('.mycar-history-card') && /flex-direction:\s*column/.test(styles) && /white-space:\s*normal/.test(styles), 'Cartão de histórico não está configurado em duas linhas com quebra segura.');
 const reportLogoMatch = app.match(/REPORT_LOGO_DATA_URI\s*=\s*"data:image\/png;base64,([^"]+)"/);
@@ -86,7 +109,7 @@ if (reportLogoMatch) {
 assert(fs.existsSync(path.join(root, 'about-logo.png')), 'about-logo.png ausente.');
 assert(sw.includes('about-logo.png'), 'about-logo.png ausente do cache PWA.');
 
-// Análise Inteligente Veicular V6.09.
+// Análise Inteligente Veicular V6.10.
 assert(/function\s+buildExecutiveIntelligenceData\s*\(/.test(app), 'Motor estruturado dos indicadores do Relatório Executivo não foi criado para a IA.');
 assert(/executive_report:\s*executiveReport/.test(app), 'Indicadores estruturados do Relatório Executivo não são enviados à IA.');
 assert(/schema_version:\s*2/.test(app), 'Schema 2 da Análise Inteligente ausente.');
@@ -112,7 +135,7 @@ assert(styles.includes('background-color:#fff!important') && styles.includes('ba
 assert(styles.includes('-webkit-text-fill-color:#000!important'), 'Dica MyCar+ sem proteção de texto preto no Android WebView.');
 assert(styles.includes('backdrop-filter:none!important'), 'Dica MyCar+ ainda permite efeito de transparência.');
 assert(sw.includes('url.pathname.endsWith("/styles.css")'), 'styles.css não usa atualização network-first.');
-assert(html.includes('styles.css?v=609') && html.includes('app.js?v=609'), 'Cache-busting visual V6.09 ausente.');
+assert(html.includes(`styles.css?v=${expected.versionCode}`) && html.includes(`app.js?v=${expected.versionCode}`) && html.includes(`indicator-calculations.js?v=${expected.versionCode}`), 'Cache-busting visual e motor de indicadores ausentes.');
 assert(!/ai-tip-card[^}]*#f8fbfd/i.test(app + styles), 'Cor quase branca antiga ainda aplicada à Dica MyCar+.');
 
 
@@ -153,12 +176,12 @@ assert(app.indexOf('MyCar Score') < app.indexOf('<h3>Composição dos Grupos</h3
 assert(/insight-metrics-six/.test(app + styles) && /max-height:720px/.test(styles), 'Modo compacto dos seis indicadores ausente.');
 
 // Gráficos, período efetivo, manual, tela Sobre e painel — versão atual.
-assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*item\.net\s*\/\s*bucket\.days\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero.');
+assert(/movementCount:\s*0/.test(app) && /movementCount\s*>\s*0\s*\?\s*IndicatorCalc\.perDay\(item\.net,\s*bucket\.days\)\s*:\s*null/.test(app), 'Custo médio diário ainda converte período sem movimento em zero ou está fora do motor central.');
 assert(/legendCols\s*=\s*w\s*<\s*460\s*\?\s*2/.test(app) && /name:"Custo líquido"/.test(app), 'Legenda responsiva do custo líquido ausente.');
 assert((html.match(/class="vehicle-static-summary"/g) || []).length >= 2 && styles.includes('.vehicle-static-summary'), 'Identificação compacta do veículo não foi aplicada a Relatórios e Gráficos.');
 assert(/slice\(0,5\)/.test(app) && html.includes('5 itens com maior valor acumulado'), 'Ranking não foi limitado aos 5 maiores itens.');
-assert(/consolidatedLabels\s*=\s*\[\.\.\.labels,\s*"Total dos custos"\]/.test(app) && /perKmLabels:\s*consolidatedLabels/.test(app), 'Barra consolidada Total dos custos ausente.');
-assert(/consolidatedColors\s*=\s*\["#246b9e",\s*"#246b9e",\s*"#246b9e",\s*"#f28b0c"\]/.test(app) && /perKmColors:\s*consolidatedColors/.test(app), 'Barra consolidada não está configurada em laranja.');
+assert(/labels = \[\.\.\.expenseLabels, "Receitas \(-\)", "Custo bruto", "Custo líquido"\]/.test(app) && /perKmLabels:\s*labels/.test(app), 'Conciliação de custos por km ausente.');
+assert(/colors = \["#246b9e", "#246b9e", "#246b9e", "#1f8a70", "#f28b0c", "#d94b4b"\]/.test(app) && /perKmColors:\s*colors/.test(app), 'Cores da conciliação financeira ausentes.');
 assert(/function\s+resolveEffectivePeriod\s*\(/.test(app) && /function\s+applyEffectivePeriodToFields\s*\(/.test(app), 'Tratamento centralizado do período efetivo ausente.');
 assert(/effectivePeriodMessage\(effective\)/.test(app) && /Período ajustado:/.test(app), 'Mensagem de ajuste do período aos registros ausente.');
 assert(/function\s+calculateNiceAxis\s*\(/.test(app) && /measureText\(label\)/.test(app), 'Escala adaptativa ou margem dinâmica do eixo Y ausente.');
@@ -173,9 +196,9 @@ assert(/labelIndexes,/.test(app) && /odometerMonthLabel/.test(app), 'Meses e ano
 assert(html.includes('<strong>Desenvolvedor:</strong>') && html.includes('class="about-developer-name"'), 'Nome cursivo do desenvolvedor ou dois-pontos ausente.');
 assert(/Segoe Script/.test(styles) && /about-developer-name[^}]*font-style:\s*italic/.test(styles), 'Fonte cursiva e itálica do desenvolvedor ausente.');
 assert(html.includes('<strong>Contato:</strong>') && html.includes('href="mailto:marcelo.auditortl@gmail.com"'), 'Contato com dois-pontos ou link mailto ausente.');
-assert(/perDayLabels:\s*consolidatedLabels/.test(app) && /perDayColors:\s*consolidatedColors/.test(app), 'Quarta barra laranja ausente no custo médio diário por grupo.');
-assert(/totalLabels:\s*consolidatedLabels/.test(app) && /totalValues:\s*\[\.\.\.totals,\s*totalCosts\]/.test(app), 'Quarta barra total ausente no custo total por grupo.');
-assert(html.includes('Custo médio diário por grupo e total') && html.includes('Custos por grupo e total consolidado'), 'Títulos dos gráficos consolidados não foram atualizados.');
+assert(/perDayLabels:\s*labels/.test(app) && /perDayColors:\s*colors/.test(app), 'Conciliação diária por grupo ausente.');
+assert(/totalLabels:\s*labels/.test(app) && /totalValues:\s*values/.test(app), 'Conciliação total por grupo ausente.');
+assert(html.includes('Custos diários: grupos, receitas, bruto e líquido') && html.includes('Valores: grupos, receitas, bruto e líquido'), 'Títulos dos gráficos conciliados não foram atualizados.');
 assert(/start\.setMonth\(start\.getMonth\(\) - 12\)/.test(app), 'Gráficos não usam o último ano como período padrão.');
 assert(html.includes('Padrão: período do último ano, ajustado aos registros disponíveis.'), 'Texto do período padrão anual ausente.');
 assert(!/<section class=\"manual-cover\">/.test(app) && /<main class=\"manual\">/.test(app), 'A capa separada do Manual de Ajuda ainda está presente.');
@@ -226,7 +249,7 @@ assert(/group === "RECEITA" \? "Pagador"/.test(app), 'Fornecedor não foi renome
 assert(/rateio_competencia_inicial/.test(db) && /rateio_valor_base_centavos/.test(db), 'Campos de rateio ausentes na exportação/importação XLSX.');
 assert(/net-totalizers \.net-totalizer\{border:2px solid var\(--red\)/.test(app), 'Bordas vermelhas dos totalizadores líquidos ausentes.');
 assert(app.indexOf('${financialCards}') < app.indexOf('${netTotalizerCards}') && app.indexOf('${netTotalizerCards}') < app.indexOf('Despesas do período'), 'Totalizadores líquidos devem ficar após Receitas e antes de Despesas do período.');
-assert(/periodNetDaily\s*=\s*periodNet\s*\/\s*inclusiveDays/.test(app) && /periodNetMonthly\s*=\s*periodNetDaily\s*\*\s*30\.44/.test(app), 'Cálculos diário e mensal do custo líquido não seguem a proposta aprovada.');
+assert(/periodIndicators = standardizedFinancialIndicators\(periodNet, periodStats\.km, inclusiveDays\)/.test(app) && /periodNetMonthly = periodIndicators\.monthlyCost/.test(app), 'Cálculos financeiro diário e mensal não usam o motor central.');
 assert(/chartCards = \[/.test(app) && /Cinco itens com maior valor acumulado/.test(app), 'Conjunto completo de gráficos do aplicativo ausente no Executivo.');
 assert(/slice\(0, 3\)/.test(app), 'Últimos lançamentos por grupo não estão limitados aos três mais recentes.');
 assert(app.indexOf('Últimos lançamentos por grupo') < app.indexOf('Manutenções com alertas cadastrados'), 'Últimos lançamentos por grupo devem aparecer antes das manutenções com alertas cadastrados.');
@@ -255,7 +278,7 @@ assert(/getOnBackPressedDispatcher\(\)\.addCallback/.test(mainActivity), 'Tratam
 assert(/finishAffinity\(\)/.test(mainActivity), 'Encerramento nativo do app Android ausente.');
 assert(/Pressione novamente para sair do MyCar\+\./.test(mainActivity), 'Confirmação nativa em dois toques ausente.');
 assert(/composition-cost-card/.test(app + styles) && /Composição dos Grupos/.test(app), 'Card Composição dos Grupos ausente.');
-assert(/label:\s*"Receitas"/.test(app) && /netCost\s*=\s*totalExpenses\s*-\s*totalIncome/.test(app), 'Receitas ou fórmula do custo líquido ausente.');
+assert(/label:\s*"Receitas"/.test(app) && /netCost\s*=\s*financialSummary\.net/.test(app), 'Receitas ou custo líquido centralizado ausente.');
 assert(!/% de dedução|>dedução</.test(app), 'A palavra “dedução” ainda aparece no card Composição dos Grupos.');
 assert(/label: "Abastecimento"[\s\S]*label: "Administrativo"[\s\S]*label: "Manutenção"/.test(app), 'Grupos do card não estão em ordem alfabética.');
 assert(!/% das despesas/.test(app), 'A observação “das despesas” ainda aparece no card.');
@@ -263,15 +286,22 @@ assert(/<span>Custo líquido<\/span>/.test(app) && /Nenhum lançamento financeir
 
 // BAT.
 assert(batch.includes(`set "VERSAO=${expected.app}"`), `BAT não está configurado para ${expected.app}.`);
+assert(batch.includes('set "REVISAO=R2"'), 'BAT não está identificado como R2.');
 assert(batch.includes(expected.zip), `BAT não procura o ZIP ${expected.zip}.`);
 assert(batch.includes('validate:cohesion'), 'BAT não executa a validação de coesão.');
 assert(!/powershell(?:\.exe)?[^\r\n]*-File/i.test(batch), 'BAT depende de PS1 externo.');
+const batchBytes = fs.readFileSync(path.join(root, expected.batch));
+assert(!(batchBytes[0] === 0xEF && batchBytes[1] === 0xBB && batchBytes[2] === 0xBF), 'BAT contém BOM UTF-8.');
+for (let index = 0; index < batchBytes.length; index += 1) {
+  if (batchBytes[index] === 0x0A) assert(index > 0 && batchBytes[index - 1] === 0x0D, `BAT contém LF sem CR na posição ${index}.`);
+}
+
 
 // A validação da versão atual verifica somente a coesão funcional.
 // A organizacao historica da pasta real nao e alterada por este script.
 
 const syncedFiles = [
-  'index.html','styles.css','report-manager.js','app.js','mycarplus-db.js','cloud.js','ai-logic.js',
+  'index.html','styles.css','report-manager.js','indicator-calculations.js','app.js','mycarplus-db.js','cloud.js','ai-logic.js',
   'firebase-config.js','jszip.min.js','manifest.webmanifest','package.json','package-lock.json','capacitor.config.json','sw.js','icon.svg',
   'icon-16.png','icon-32.png','icon-48.png','icon-72.png','icon-96.png','icon-128.png','icon-144.png','icon-180.png','icon-192.png','icon-256.png','icon-384.png','icon-512.png','mycar-plus-logo.png','desenvolvedor.png','about-logo.png',
   'data/MyCarPlus.xlsx',

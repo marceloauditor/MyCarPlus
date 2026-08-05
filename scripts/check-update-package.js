@@ -17,9 +17,9 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv);
 const root = path.resolve(String(args.root || path.resolve(__dirname, "..")));
 const mode = String(args.mode || "package").toLowerCase();
-const diagnostic = args.diagnostic ? path.resolve(String(args.diagnostic)) : path.join(root, "DIAGNOSTICO_MONTAGEM_V6_09.txt");
+const diagnostic = args.diagnostic ? path.resolve(String(args.diagnostic)) : path.join(root, "DIAGNOSTICO_MONTAGEM_V6_10_R2.txt");
 const logPath = args.log ? path.resolve(String(args.log)) : null;
-const expected = { app: "6.09", semver: "6.9.0", code: "609", name: "6.09.0", cache: "mycar-plus-v6-09" };
+const expected = { app: "6.10", semver: "6.10.0", code: "610", name: "6.10.0", cache: "mycar-plus-v6-10", revision: "R2" };
 const results = [];
 
 function sha(file) { return crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex"); }
@@ -50,17 +50,21 @@ check("CHK-ROOT-001", "Pasta raiz do pacote", () => { requireCond(fs.existsSync(
 check("CHK-FILES-001", "Arquivos essenciais", () => {
   const required = [
     "app.js", "ai-logic.js", "index.html", "styles.css", "package.json", "package-lock.json", "sw.js",
-    "report-logo.png", "about-logo.png", "data/MyCarPlus.xlsx", "android/app/build.gradle",
-    "scripts/sync-web-root.js", "scripts/validate-cohesion.js", "scripts/check-update-package.js",
-    "CHECKLIST_MONTAGEM_E_DIAGNOSTICO_V6_09.md", "MANIFEST_SHA256_V6_09.txt",
+    "report-logo.png", "about-logo.png", "indicator-calculations.js", "data/MyCarPlus.xlsx", "android/app/build.gradle",
+    "scripts/sync-web-root.js", "scripts/validate-cohesion.js", "scripts/validate-indicators.js", "scripts/validate-formula-centralization.js", "scripts/check-update-package.js",
+    "PACKAGE_REVISION.txt", "CHECKLIST_MONTAGEM_E_DIAGNOSTICO_V6_10_R2.md", "MANIFEST_SHA256_V6_10_R2.txt",
   ];
   const missing = required.filter((rel) => !exists(rel));
   requireCond(!missing.length, `ausentes: ${missing.join(", ")}`);
   return `${required.length} arquivos localizados`;
 });
 check("CHK-APP-001", "Versão do aplicativo", () => {
-  requireCond(/APP_VERSION\s*=\s*["']6\.09["']/.test(text("app.js")), 'APP_VERSION = "6.09" não localizado');
+  requireCond(/APP_VERSION\s*=\s*["']6\.10["']/.test(text("app.js")), 'APP_VERSION = "6.10" não localizado');
   return expected.app;
+});
+check("CHK-PACKAGE-001", "Revisão do pacote", () => {
+  requireCond(text("PACKAGE_REVISION.txt").trim() === expected.revision, `esperado ${expected.revision}`);
+  return expected.revision;
 });
 check("CHK-NPM-001", "Versão package.json", () => {
   const pkg = JSON.parse(text("package.json")); requireCond(pkg.version === expected.semver, `encontrada ${pkg.version}`); return pkg.version;
@@ -98,8 +102,8 @@ check("CHK-LOGO-002", "Logotipo Base64 dos relatórios", () => {
 });
 check("CHK-LOGO-003", "Logotipo da tela Sobre", () => {
   const html = text("index.html");
-  requireCond(html.includes("about-logo.png?v=609"), "referência principal ausente");
-  requireCond(html.includes("icon-192.png?v=609"), "fallback ausente");
+  requireCond(html.includes("about-logo.png?v=610"), "referência principal ausente");
+  requireCond(html.includes("icon-192.png?v=610"), "fallback ausente");
   return "principal e fallback configurados";
 });
 check("CHK-AI-001", "Indicadores do Relatório Executivo enviados à IA", () => {
@@ -145,13 +149,64 @@ check("CHK-AI-005", "Dica MyCar+ branca e preta em qualquer tema", () => {
   requireCond(styles.includes("-webkit-text-fill-color:#000!important"), "proteção de texto preto no WebView ausente");
   requireCond(styles.includes("backdrop-filter:none!important"), "efeito de transparência não foi neutralizado");
   requireCond(sw.includes('url.pathname.endsWith("/styles.css")'), "styles.css não está em atualização network-first");
-  requireCond(html.includes('styles.css?v=609') && html.includes('app.js?v=609'), "cache-busting V6.09 ausente");
+  requireCond(html.includes('styles.css?v=610') && html.includes('app.js?v=610'), "cache-busting V6.10 ausente");
   requireCond(!/ai-tip-card[^}]*#f8fbfd/i.test(app + styles), "azul quase branco antigo ainda aplicado à dica");
   return "branco #fff, preto #000, tema escuro e cache protegidos";
 });
+check("CHK-CALC-001", "Motor único de fórmulas", () => {
+  const app = text("app.js"), html = text("index.html"), calc = text("indicator-calculations.js");
+  requireCond(html.includes('indicator-calculations.js?v=610'), "motor não carregado no HTML");
+  requireCond(/const IndicatorCalc = window\.MyCarIndicators/.test(app), "app.js não usa o motor central");
+  const functions = [
+    "dashboardIndicators", "financialIndicators", "financialTotals", "netCost", "competenceNetCost",
+    "groupFinancialRows", "sumValues", "aggregateValuesBy", "aggregateRecordsBy", "aggregateSignedValuesBy",
+    "signedMovementValue", "movementConsumption", "latestFuelConsumption", "consumptionSummary",
+    "detailedConsumptionSummary", "fuelParticipation", "aggregateFuelBy", "categoryCostMetrics",
+    "valuesPerDistance", "valuesPerDay", "percentage", "percentageChange", "perDay",
+    "annualProjection", "litersFromValuePrice", "installmentPreview", "allocationSchedule",
+  ];
+  for (const name of functions) {
+    requireCond(new RegExp(`function\\s+${name}\\s*\\(`).test(calc), `função central ausente: ${name}`);
+    requireCond(app.includes(`IndicatorCalc.${name}`), `app.js não consome: ${name}`);
+  }
+  return `${functions.length} famílias de cálculo centralizadas`;
+});
+check("CHK-CALC-002", "Padronização financeira integral", () => {
+  const app = text("app.js"), calc = text("indicator-calculations.js");
+  requireCond(calc.includes("AVG_DAYS_PER_MONTH = 30.44"), "fator mensal 30,44 ausente");
+  requireCond(app.includes("IndicatorCalc.dashboardIndicators(ms, vehicles)"), "tela inicial não usa o resumo central");
+  requireCond((app.match(/IndicatorCalc\.groupFinancialRows/g) || []).length >= 2, "Relatório e IA não compartilham médias por grupo");
+  requireCond((app.match(/IndicatorCalc\.allocationSchedule/g) || []).length >= 2, "Relatório e IA não compartilham rateio");
+  requireCond(!/periodTotal\s*\/\s*inclusiveDays/.test(app), "média por grupo ainda duplicada");
+  requireCond(!/periodGross\s*-\s*rateioOriginalInPeriod/.test(app), "custo por competência ainda duplicado");
+  return "km, dia, mês, líquido, competência e rateio centralizados";
+});
+check("CHK-CALC-003", "Consumo centralizado com duas casas", () => {
+  const app = text("app.js"), logic = text("ai-logic.js"), calc = text("indicator-calculations.js");
+  requireCond(/movementConsumption\s*\(/.test(calc) && /validFuelCycles\s*\(/.test(calc), "regras centrais de consumo ausentes");
+  requireCond(app.includes("IndicatorCalc.latestFuelConsumption"), "último consumo não usa motor central");
+  requireCond(app.includes("IndicatorCalc.consumptionSummary") && app.includes("IndicatorCalc.detailedConsumptionSummary"), "resumos de consumo não centralizados");
+  requireCond(app.includes("IndicatorCalc.aggregateFuelBy"), "consumo por combustível não centralizado");
+  requireCond(/num\(value, 2\)/.test(app) && /consumption_km_l,2/.test(app), "consumo visível não está em duas casas");
+  requireCond(logic.includes("exatamente duas casas decimais"), "IA não recebeu regra de duas casas");
+  return "precisão interna integral, ciclos válidos e exibição em 2 casas";
+});
+check("CHK-CALC-004", "Conciliação dos gráficos", () => {
+  const app = text("app.js"), html = text("index.html");
+  requireCond(app.includes('"Receitas (-)", "Custo bruto", "Custo líquido"'), "barras de conciliação ausentes");
+  requireCond(app.includes("IndicatorCalc.valuesPerDistance") && app.includes("IndicatorCalc.valuesPerDay"), "gráficos não usam taxas centrais");
+  requireCond(html.includes("grupos, receitas, bruto e líquido"), "títulos dos gráficos não foram esclarecidos");
+  return "despesas, receitas, bruto e líquido";
+});
+check("CHK-CALC-005", "Auditoria contra fórmulas duplicadas", () => {
+  const script = path.join(root, "scripts/validate-formula-centralization.js");
+  const result = require("child_process").spawnSync(process.execPath, [script], { cwd: root, encoding: "utf8" });
+  requireCond(result.status === 0, (result.stderr || result.stdout || "auditoria reprovada").trim());
+  return "scanner de duplicidade aprovado";
+});
 check("CHK-SYNC-001", "Coesão raiz, Web e Android", () => {
   const files = [
-    "index.html", "styles.css", "report-manager.js", "app.js", "mycarplus-db.js", "cloud.js", "ai-logic.js",
+    "index.html", "styles.css", "report-manager.js", "indicator-calculations.js", "app.js", "mycarplus-db.js", "cloud.js", "ai-logic.js",
     "firebase-config.js", "jszip.min.js", "manifest.webmanifest", "package.json", "package-lock.json", "capacitor.config.json", "sw.js", "icon.svg",
     "icon-16.png", "icon-32.png", "icon-48.png", "icon-72.png", "icon-96.png", "icon-128.png", "icon-144.png", "icon-180.png", "icon-192.png", "icon-256.png", "icon-384.png", "icon-512.png",
     "mycar-plus-logo.png", "desenvolvedor.png", "about-logo.png", "data/MyCarPlus.xlsx",
@@ -161,7 +216,7 @@ check("CHK-SYNC-001", "Coesão raiz, Web e Android", () => {
 });
 check("CHK-MANIFEST-001", "Manifesto SHA-256", () => {
   if (mode === "installed") return "dispensado após sincronização";
-  const lines = text("MANIFEST_SHA256_V6_09.txt").split(/\r?\n/).filter(Boolean).filter((line) => !line.startsWith("#"));
+  const lines = text("MANIFEST_SHA256_V6_10_R2.txt").split(/\r?\n/).filter(Boolean).filter((line) => !line.startsWith("#"));
   requireCond(lines.length > 10, "manifesto vazio ou incompleto");
   for (const line of lines) {
     const match = line.match(/^([a-f0-9]{64})\s+\*(.+)$/i);
@@ -172,27 +227,37 @@ check("CHK-MANIFEST-001", "Manifesto SHA-256", () => {
   }
   return `${lines.length} hashes conferidos`;
 });
-check("CHK-BAT-001", "BAT V6.09 dentro do pacote", () => {
-  const rel = "ATUALIZAR_MYCAR_V6_09_KEY.bat";
+check("CHK-BAT-001", "BAT V6.10 R2 dentro do pacote", () => {
+  const rel = "ATUALIZAR_MYCAR_V6_10_R2_KEY.bat";
   requireCond(exists(rel), `${rel} ausente`);
   const bat = text(rel);
-  requireCond(bat.includes('set "VERSAO=6.09"'), "variável VERSAO incorreta");
+  requireCond(bat.includes('set "VERSAO=6.10"'), "variável VERSAO incorreta");
   requireCond(bat.includes("check-update-package.js"), "checklist automático não chamado");
   requireCond(!/findstr\s+\/C:/i.test(bat), "findstr legado ainda presente");
   requireCond(!bat.includes('for %%P in ('), "limpeza antiga baseada em FOR ainda presente");
-  return "checklist Node ativo e limpeza por caminho absoluto";
+  requireCond(bat.includes('set "REVISAO=R2"'), "revisão R2 ausente no BAT");
+  requireCond(bat.includes("MYCAR_PLUS_V6_10_R2_KEY.zip"), "ZIP R2 não configurado");
+  const bytes = fs.readFileSync(path.join(root, rel));
+  requireCond(bytes[0] !== 0xEF || bytes[1] !== 0xBB || bytes[2] !== 0xBF, "BAT contém BOM UTF-8");
+  for (let index = 0; index < bytes.length; index += 1) {
+    if (bytes[index] === 0x0A) requireCond(index > 0 && bytes[index - 1] === 0x0D, `LF sem CR na posição ${index}`);
+  }
+  return "ASCII sem BOM, CRLF íntegro, checklist Node e limpeza absoluta";
 });
 check("CHK-CLEAN-001", "Ausência de resíduos operacionais antigos", () => {
-  const forbidden = ["ATUALIZAR_MYCAR_V6_08_KEY.bat", "VALIDACAO_PACOTE_V6_08_KEY.txt", "MANIFEST_SHA256_V6_08.txt"];
+  const forbidden = [
+    "ATUALIZAR_MYCAR_V6_09_KEY.bat", "VALIDACAO_PACOTE_V6_09_KEY.txt", "MANIFEST_SHA256_V6_09.txt",
+    "ATUALIZAR_MYCAR_V6_10_KEY.bat", "VALIDACAO_PACOTE_V6_10_KEY.txt", "MANIFEST_SHA256_V6_10.txt",
+  ];
   const found = forbidden.filter(exists);
   requireCond(!found.length, `${mode === "installed" ? "limpeza controlada não removeu" : "resíduos no pacote"}: ${found.join(", ")}`);
-  return mode === "installed" ? "limpeza controlada confirmada no projeto" : "pacote sem artefatos operacionais da V6.08";
+  return mode === "installed" ? "limpeza controlada confirmada no projeto" : "pacote sem artefatos operacionais da V6.09";
 });
 
 const failed = results.filter((result) => !result.ok);
 const lines = [
   "============================================================",
-  "DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.09",
+  "DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.10 R2",
   `Data: ${new Date().toLocaleString("pt-BR")}`,
   `Modo: ${mode}`,
   `Raiz: ${root}`,

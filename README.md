@@ -1,23 +1,17 @@
-# MyCar+ V6.09
+# MyCar+ V6.10 R2
 
-Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas e indicadores de gestão veicular.
-
-## Demonstrativos
-
-- **Relatório Executivo**: cálculos e indicadores produzidos localmente pelo MyCar+.
-- **Análise Inteligente de Gestão Veicular**: interpretação por IA dos dados estruturados do Relatório Executivo, com evidências, limitações, plano de ação e Dica MyCar+.
+Aplicativo Web/PWA e Android para controle de consumo, manutenção, despesas administrativas e receitas do veículo.
 
 ## Atualização
 
-Mantenha `MYCAR_PLUS_V6_09_KEY.zip` e `ATUALIZAR_MYCAR_V6_09_KEY.bat` juntos na pasta Downloads. O atualizador valida o pacote antes do backup, sincroniza Web/Android, executa o checklist novamente, compila o APK e somente então atualiza o GitHub.
+Mantenha `MYCAR_PLUS_V6_10_R2_KEY.zip` e `ATUALIZAR_MYCAR_V6_10_R2_KEY.bat` juntos na pasta Downloads. O atualizador valida a integridade do ZIP, cria backup, sincroniza Web/Android, testa as fórmulas, compila o APK e somente então atualiza o GitHub.
 
-Versões: APP 6.09 · npm 6.9.0 · Android 609 / 6.09.0 · cache mycar-plus-v6-09.
+Versões: APP 6.10 · npm 6.10.0 · Android 610 / 6.10.0 · cache `mycar-plus-v6-10` · revisão do pacote R2.
 
-## Ajustes V6.09
+## Ajustes V6.10 R2
 
-- Fundo da Dica MyCar+ em branco puro (`#FFFFFF`).
-- Categoria, título e texto em preto puro (`#000000`).
-- Mesma aparência nos temas claro e escuro.
-- Proteção aplicada à tela, impressão e compartilhamento.
-- Neutralização de transparência, gradiente, filtros e inversão de texto do Android WebView.
-- Atualização network-first do `styles.css` e cache-busting `v=609`.
+- Centralização integral das fórmulas dos indicadores e artefatos em `indicator-calculations.js`.
+- Custos por km, dia e mês; custo líquido; competência; projeções; rateio; consumo; litros; participação e agregações por combustível usam o mesmo motor.
+- Consumo exibido com duas casas, mantendo precisão interna.
+- BAT regravado em ASCII sem BOM e CRLF.
+- ZIP testado estruturalmente antes da extração e antes de qualquer alteração no projeto.
