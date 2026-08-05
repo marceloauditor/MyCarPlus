@@ -17,9 +17,9 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv);
 const root = path.resolve(String(args.root || path.resolve(__dirname, "..")));
 const mode = String(args.mode || "package").toLowerCase();
-const diagnostic = args.diagnostic ? path.resolve(String(args.diagnostic)) : path.join(root, "DIAGNOSTICO_MONTAGEM_V6_07.txt");
+const diagnostic = args.diagnostic ? path.resolve(String(args.diagnostic)) : path.join(root, "DIAGNOSTICO_MONTAGEM_V6_08.txt");
 const logPath = args.log ? path.resolve(String(args.log)) : null;
-const expected = { app: "6.07", semver: "6.7.0", code: "607", name: "6.07.0", cache: "mycar-plus-v6-07" };
+const expected = { app: "6.08", semver: "6.8.0", code: "608", name: "6.08.0", cache: "mycar-plus-v6-08" };
 const results = [];
 
 function sha(file) { return crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex"); }
@@ -52,14 +52,14 @@ check("CHK-FILES-001", "Arquivos essenciais", () => {
     "app.js", "ai-logic.js", "index.html", "styles.css", "package.json", "package-lock.json", "sw.js",
     "report-logo.png", "about-logo.png", "data/MyCarPlus.xlsx", "android/app/build.gradle",
     "scripts/sync-web-root.js", "scripts/validate-cohesion.js", "scripts/check-update-package.js",
-    "CHECKLIST_MONTAGEM_E_DIAGNOSTICO_V6_07.md", "MANIFEST_SHA256_V6_07.txt",
+    "CHECKLIST_MONTAGEM_E_DIAGNOSTICO_V6_08.md", "MANIFEST_SHA256_V6_08.txt",
   ];
   const missing = required.filter((rel) => !exists(rel));
   requireCond(!missing.length, `ausentes: ${missing.join(", ")}`);
   return `${required.length} arquivos localizados`;
 });
 check("CHK-APP-001", "Versão do aplicativo", () => {
-  requireCond(/APP_VERSION\s*=\s*["']6\.07["']/.test(text("app.js")), 'APP_VERSION = "6.07" não localizado');
+  requireCond(/APP_VERSION\s*=\s*["']6\.08["']/.test(text("app.js")), 'APP_VERSION = "6.08" não localizado');
   return expected.app;
 });
 check("CHK-NPM-001", "Versão package.json", () => {
@@ -98,8 +98,8 @@ check("CHK-LOGO-002", "Logotipo Base64 dos relatórios", () => {
 });
 check("CHK-LOGO-003", "Logotipo da tela Sobre", () => {
   const html = text("index.html");
-  requireCond(html.includes("about-logo.png?v=607"), "referência principal ausente");
-  requireCond(html.includes("icon-192.png?v=607"), "fallback ausente");
+  requireCond(html.includes("about-logo.png?v=608"), "referência principal ausente");
+  requireCond(html.includes("icon-192.png?v=608"), "fallback ausente");
   return "principal e fallback configurados";
 });
 check("CHK-AI-001", "Indicadores do Relatório Executivo enviados à IA", () => {
@@ -125,6 +125,27 @@ check("CHK-AI-003", "Identidade e dica da Análise Inteligente", () => {
   requireCond(/<small>Status de manutenção<\/small>/.test(app), "status de manutenção ausente");
   return "nome diferenciado, dica local e status técnico ativos";
 });
+check("CHK-AI-004", "Análise sempre completa sem seletor", () => {
+  const app = text("app.js"), html = text("index.html"), logic = text("ai-logic.js");
+  requireCond(!html.includes('id="aiType"'), "seletor aiType ainda presente");
+  requireCond(!html.includes("Tipo de análise") && !html.includes("Análise desejada"), "cartão de tipo ainda presente");
+  requireCond(!app.includes('$("#aiType")') && !app.includes("analysis_type: analysisType"), "leitura dinâmica do tipo ainda presente");
+  requireCond(!logic.includes("FOCO SOLICITADO") && !logic.includes("focusNames"), "prompt por foco ainda presente");
+  requireCond(logic.includes("A análise é sempre completa"), "regra de análise completa ausente");
+  requireCond(/analysis_scope:\s*"completa"/.test(app), "escopo completo não fixado");
+  return "seletor removido e escopo completo fixo";
+});
+check("CHK-AI-005", "Legibilidade da Dica MyCar+", () => {
+  const app = text("app.js"), styles = text("styles.css");
+  for (const content of [app, styles]) {
+    requireCond(content.includes("background:#f8fbfd!important"), "fundo opaco explícito ausente");
+    requireCond(content.includes("color:#111827!important"), "cor principal escura ausente");
+    requireCond(content.includes("color:#111!important"), "título preto ausente");
+    requireCond(content.includes("color:#1f2937!important"), "texto preto ausente");
+    requireCond(content.includes("color-scheme:light"), "proteção contra inversão de tema ausente");
+  }
+  return "cores explícitas na tela e no relatório compartilhado";
+});
 check("CHK-SYNC-001", "Coesão raiz, Web e Android", () => {
   const files = [
     "index.html", "styles.css", "report-manager.js", "app.js", "mycarplus-db.js", "cloud.js", "ai-logic.js",
@@ -137,7 +158,7 @@ check("CHK-SYNC-001", "Coesão raiz, Web e Android", () => {
 });
 check("CHK-MANIFEST-001", "Manifesto SHA-256", () => {
   if (mode === "installed") return "dispensado após sincronização";
-  const lines = text("MANIFEST_SHA256_V6_07.txt").split(/\r?\n/).filter(Boolean).filter((line) => !line.startsWith("#"));
+  const lines = text("MANIFEST_SHA256_V6_08.txt").split(/\r?\n/).filter(Boolean).filter((line) => !line.startsWith("#"));
   requireCond(lines.length > 10, "manifesto vazio ou incompleto");
   for (const line of lines) {
     const match = line.match(/^([a-f0-9]{64})\s+\*(.+)$/i);
@@ -148,27 +169,27 @@ check("CHK-MANIFEST-001", "Manifesto SHA-256", () => {
   }
   return `${lines.length} hashes conferidos`;
 });
-check("CHK-BAT-001", "BAT V6.07 dentro do pacote", () => {
-  const rel = "ATUALIZAR_MYCAR_V6_07_KEY.bat";
+check("CHK-BAT-001", "BAT V6.08 dentro do pacote", () => {
+  const rel = "ATUALIZAR_MYCAR_V6_08_KEY.bat";
   requireCond(exists(rel), `${rel} ausente`);
   const bat = text(rel);
-  requireCond(bat.includes('set "VERSAO=6.07"'), "variável VERSAO incorreta");
+  requireCond(bat.includes('set "VERSAO=6.08"'), "variável VERSAO incorreta");
   requireCond(bat.includes("check-update-package.js"), "checklist automático não chamado");
   requireCond(!/findstr\s+\/C:/i.test(bat), "findstr legado ainda presente");
   requireCond(!bat.includes('for %%P in ('), "limpeza antiga baseada em FOR ainda presente");
   return "checklist Node ativo e limpeza por caminho absoluto";
 });
 check("CHK-CLEAN-001", "Ausência de resíduos operacionais antigos", () => {
-  const forbidden = ["ATUALIZAR_MYCAR_V6_06_KEY_R2.bat", "VALIDACAO_PACOTE_V6_06_KEY.txt", "MANIFEST_SHA256_V6_06.txt"];
+  const forbidden = ["ATUALIZAR_MYCAR_V6_07_KEY.bat", "VALIDACAO_PACOTE_V6_07_KEY.txt", "MANIFEST_SHA256_V6_07.txt"];
   const found = forbidden.filter(exists);
   requireCond(!found.length, `${mode === "installed" ? "limpeza controlada não removeu" : "resíduos no pacote"}: ${found.join(", ")}`);
-  return mode === "installed" ? "limpeza controlada confirmada no projeto" : "pacote sem artefatos operacionais da V6.06";
+  return mode === "installed" ? "limpeza controlada confirmada no projeto" : "pacote sem artefatos operacionais da V6.07";
 });
 
 const failed = results.filter((result) => !result.ok);
 const lines = [
   "============================================================",
-  "DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.07",
+  "DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.08",
   `Data: ${new Date().toLocaleString("pt-BR")}`,
   `Modo: ${mode}`,
   `Raiz: ${root}`,

@@ -124,17 +124,9 @@ window.mycarAiAnalyze = async (indicators) => {
   if (initializationError) return localFallbackReport(indicators, initializationError.message);
   if (!model) return localFallbackReport(indicators, "Firebase AI Logic não inicializado.");
 
-  const focusNames = {
-    completa: "análise completa",
-    combustivel: "combustível e consumo",
-    custos: "custos, despesas e rateios",
-    manutencao: "manutenções e alertas",
-    fornecedores: "qualidade cadastral de fornecedores",
-  };
-  const focus = focusNames[indicators?.analysis_type] || "análise completa";
   const prompt = `Você é um analista de gestão veicular. Responda em português do Brasil, com linguagem objetiva e prudente.
 Os dados em executive_report são os mesmos indicadores estruturados usados pelo Relatório Executivo do MyCar+. Use-os como fonte principal e não recalcule totais por métodos diferentes.
-FOCO SOLICITADO: ${focus}. Nas seções fora do foco, seja breve.
+A análise é sempre completa e deve abordar utilização, combustível, custos, rateios, manutenção, alertas, fornecedores, qualidade dos dados, recomendações e limitações.
 
 REGRAS OBRIGATÓRIAS:
 1. Use somente números, fatos e relações presentes nos indicadores. Não invente diagnóstico mecânico, causa, intenção, competência, parcela ou vigência.

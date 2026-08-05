@@ -278,3 +278,9 @@ V6.07 — ANÁLISE INTELIGENTE COM DADOS EXECUTIVOS
 - Confiança calculada localmente.
 - Dica MyCar+ local e revisada ao final do documento.
 - APP 6.07; npm 6.7.0; Android 607 / 6.07.0; cache mycar-plus-v6-07.
+
+
+V6.08 — 04/08/2026
+- Removido o seletor de tipo da Análise Inteligente Veicular.
+- A análise passa a ser sempre completa por padrão.
+- Dica MyCar+ recebeu cores explícitas para legibilidade em tema escuro, Web, Android, impressão e compartilhamento.

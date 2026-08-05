@@ -1,15 +1,11 @@
-MYCAR+ — CHECKLIST DE VALIDAÇÃO ATUAL
-VERSÃO: 6.07
+MYCAR+ V6.08 — CHECKLIST ATUAL
 
-[ ] Relatório Executivo mantém cálculos locais e estrutura original.
-[ ] Análise Inteligente Veicular recebe `executive_report` estruturado.
-[ ] Análise Inteligente não recebe o HTML completo do Relatório Executivo.
-[ ] Custos, consumo, utilização, rateios, manutenção e alertas são coerentes entre os dois demonstrativos.
-[ ] Nenhuma duplicidade é sugerida sem candidato exato fornecido pelo aplicativo.
-[ ] IPVA, licenciamento e seguro não são classificados como anomalia apenas por valor alto.
-[ ] Recomendações apresentam evidência existente.
-[ ] Confiança é calculada localmente.
-[ ] Dica MyCar+ aparece como seção final e informa que não é diagnóstico mecânico.
-[ ] Títulos diferenciam Relatório Executivo e Análise Inteligente Veicular.
-[ ] Raiz, www e Android possuem os mesmos 31 arquivos sincronizados.
-[ ] APK Debug é gerado antes do commit e do push.
+[ ] APP_VERSION 6.08
+[ ] package.json e package-lock.json 6.8.0
+[ ] Android 608 / 6.08.0
+[ ] Cache mycar-plus-v6-08
+[ ] Seletor aiType removido
+[ ] Análise completa definida no código e prompt
+[ ] Dica MyCar+ com texto escuro explícito
+[ ] Raiz, Web e Android idênticos
+[ ] APK Debug compilado no computador do usuário

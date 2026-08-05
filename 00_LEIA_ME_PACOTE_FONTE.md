@@ -1,17 +1,11 @@
-# MyCar+ V6.07 — pacote fonte
+# PACOTE FONTE — MYCAR+ V6.08
 
-Este pacote contém a fonte oficial da V6.07, a camada Web, o projeto Android, o atualizador e o checklist de diagnóstico.
+Este pacote atualiza o MyCar+ para a versão 6.08.
 
-## Mudança principal
+Principais alterações:
+- Análise Inteligente Veicular sempre completa;
+- retirada do seletor de tipo de análise;
+- Dica MyCar+ legível em tema claro e escuro;
+- checklist de montagem e diagnóstico atualizado.
 
-A **Análise Inteligente Veicular** passou a receber os indicadores estruturados calculados para o Relatório Executivo. O aplicativo envia dados e evidências em JSON; não envia o HTML do relatório.
-
-Também foram adicionados filtro de evidências, bloqueio de hipóteses de duplicidade sem comprovação, confiança calculada localmente e uma Dica MyCar+ selecionada no próprio aplicativo.
-
-## Instalação
-
-1. Coloque o ZIP e o BAT V6.07 na pasta Downloads.
-2. Execute `ATUALIZAR_MYCAR_V6_07_KEY.bat`.
-3. Em caso de interrupção, envie o log e o diagnóstico gerados em Downloads.
-
-O atualizador não envia alterações ao GitHub antes de validar a fonte e compilar o APK.
+Use o arquivo `ATUALIZAR_MYCAR_V6_08_KEY.bat` colocado junto do ZIP na pasta Downloads.

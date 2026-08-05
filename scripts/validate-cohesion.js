@@ -66,7 +66,7 @@ assert(new RegExp(`versionCode\\s+${expected.versionCode}\\b`).test(gradle), `ve
 assert(gradle.includes(`versionName "${expected.androidVersionName}"`), `versionName deve ser ${expected.androidVersionName}.`);
 assert(sw.includes(expected.cache), `Cache PWA deve ser ${expected.cache}.`);
 
-// Consolidação V6.07.
+// Consolidação V6.08.
 assert(!html.includes('class="home-vehicle-head compact"') && !html.includes('<small>Veículo</small>'), 'Identificação duplicada de veículo ainda aparece na página inicial.');
 assert(/class="mycar-history-card"/.test(app) && /<span>Histórico<\/span>/.test(app), 'Cartão final de histórico em duas linhas ausente.');
 assert(/function\s+formatHistoryDuration\s*\(/.test(app), 'Cálculo dinâmico do histórico do veículo ausente.');
@@ -86,7 +86,7 @@ if (reportLogoMatch) {
 assert(fs.existsSync(path.join(root, 'about-logo.png')), 'about-logo.png ausente.');
 assert(sw.includes('about-logo.png'), 'about-logo.png ausente do cache PWA.');
 
-// Análise Inteligente Veicular V6.07.
+// Análise Inteligente Veicular V6.08.
 assert(/function\s+buildExecutiveIntelligenceData\s*\(/.test(app), 'Motor estruturado dos indicadores do Relatório Executivo não foi criado para a IA.');
 assert(/executive_report:\s*executiveReport/.test(app), 'Indicadores estruturados do Relatório Executivo não são enviados à IA.');
 assert(/schema_version:\s*2/.test(app), 'Schema 2 da Análise Inteligente ausente.');
@@ -100,6 +100,19 @@ assert(/Análise Inteligente de Gestão Veicular/.test(app + html), 'Nova identi
 assert(!/<small>Saúde veicular<\/small>/.test(app), 'Pontuação genérica de saúde veicular ainda aparece na análise.');
 assert(/<small>Status de manutenção<\/small>/.test(app), 'Status de manutenção não substituiu a pontuação genérica.');
 assert(/Confiança dos dados/.test(app), 'Confiança local dos dados não aparece na análise.');
+assert(!html.includes('id="aiType"') && !html.includes('Tipo de análise') && !html.includes('Análise desejada'), 'Seletor de tipo da Análise Inteligente ainda está presente.');
+assert(!app.includes('$("#aiType")') && !app.includes('analysis_type: analysisType'), 'Código ainda lê um tipo de análise selecionável.');
+assert(!read('ai-logic.js').includes('FOCO SOLICITADO') && !read('ai-logic.js').includes('focusNames'), 'Prompt ainda contém foco variável.');
+assert(read('ai-logic.js').includes('A análise é sempre completa'), 'Prompt não fixa a análise completa.');
+assert(/analysis_scope:\s*"completa"/.test(app), 'Escopo completo não foi fixado nos indicadores executivos.');
+for (const content of [app, styles]) {
+  assert(content.includes('background:#f8fbfd!important'), 'Dica MyCar+ sem fundo opaco explícito.');
+  assert(content.includes('color:#111827!important'), 'Dica MyCar+ sem cor principal escura.');
+  assert(content.includes('color:#111!important'), 'Título da Dica MyCar+ sem preto explícito.');
+  assert(content.includes('color:#1f2937!important'), 'Texto da Dica MyCar+ sem cor escura explícita.');
+  assert(content.includes('color-scheme:light'), 'Dica MyCar+ sem proteção contra inversão de tema.');
+}
+
 
 // Exclusividade do novo modelo de alertas.
 assert(!/TECHNICAL_ITEMS|technicalParameters|alertHistory|Historico_Alertas|Parametros_Tecnicos|technicalKey|chave_tecnica/.test(app + db), 'O modelo antigo de alertas ainda está presente no código.');
