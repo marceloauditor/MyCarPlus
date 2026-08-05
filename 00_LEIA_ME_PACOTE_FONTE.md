@@ -1,11 +1,12 @@
-# PACOTE FONTE — MYCAR+ V6.08
+# PACOTE FONTE — MYCAR+ V6.09
 
-Este pacote atualiza o MyCar+ para a versão 6.08.
+Este pacote atualiza o MyCar+ para a versão 6.09.
 
 Principais alterações:
-- Análise Inteligente Veicular sempre completa;
-- retirada do seletor de tipo de análise;
-- Dica MyCar+ legível em tema claro e escuro;
-- checklist de montagem e diagnóstico atualizado.
+- Dica MyCar+ com fundo branco puro e texto preto puro;
+- proteção específica para temas claro e escuro;
+- correção aplicada à tela, impressão e compartilhamento;
+- bloqueio de transparência, filtros e inversão de texto do Android WebView;
+- atualização de cache e checklist automático reforçado.
 
-Use o arquivo `ATUALIZAR_MYCAR_V6_08_KEY.bat` colocado junto do ZIP na pasta Downloads.
+Coloque `MYCAR_PLUS_V6_09_KEY.zip` e `ATUALIZAR_MYCAR_V6_09_KEY.bat` juntos na pasta Downloads e execute o BAT.

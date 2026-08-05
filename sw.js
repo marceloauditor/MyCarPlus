@@ -1,4 +1,4 @@
-const CACHE = "mycar-plus-v6-08";
+const CACHE = "mycar-plus-v6-09";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -55,6 +55,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   const networkFirst =
+    url.pathname.endsWith("/styles.css") ||
     url.pathname.endsWith("/report-manager.js") ||
     url.pathname.endsWith("/app.js") ||
     url.pathname.endsWith("/cloud.js") ||

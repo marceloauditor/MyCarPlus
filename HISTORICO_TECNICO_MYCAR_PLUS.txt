@@ -284,3 +284,16 @@ V6.08 — 04/08/2026
 - Removido o seletor de tipo da Análise Inteligente Veicular.
 - A análise passa a ser sempre completa por padrão.
 - Dica MyCar+ recebeu cores explícitas para legibilidade em tema escuro, Web, Android, impressão e compartilhamento.
+
+============================================================
+V6.09 — DICA MYCAR+ BRANCA E PRETA
+============================================================
+- Fundo da Dica MyCar+ fixado em branco puro (#FFFFFF).
+- Categoria, título e texto fixados em preto puro (#000000).
+- Proteção específica para temas claro e escuro.
+- Neutralização de transparência, gradiente, filtros e preenchimento automático do Android WebView.
+- Proteção inline aplicada ao relatório exibido, impresso e compartilhado.
+- styles.css alterado para network-first e recursos visuais com cache-busting V6.09.
+- Checklist automático reforçado para testar a prioridade real das regras visuais.
+- APP 6.09; npm 6.9.0; Android 609 / 6.09.0; cache mycar-plus-v6-09.
+

@@ -66,7 +66,7 @@ assert(new RegExp(`versionCode\\s+${expected.versionCode}\\b`).test(gradle), `ve
 assert(gradle.includes(`versionName "${expected.androidVersionName}"`), `versionName deve ser ${expected.androidVersionName}.`);
 assert(sw.includes(expected.cache), `Cache PWA deve ser ${expected.cache}.`);
 
-// Consolidação V6.08.
+// Consolidação V6.09.
 assert(!html.includes('class="home-vehicle-head compact"') && !html.includes('<small>Veículo</small>'), 'Identificação duplicada de veículo ainda aparece na página inicial.');
 assert(/class="mycar-history-card"/.test(app) && /<span>Histórico<\/span>/.test(app), 'Cartão final de histórico em duas linhas ausente.');
 assert(/function\s+formatHistoryDuration\s*\(/.test(app), 'Cálculo dinâmico do histórico do veículo ausente.');
@@ -86,7 +86,7 @@ if (reportLogoMatch) {
 assert(fs.existsSync(path.join(root, 'about-logo.png')), 'about-logo.png ausente.');
 assert(sw.includes('about-logo.png'), 'about-logo.png ausente do cache PWA.');
 
-// Análise Inteligente Veicular V6.08.
+// Análise Inteligente Veicular V6.09.
 assert(/function\s+buildExecutiveIntelligenceData\s*\(/.test(app), 'Motor estruturado dos indicadores do Relatório Executivo não foi criado para a IA.');
 assert(/executive_report:\s*executiveReport/.test(app), 'Indicadores estruturados do Relatório Executivo não são enviados à IA.');
 assert(/schema_version:\s*2/.test(app), 'Schema 2 da Análise Inteligente ausente.');
@@ -105,13 +105,15 @@ assert(!app.includes('$("#aiType")') && !app.includes('analysis_type: analysisTy
 assert(!read('ai-logic.js').includes('FOCO SOLICITADO') && !read('ai-logic.js').includes('focusNames'), 'Prompt ainda contém foco variável.');
 assert(read('ai-logic.js').includes('A análise é sempre completa'), 'Prompt não fixa a análise completa.');
 assert(/analysis_scope:\s*"completa"/.test(app), 'Escopo completo não foi fixado nos indicadores executivos.');
-for (const content of [app, styles]) {
-  assert(content.includes('background:#f8fbfd!important'), 'Dica MyCar+ sem fundo opaco explícito.');
-  assert(content.includes('color:#111827!important'), 'Dica MyCar+ sem cor principal escura.');
-  assert(content.includes('color:#111!important'), 'Título da Dica MyCar+ sem preto explícito.');
-  assert(content.includes('color:#1f2937!important'), 'Texto da Dica MyCar+ sem cor escura explícita.');
-  assert(content.includes('color-scheme:light'), 'Dica MyCar+ sem proteção contra inversão de tema.');
-}
+assert(app.includes('style="background-color:#fff!important;background-image:none!important;color:#000!important;opacity:1!important;color-scheme:light"'), 'Proteção inline branca e preta da Dica MyCar+ ausente.');
+assert(app.includes('background-color:#fff!important') && app.includes('color:#000!important'), 'Relatório compartilhado sem branco puro e preto puro.');
+assert(styles.includes('html[data-theme="dark"] .ai-tip-section .ai-tip-card'), 'Dica MyCar+ sem seletor específico para tema escuro.');
+assert(styles.includes('background-color:#fff!important') && styles.includes('background-image:none!important'), 'Dica MyCar+ sem superfície branca real.');
+assert(styles.includes('-webkit-text-fill-color:#000!important'), 'Dica MyCar+ sem proteção de texto preto no Android WebView.');
+assert(styles.includes('backdrop-filter:none!important'), 'Dica MyCar+ ainda permite efeito de transparência.');
+assert(sw.includes('url.pathname.endsWith("/styles.css")'), 'styles.css não usa atualização network-first.');
+assert(html.includes('styles.css?v=609') && html.includes('app.js?v=609'), 'Cache-busting visual V6.09 ausente.');
+assert(!/ai-tip-card[^}]*#f8fbfd/i.test(app + styles), 'Cor quase branca antiga ainda aplicada à Dica MyCar+.');
 
 
 // Exclusividade do novo modelo de alertas.

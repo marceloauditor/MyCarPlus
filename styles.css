@@ -1173,7 +1173,39 @@ html[data-theme="light"] .mycar-history-card strong{color:#12395b!important}
   .about-app-logo{width:82px;height:82px;border-radius:18px}
 }
 
-/* V6.08 - Análise Inteligente completa e Dica MyCar+ legível */
+/* V6.09 — Dica MyCar+ com superfície branca real e texto preto em qualquer tema */
 .ai-evidence{display:block;margin-top:4px;color:var(--muted,#607080);font-size:.78em;line-height:1.35}
-.ai-tip-card{border:1px solid var(--border,#c7d8e4);border-left:4px solid var(--primary,#0788e8);border-radius:10px;padding:12px;background:#f8fbfd!important;color:#111827!important;opacity:1!important;color-scheme:light}
-.ai-tip-card small,.ai-tip-card strong{display:block}.ai-tip-card small{color:#52606d!important}.ai-tip-card strong{margin:4px 0;color:#111!important}.ai-tip-card p{margin:5px 0 0;color:#1f2937!important}
+.ai-tip-section .ai-tip-card,
+html[data-theme="light"] .ai-tip-section .ai-tip-card,
+html[data-theme="dark"] .ai-tip-section .ai-tip-card{
+  display:block!important;
+  position:relative!important;
+  border:1px solid #aebdca!important;
+  border-left:4px solid #0788e8!important;
+  border-radius:10px!important;
+  padding:12px!important;
+  background-color:#fff!important;
+  background-image:none!important;
+  color:#000!important;
+  opacity:1!important;
+  visibility:visible!important;
+  color-scheme:light!important;
+  mix-blend-mode:normal!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:0 2px 8px rgba(18,57,91,.12)!important;
+}
+.ai-tip-section .ai-tip-card *,
+html[data-theme="light"] .ai-tip-section .ai-tip-card *,
+html[data-theme="dark"] .ai-tip-section .ai-tip-card *{
+  color:#000!important;
+  opacity:1!important;
+  visibility:visible!important;
+  text-shadow:none!important;
+  -webkit-text-fill-color:#000!important;
+}
+.ai-tip-section .ai-tip-card small,
+.ai-tip-section .ai-tip-card strong{display:block!important}
+.ai-tip-section .ai-tip-card strong{margin:4px 0!important}
+.ai-tip-section .ai-tip-card p{margin:5px 0 0!important}

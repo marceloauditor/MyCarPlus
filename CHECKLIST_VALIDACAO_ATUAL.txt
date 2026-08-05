@@ -1,11 +1,14 @@
-MYCAR+ V6.08 — CHECKLIST ATUAL
+MYCAR+ V6.09 — CHECKLIST ATUAL
 
-[ ] APP_VERSION 6.08
-[ ] package.json e package-lock.json 6.8.0
-[ ] Android 608 / 6.08.0
-[ ] Cache mycar-plus-v6-08
-[ ] Seletor aiType removido
-[ ] Análise completa definida no código e prompt
-[ ] Dica MyCar+ com texto escuro explícito
+[ ] APP_VERSION 6.09
+[ ] package.json e package-lock.json 6.9.0
+[ ] Android 609 / 6.09.0
+[ ] Cache mycar-plus-v6-09
+[ ] Dica MyCar+ com fundo branco puro #FFFFFF
+[ ] Categoria, título e texto em preto puro #000000
+[ ] Regra específica para temas claro e escuro
+[ ] Transparência, gradiente e filtros neutralizados
+[ ] Proteção inline no relatório exibido e compartilhado
+[ ] styles.css network-first e referências v=609
 [ ] Raiz, Web e Android idênticos
-[ ] APK Debug compilado no computador do usuário
+[ ] APK Debug compilado pelo BAT no computador do usuário

@@ -1,21 +1,23 @@
-# MyCar+ V6.08
+# MyCar+ V6.09
 
 Aplicativo Web/PWA e Android para controle de consumo de combustível, manutenção, despesas administrativas, receitas, alertas e indicadores de gestão veicular.
 
 ## Demonstrativos
 
 - **Relatório Executivo**: cálculos e indicadores produzidos localmente pelo MyCar+.
-- **Análise Inteligente Veicular**: interpretação por IA dos dados estruturados do Relatório Executivo, com evidências, limitações e plano de ação.
-
-A Análise Inteligente recebe indicadores em JSON, e não o HTML do relatório. A dica final é selecionada localmente em uma biblioteca revisada.
+- **Análise Inteligente de Gestão Veicular**: interpretação por IA dos dados estruturados do Relatório Executivo, com evidências, limitações, plano de ação e Dica MyCar+.
 
 ## Atualização
 
-Mantenha `MYCAR_PLUS_V6_07_KEY.zip` e `ATUALIZAR_MYCAR_V6_07_KEY.bat` na pasta Downloads. O atualizador valida o pacote antes do backup, sincroniza Web/Android, executa o checklist novamente, compila o APK e somente então atualiza o GitHub.
+Mantenha `MYCAR_PLUS_V6_09_KEY.zip` e `ATUALIZAR_MYCAR_V6_09_KEY.bat` juntos na pasta Downloads. O atualizador valida o pacote antes do backup, sincroniza Web/Android, executa o checklist novamente, compila o APK e somente então atualiza o GitHub.
 
-Versões: APP 6.08 · npm 6.8.0 · Android 608 / 6.08.0 · cache mycar-plus-v6-08.
+Versões: APP 6.09 · npm 6.9.0 · Android 609 / 6.09.0 · cache mycar-plus-v6-09.
 
-## Ajustes V6.08
+## Ajustes V6.09
 
-- Análise Inteligente sempre completa, sem seletor de tipo.
-- Dica MyCar+ com fundo opaco e texto escuro explícito em Web, Android, impressão e compartilhamento.
+- Fundo da Dica MyCar+ em branco puro (`#FFFFFF`).
+- Categoria, título e texto em preto puro (`#000000`).
+- Mesma aparência nos temas claro e escuro.
+- Proteção aplicada à tela, impressão e compartilhamento.
+- Neutralização de transparência, gradiente, filtros e inversão de texto do Android WebView.
+- Atualização network-first do `styles.css` e cache-busting `v=609`.
