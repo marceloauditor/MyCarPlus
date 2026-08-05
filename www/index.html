@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="styles.css?v=610">
+<link rel="stylesheet" href="styles.css?v=611">
 </head>
 <body>
 <div id="splashScreen" class="splash-screen" aria-label="Carregando MyCar+">
@@ -28,7 +28,7 @@
 <div class="header-menu-wrap header-menu-leading">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
 <div id="headerMenu" class="header-menu" hidden>
-<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.10</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
+<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.11</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
 <small class="menu-group-title">OPERAÇÃO</small>
 <button data-menu-page="cadastros">⚙ Cadastros e parâmetros</button>
 <button data-menu-page="alertas">⚠ Alertas e manutenção</button>
@@ -49,7 +49,7 @@
 <div id="headerMenuBackdrop" class="header-menu-backdrop" hidden></div>
 <div class="header-brand-block">
 <div class="mycar-wordmark header-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></div>
-<span class="app-version" id="homeVersion">v6.10</span>
+<span class="app-version" id="homeVersion">v6.11</span>
 </div>
 <div class="header-actions">
 <button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="cloud-dot offline"></span></button>
@@ -478,7 +478,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V6.10</h3>
+<h3>Manual de utilização — MyCar+ V6.11</h3>
 <p>Guia completo dos cadastros, lançamentos, rateios, indicadores, relatórios, gráficos, alertas, sincronização e proteção dos dados do veículo.</p>
 <details open><summary>1. Visão geral e veículo selecionado</summary><p>O MyCar+ organiza todas as informações por veículo. A seleção da tela inicial controla lançamentos, indicadores, relatórios, gráficos e alertas. Veículos ativos aceitam novos registros; veículos inativos preservam todo o histórico para consulta, mas não geram novos alertas vencidos. Inativar um veículo não exclui seus dados.</p></details>
 <details><summary>2. Painel inteligente</summary><p>O painel apresenta indicadores históricos de custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Custos usam dias corridos inclusivos; o consumo usa apenas ciclos completos com litros e distância maiores que zero. Abaixo ficam Tendências, MyCar Score, Utilização e Composição dos Grupos. Na composição, Abastecimento, Administrativo e Manutenção formam as despesas; Receitas aparecem separadamente e são subtraídas no Custo líquido.</p></details>
@@ -519,7 +519,7 @@
 <img class="about-app-logo" src="about-logo.png?v=610" alt="Logotipo do MyCar+" onerror="this.onerror=null;this.src='icon-192.png?v=610'">
 </div>
 <h3 class="mycar-wordmark about-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></h3>
-<p><strong>Versão:</strong> 6.10</p>
+<p><strong>Versão:</strong> 6.11</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -634,7 +634,6 @@
 <input type="hidden" name="longitude">
 <input type="hidden" name="precisaoGps">
 <select name="grupo" required hidden></select>
-<input name="incluirIndicadores" type="checkbox" checked hidden>
 <div class="dialog-head entry-dialog-head">
 <div class="entry-title-block">
 <small id="entryGroupEyebrow">Lançamentos</small>
@@ -1000,23 +999,17 @@
 </dialog>
 <script src="jszip.min.js">
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js">
+<script src="firebase-config.js?v=611">
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js">
+<script type="module" src="ai-logic.js?v=611">
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js">
+<script src="mycarplus-db.js?v=611">
 </script>
-<script src="firebase-config.js?v=610">
+<script src="report-manager.js?v=611"></script>
+<script src="indicator-calculations.js?v=611"></script>
+<script src="app.js?v=611">
 </script>
-<script type="module" src="ai-logic.js?v=610">
-</script>
-<script src="mycarplus-db.js?v=610">
-</script>
-<script src="report-manager.js?v=610"></script>
-<script src="indicator-calculations.js?v=610"></script>
-<script src="app.js?v=610">
-</script>
-<script src="cloud.js?v=610">
+<script src="cloud.js?v=611">
 </script>
 </body>
 </html>

@@ -105,15 +105,6 @@
     return true;
   }
 
-  async function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = reject;
-      reader.onload = () => resolve(String(reader.result || "").replace(/^data:[^,]+,/, ""));
-      reader.readAsDataURL(file);
-    });
-  }
-
   async function share(jobName, html) {
     const reportHtml = String(html || state.currentHtml || "");
     const reportName = safeJobName(jobName || state.currentJobName);

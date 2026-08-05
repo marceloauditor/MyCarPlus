@@ -1,9 +1,0 @@
-CORREÇÃO DO BAT — MYCAR+ V5.70
-
-O BAT agora localiza automaticamente o ZIP na pasta Downloads, aceitando:
-- MYCAR_PLUS_V5_70_CAR.zip
-- MYCAR_PLUS_V5_70_CAR (1).zip
-- MYCAR_PLUS_V5_70_CAR (2).zip
-- outros sufixos criados pelo navegador
-
-Quando houver mais de um pacote compatível, será usado o arquivo mais recente.

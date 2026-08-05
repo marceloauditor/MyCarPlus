@@ -299,18 +299,26 @@ V6.09 — DICA MYCAR+ BRANCA E PRETA
 
 
 
-V6.10 — PADRONIZAÇÃO DOS INDICADORES
+V6.11 — PADRONIZAÇÃO DOS INDICADORES
 - Motor único indicator-calculations.js.
 - Dias corridos inclusivos para custos diário e mensal.
 - Custo mensal = custo diário x 30,44 em todos os artefatos.
 - Consumo ponderado apenas com ciclos completos, litros e distância positivos.
 - Exibição de consumo em duas casas; precisão integral mantida internamente.
 - Gráficos conciliam despesas, receitas, custo bruto e custo líquido.
-- APP 6.10; npm 6.10.0; Android 610 / 6.10.0; cache mycar-plus-v6-10.
+- APP 6.11; npm 6.11.0; Android 611 / 6.11.0; cache mycar-plus-v6-11.
 
-V6.10 R2 — CENTRALIZAÇÃO INTEGRAL E CORREÇÃO DO BAT
-- Mantida a versão funcional 6.10.
+V6.11 — CENTRALIZAÇÃO INTEGRAL E CORREÇÃO DO BAT
+- Atualizada a versão funcional para 6.11.
 - Todas as fórmulas dos indicadores e artefatos foram concentradas em indicator-calculations.js.
 - Centralizados consumo, combustível, custos, somatórios, agregações, projeções e rateio.
 - BAT corrigido de LF para CRLF, em ASCII sem BOM, eliminando os erros et/cho/f no cmd.exe.
 - Incluída validação estrutural do ZIP e auditoria automática contra fórmulas duplicadas.
+
+
+V6.11 — ESTABILIZAÇÃO E ENCERRAMENTO
+Gravação transacional, isolamento por UID, conflitos explícitos, Firebase modular, cache offline completo, limpeza do modelo antigo de alertas e remoção de resíduos.
+
+V6.11 R2 — 05/08/2026
+1. Corrigida limpeza da instalação quando a raiz ainda continha ativos e arquivos de dados de versões anteriores.
+2. Mantida a versão funcional 6.11 sem alterações de regras ou dados.

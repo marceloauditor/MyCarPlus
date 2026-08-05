@@ -1,12 +1,20 @@
-# Configuração dos dados online
+# Configuração dos dados online — MyCar+ V6.11
 
-1. Crie um projeto no Firebase no plano Spark.
+1. Crie um projeto no Firebase.
 2. Ative Authentication > Sign-in method > Google.
-3. Em Authentication > Settings > Authorized domains, adicione `marceloauditor.github.io`.
+3. Em Authentication > Settings > Authorized domains, adicione o domínio usado pela versão Web.
 4. Crie o Cloud Firestore em modo de produção.
-5. Em Firestore > Rules, substitua o conteúdo pelas regras de `firestore.rules` e publique.
-6. Em Configurações do projeto > Seus apps, crie um app Web.
-7. A configuração do aplicativo Web já está gravada em `firebase-config.js`.
-8. Publique todos os arquivos no GitHub Pages.
+5. Publique as regras existentes em `firebase/firestore.rules`.
+6. Confira os dados do aplicativo Web em `firebase-config.js`.
+7. Publique os arquivos da pasta `www` no GitHub Pages.
 
-No primeiro login, se não existir uma base online, o aplicativo enviará automaticamente o histórico local e o dataset inicial. Depois disso, o Firestore será a fonte sincronizada entre os aparelhos.
+## Primeira conexão de uma conta
+
+- Se a conta já possuir dados no Firebase, eles serão carregados em seu espaço local exclusivo.
+- Se a conta estiver vazia e existirem dados no espaço local do aparelho, o aplicativo pedirá confirmação antes de vinculá-los e enviá-los.
+- Recusar a vinculação cria um espaço vazio para aquela conta e preserva o espaço local anterior.
+- Sair da conta retorna ao espaço local sem misturar os dados de usuários diferentes.
+
+## Sincronização
+
+A gravação local é concluída antes do envio. Uma fila e um diário permitem recuperar operações interrompidas. Em caso de edição divergente em dois aparelhos, nenhuma versão é descartada silenciosamente: o painel solicita a escolha da versão a manter.

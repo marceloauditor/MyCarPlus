@@ -139,7 +139,7 @@
 
   function isValidFuelCycle(movement) {
     return movement?.grupo === "COMBUSTÍVEL"
-      && normalize(movement?.tanque_completo) !== "NAO"
+      && normalize(movement?.tanque_completo) === "SIM"
       && movementConsumption(movement) !== null;
   }
 

@@ -1,11 +1,17 @@
-# PACOTE FONTE — MYCAR+ V6.10 R2
+# PACOTE FONTE — MYCAR+ V6.11 R2
 
-Esta revisão mantém a versão funcional 6.10 e conclui a centralização das fórmulas de negócio utilizadas pela tela inicial, Relatório Executivo, gráficos, exportações e Análise Inteligente.
+Versão de estabilização e encerramento do projeto.
 
-O motor oficial é `indicator-calculations.js`. Nele ficam as regras de custos, dias inclusivos, consumo, litros, participação por combustível, somatórios, projeções, rateio e agregações financeiras. O `app.js` apenas solicita os resultados e apresenta os dados.
+Principais medidas:
+- gravação local com diário de recuperação e fila criada no mesmo fluxo;
+- dados locais isolados por Conta Google;
+- conflitos entre aparelhos preservados para decisão do usuário;
+- Firebase modular 12.16.0 compartilhado pela sincronização e pela IA;
+- funcionamento offline com o motor de indicadores e banco XLSX no cache;
+- eliminação total do modelo antigo de alertas, inclusive no Firebase;
+- remoção de funções órfãs, arquivos duplicados e artefatos técnicos;
+- validação de estrutura no Firestore e limpeza de exclusões antigas;
+- versão APP 6.11, npm 6.11.0 e Android 611 / 6.11.0;
+- publicação automática das regras do Firestore quando o Firebase CLI estiver disponível.
 
-A revisão R2 também corrige o atualizador Windows: todos os arquivos `.bat` foram gravados em ASCII, sem BOM e com finais de linha CRLF. Isso elimina os erros `et`, `cho` e `f` causados pelo BAT anterior em LF.
-
-A base `data/MyCarPlus.xlsx` é preservada. O atualizador valida o ZIP antes do backup, sincroniza raiz, Web e Android, executa os testes e somente depois compila o APK e atualiza o GitHub.
-
-Coloque `MYCAR_PLUS_V6_10_R2_KEY.zip` e `ATUALIZAR_MYCAR_V6_10_R2_KEY.bat` juntos na pasta Downloads e execute o BAT.
+Coloque `MYCAR_PLUS_V6_11_KEY.zip` e `ATUALIZAR_MYCAR_V6_11_KEY.bat` juntos em Downloads e execute o BAT.

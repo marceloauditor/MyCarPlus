@@ -1,0 +1,3 @@
+VALIDAÇÃO DO PACOTE — MYCAR+ V6.11 R2
+
+A validação automática deve confirmar versão, estrutura, gravação, sincronização, cache offline, centralização dos cálculos, limpeza dos alertas antigos, coesão entre raiz/Web/Android, manifesto SHA-256 e integridade CRLF do BAT e remoção explícita dos resíduos do projeto instalado.

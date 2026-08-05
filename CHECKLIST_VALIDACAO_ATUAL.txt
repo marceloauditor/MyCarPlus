@@ -1,17 +1,11 @@
-MYCAR+ V6.10 R2 — CHECKLIST ATUAL
-
-[ ] APP_VERSION 6.10
-[ ] package.json e package-lock.json 6.10.0
-[ ] Android 610 / 6.10.0
-[ ] Cache mycar-plus-v6-10
-[ ] Revisão do pacote R2
-[ ] Motor único carregado antes do app.js
-[ ] Todas as fórmulas dos indicadores e artefatos centralizadas
-[ ] Dias corridos inclusivos
-[ ] Custo por km, dia e mês padronizados
-[ ] Consumo ponderado com duas casas
-[ ] Agregações e rateio centralizados
-[ ] BAT ASCII sem BOM e CRLF
-[ ] ZIP estruturalmente válido
-[ ] Raiz, Web e Android idênticos
-[ ] Manifesto SHA-256 conferido
+MYCAR+ V6.11 — CHECKLIST ATUAL
+[ ] APP_VERSION 6.11
+[ ] package.json e package-lock.json 6.11.0
+[ ] Android 611 / 6.11.0
+[ ] Cache mycar-plus-v6-11
+[ ] Gravação transacional e fila recuperável
+[ ] Dados locais isolados por UID
+[ ] Conflitos não resolvidos silenciosamente
+[ ] Alertas antigos removidos
+[ ] PWA abre offline com motor e XLSX
+[ ] ZIP, BAT, APK e GitHub aprovados

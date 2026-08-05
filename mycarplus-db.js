@@ -1,11 +1,11 @@
 
 /*
- * MyCar+ V4.1
+ * MyCar+ V6.11
  * Banco oficial único: data/MyCarPlus.xlsx
  * Este módulo lê e exporta diretamente a estrutura do arquivo MyCarPlus.xlsx.
  */
 window.MyCarPlusDB = (() => {
-  const FILE = "data/MyCarPlus.xlsx?v=556";
+  const FILE = "data/MyCarPlus.xlsx";
   const NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
   const REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
@@ -170,7 +170,7 @@ window.MyCarPlusDB = (() => {
         preco_unitario:r.preco_unitario === "" ? "" : Number(r.preco_unitario),
         tanque_completo:r.tanque_completo || "", forma_pagamento:r.forma_pagamento || "",
         observacao:r.observacao || "", status_migracao:r.status_migracao || "",
-        origem_dado:r.origem_dado || "", incluir_indicadores:r.incluir_indicadores || "SIM",
+        origem_dado:r.origem_dado || "",
         lote_reconstrucao_id:r.lote_reconstrucao_id || "",
         latitude:r.latitude === "" ? "" : Number(r.latitude),
         longitude:r.longitude === "" ? "" : Number(r.longitude),
@@ -299,7 +299,6 @@ window.MyCarPlusDB = (() => {
       m.observacao || "",
       m.status_migracao || "APP",
       m.origem_dado || "APP",
-      m.incluir_indicadores || "SIM",
       m.lote_reconstrucao_id || ""
       ,m.latitude === "" || m.latitude == null ? "" : Number(m.latitude)
       ,m.longitude === "" || m.longitude == null ? "" : Number(m.longitude)
@@ -312,7 +311,7 @@ window.MyCarPlusDB = (() => {
     ]);
 
     zip.file(map.Movimentacoes, worksheet("MOVIMENTAÇÕES","Coleção Firebase sugerida: users/{uid}/movimentacoes",
-      ["id","movimento_id","ordem_item","veiculo_id","motorista_id","fornecedor_id","data_hora","hodometro_km","grupo","item_id","valor","quantidade_litros","preco_unitario","tanque_completo","forma_pagamento","observacao","status_migracao","origem_dado","incluir_indicadores","lote_reconstrucao_id","latitude","longitude","precisao_gps_m","localizacao_confirmada","rateio_ativo","rateio_qtd_meses","rateio_competencia_inicial","rateio_valor_base_centavos"], movementRows));
+      ["id","movimento_id","ordem_item","veiculo_id","motorista_id","fornecedor_id","data_hora","hodometro_km","grupo","item_id","valor","quantidade_litros","preco_unitario","tanque_completo","forma_pagamento","observacao","status_migracao","origem_dado","lote_reconstrucao_id","latitude","longitude","precisao_gps_m","localizacao_confirmada","rateio_ativo","rateio_qtd_meses","rateio_competencia_inicial","rateio_valor_base_centavos"], movementRows));
     zip.file(map.Veiculos, worksheet("CADASTRO DE VEÍCULOS","Coleção Firebase sugerida: users/{uid}/veiculos",
       ["id","nome","placa","ano_fabricacao","ano_modelo","motorizacao","consumo_ref_etanol_cidade_km_l","consumo_ref_etanol_estrada_km_l","consumo_ref_gasolina_cidade_km_l","consumo_ref_gasolina_estrada_km_l","consumo_ref_diesel_cidade_km_l","consumo_ref_diesel_estrada_km_l","hodometro_inicial_km","ativo","padrao","criado_em","atualizado_em","capacidade_tanque_litros"], vehicleRows));
     zip.file(map.Motoristas, worksheet("CADASTRO DE MOTORISTAS","Coleção Firebase sugerida: users/{uid}/motoristas",

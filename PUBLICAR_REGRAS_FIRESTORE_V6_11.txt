@@ -1,0 +1,10 @@
+PUBLICAÇÃO DAS REGRAS DO FIRESTORE — MYCAR+ V6.11
+
+O atualizador tenta publicar automaticamente as regras quando o Firebase CLI está instalado e autenticado.
+
+Caso o diagnóstico apresente aviso, abra o Prompt de Comando na pasta do projeto e execute:
+
+firebase login
+firebase deploy --only firestore:rules --project mycarplus-3180a
+
+Arquivo de regras: firebase\firestore.rules
