@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="styles.css?v=611">
+<link rel="stylesheet" href="styles.css?v=612">
 </head>
 <body>
 <div id="splashScreen" class="splash-screen" aria-label="Carregando MyCar+">
@@ -28,7 +28,7 @@
 <div class="header-menu-wrap header-menu-leading">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
 <div id="headerMenu" class="header-menu" hidden>
-<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.11</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
+<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.12</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
 <small class="menu-group-title">OPERAÇÃO</small>
 <button data-menu-page="cadastros">⚙ Cadastros e parâmetros</button>
 <button data-menu-page="alertas">⚠ Alertas e manutenção</button>
@@ -49,7 +49,7 @@
 <div id="headerMenuBackdrop" class="header-menu-backdrop" hidden></div>
 <div class="header-brand-block">
 <div class="mycar-wordmark header-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></div>
-<span class="app-version" id="homeVersion">v6.11</span>
+<span class="app-version" id="homeVersion">v6.12</span>
 </div>
 <div class="header-actions">
 <button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="cloud-dot offline"></span></button>
@@ -170,7 +170,7 @@
         <label class="report-guide-field"><span>Data final</span><input id="reportEnd" type="date"></label>
       </div>
       <div class="report-guide-period-foot">
-        <small id="reportDefaultHint">Padrão: período do último ano, ajustado aos registros disponíveis.</small>
+        <small id="reportDefaultHint">Padrão: primeiro movimento do veículo até a data atual.</small>
       </div>
       <p id="reportPeriodError" class="period-error"></p>
     </section>
@@ -300,8 +300,8 @@
 </label>
 </div>
 <div class="report-guide-period-foot chart-period-foot">
-<small id="chartDefaultHint">Padrão: período do último ano, ajustado aos registros disponíveis.</small>
-<small id="chartPeriodLabel">O período será limitado à primeira e à última movimentação disponíveis.</small>
+<small id="chartDefaultHint">Padrão: primeiro movimento do veículo até a data atual.</small>
+<small id="chartPeriodLabel">A data inicial usa o primeiro movimento; a data final usa a data atual.</small>
 </div>
 <p id="chartPeriodError" class="period-error"></p>
 </section>
@@ -478,7 +478,7 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V6.11</h3>
+<h3>Manual de utilização — MyCar+ V6.12</h3>
 <p>Guia completo dos cadastros, lançamentos, rateios, indicadores, relatórios, gráficos, alertas, sincronização e proteção dos dados do veículo.</p>
 <details open><summary>1. Visão geral e veículo selecionado</summary><p>O MyCar+ organiza todas as informações por veículo. A seleção da tela inicial controla lançamentos, indicadores, relatórios, gráficos e alertas. Veículos ativos aceitam novos registros; veículos inativos preservam todo o histórico para consulta, mas não geram novos alertas vencidos. Inativar um veículo não exclui seus dados.</p></details>
 <details><summary>2. Painel inteligente</summary><p>O painel apresenta indicadores históricos de custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Custos usam dias corridos inclusivos; o consumo usa apenas ciclos completos com litros e distância maiores que zero. Abaixo ficam Tendências, MyCar Score, Utilização e Composição dos Grupos. Na composição, Abastecimento, Administrativo e Manutenção formam as despesas; Receitas aparecem separadamente e são subtraídas no Custo líquido.</p></details>
@@ -493,12 +493,12 @@
 <details><summary>11. Rateio por competência</summary><p>O rateio está disponível somente em itens de Manutenção e Administrativo. Toque em R, informe de 02 a 120 meses e confira a prévia de competência inicial, final e parcela mensal. O mês do lançamento é a primeira competência. Diferenças de centavos são ajustadas na última parcela. Toque novamente em R ✓ para consultar, alterar ou remover. O movimento original continua registrado pelo valor integral; o sistema não cria movimentos mensais artificiais.</p></details>
 <details><summary>12. Movimentos</summary><p>Consulte, pesquise, altere ou exclua registros por data, descrição, item, grupo, fornecedor ou pagador. A edição de valor ou quantidade de meses recalcula o rateio. A exclusão do movimento também remove o rateio vinculado, sem afetar outros movimentos.</p></details>
 <details><summary>13. Alertas técnicos</summary><p>Use “Incluir Alerta” para programar manutenção por data, quilometragem ou ambos. O alerta pertence ao veículo e deve estar vinculado a um item cadastrado. É possível consultar, alterar e excluir. Excluir o alerta remove apenas a programação: o histórico real de manutenção é preservado.</p></details>
-<details><summary>14. Guia Relatórios e período</summary><p>O período padrão corresponde aos três meses anteriores e pode ser alterado ou limpo. O aplicativo ajusta datas fora do histórico disponível e informa o período efetivamente utilizado. Os botões geram Relatório Executivo, Análise Inteligente Veicular e arquivo XLSX para o veículo selecionado.</p></details>
+<details><summary>14. Guia Relatórios e período</summary><p>O período padrão começa na primeira movimentação do veículo selecionado e termina na data atual. O usuário pode alterar as datas; o aplicativo ajusta somente a data inicial anterior ao histórico e a data final futura. Os botões geram Relatório Executivo, Análise Inteligente Veicular e arquivo XLSX para o veículo selecionado.</p></details>
 <details><summary>15. Relatório Executivo</summary><p>O documento é contínuo, sem quebras artificiais. Reúne identificação do veículo e período; indicadores de consumo geral, Etanol e Gasolina; indicadores financeiros realizados; totalizadores líquidos; despesas do período; Custos por Competência; leitura executiva; gráficos; últimos três lançamentos de cada grupo; e manutenções que possuem alertas cadastrados. Os botões permitem fechar, compartilhar e imprimir ou salvar em PDF. Consumos são exibidos com duas casas decimais, mantendo precisão integral no cálculo.</p></details>
 <details><summary>16. Custos por Competência</summary><p>Esta seção substitui o valor integral dos itens rateados pelas parcelas incluídas no período do relatório. Itens não rateados e receitas entram integralmente. São mostrados custo líquido por km, diário, mensal e total, além do detalhamento do valor original, competências consideradas, valor apropriado e saldo futuro. A visão financeira realizada continua separada e preserva o valor efetivamente pago.</p></details>
-<details><summary>17. Análise Inteligente Veicular</summary><p>A análise usa os mesmos indicadores estruturados do Relatório Executivo, considera somente o veículo e o período escolhidos e depende de Internet. A IA interpreta evidências, limitações e tendências, enquanto os totais permanecem calculados pelo MyCar+. Ao final é apresentada uma Dica MyCar+ selecionada de uma biblioteca revisada do aplicativo. A análise não altera os lançamentos.</p></details>
+<details><summary>17. Análise Inteligente Veicular</summary><p>A análise usa os mesmos indicadores estruturados do Relatório Executivo, herda o período padrão da primeira movimentação até a data atual, considera somente o veículo e o período escolhidos e depende de Internet. A IA interpreta evidências, limitações e tendências, enquanto os totais permanecem calculados pelo MyCar+. Ao final é apresentada uma Dica MyCar+ selecionada de uma biblioteca revisada do aplicativo. A análise não altera os lançamentos.</p></details>
 <details><summary>18. Relatório XLSX</summary><p>A exportação contém os cadastros, movimentos do período, campos de rateio e dados técnicos necessários à conferência. As competências são derivadas do item original; não são exportadas como movimentos fictícios. O arquivo serve para análise e auditoria, enquanto o backup JSON é o formato recomendado para restauração completa.</p></details>
-<details><summary>19. Gráficos</summary><p>O período padrão é o último ano, ajustado aos registros. Os gráficos abrangem consumo geral e por combustível, hodômetro, evolução financeira, custo por quilômetro, custo médio diário por grupo, custos por grupo e total consolidado e os cinco itens com maior valor. Em períodos sem dados não é criado consumo zero. A evolução financeira é acumulada; o hodômetro mantém os registros reais; e a barra laranja “Total dos custos” soma Abastecimento, Administrativo e Manutenção, sem incluir Receitas.</p></details>
+<details><summary>19. Gráficos</summary><p>O período padrão começa na primeira movimentação do veículo selecionado e termina na data atual. Os gráficos abrangem consumo geral e por combustível, hodômetro, evolução financeira, custo por quilômetro, custo médio diário por grupo, custos por grupo e total consolidado e os cinco itens com maior valor. Em períodos sem dados não é criado consumo zero. A evolução financeira é acumulada; o hodômetro mantém os registros reais; e a barra laranja “Total dos custos” soma Abastecimento, Administrativo e Manutenção, sem incluir Receitas.</p></details>
 <details><summary>20. Sincronização e Firebase</summary><p>A sincronização ocorre por registro entre Android, Web e Firebase. “0 pendências” indica que os dados locais foram confirmados na nuvem. Use a mesma Conta Google nos dispositivos. Em Sobre o MyCar+, consulte última sincronização, enviados, recebidos, pendências e eventos técnicos. Não desinstale o aplicativo enquanto houver pendências.</p></details>
 <details><summary>21. Backup e restauração</summary><p>Faça backup JSON antes de atualizações importantes. O arquivo inclui cadastros, movimentos, alertas e campos de rateio. Na restauração, confira o resumo apresentado antes de confirmar. Mantenha também exportações XLSX periódicas para conferência, mas não as utilize como substitutas do backup completo.</p></details>
 <details><summary>22. Instalação, navegação e temas</summary><p>No Android, instale pelo APK ou abra o projeto no Android Studio. Na Web, use Instalar aplicativo ou Adicionar à tela inicial. Voltar, Cancelar, X ou Esc fecham primeiro a janela ativa. Na tela inicial do Android, pressione Voltar duas vezes para sair. Os temas Claro, Escuro e Automático preservam a mesma organização.</p><button type="button" id="helpInstallBtn" class="secondary install-app-action">⬇ Instalar MyCar+</button><p id="installHelpText" class="field-help">Toque no botão para instalar ou consultar a orientação do navegador.</p></details>
@@ -519,7 +519,7 @@
 <img class="about-app-logo" src="about-logo.png?v=610" alt="Logotipo do MyCar+" onerror="this.onerror=null;this.src='icon-192.png?v=610'">
 </div>
 <h3 class="mycar-wordmark about-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></h3>
-<p><strong>Versão:</strong> 6.11</p>
+<p><strong>Versão:</strong> 6.12</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -999,17 +999,17 @@
 </dialog>
 <script src="jszip.min.js">
 </script>
-<script src="firebase-config.js?v=611">
+<script src="firebase-config.js?v=612">
 </script>
-<script type="module" src="ai-logic.js?v=611">
+<script type="module" src="ai-logic.js?v=612">
 </script>
-<script src="mycarplus-db.js?v=611">
+<script src="mycarplus-db.js?v=612">
 </script>
-<script src="report-manager.js?v=611"></script>
-<script src="indicator-calculations.js?v=611"></script>
-<script src="app.js?v=611">
+<script src="report-manager.js?v=612"></script>
+<script src="indicator-calculations.js?v=612"></script>
+<script src="app.js?v=612">
 </script>
-<script src="cloud.js?v=611">
+<script src="cloud.js?v=612">
 </script>
 </body>
 </html>

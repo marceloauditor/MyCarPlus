@@ -1,41 +1,41 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 chcp 65001 >nul
-title Atualizacao MyCar+ V6.11 R2 KEY
+title Atualizacao MyCar+ V6.12 KEY
 
-set "VERSAO=6.11"
-set "VERSAO_SEM_PONTO=611"
-set "REVISAO=R2"
-set "ZIP_PREFIX=MYCAR_PLUS_V6_11_R2_KEY"
-set "ZIP_ESPERADO=MYCAR_PLUS_V6_11_R2_KEY.zip"
-set "PASTA_INTERNA=MYCAR_PLUS_V6_11_R2_KEY"
+set "VERSAO=6.12"
+set "VERSAO_SEM_PONTO=612"
+set "REVISAO="
+set "ZIP_PREFIX=MYCAR_PLUS_V6_12_KEY"
+set "ZIP_ESPERADO=MYCAR_PLUS_V6_12_KEY.zip"
+set "PASTA_INTERNA=MYCAR_PLUS_V6_12_KEY"
 set "PROJETO=%USERPROFILE%\Documents\GitHub\MyCarPlus"
 set "DOWNLOADS=%USERPROFILE%\Downloads"
-set "WORKTEMP=%DOWNLOADS%\MYCAR_PLUS_V6_11_R2_KEY_TEMP"
-set "LOG=%DOWNLOADS%\ATUALIZACAO_MYCAR_V6_11_R2_KEY_LOG.txt"
-set "DIAGNOSTICO=%DOWNLOADS%\DIAGNOSTICO_MYCAR_V6_11_R2.txt"
-set "APK_DESTINO=%DOWNLOADS%\MYCAR_PLUS_V6_11_R2_KEY_DEBUG.apk"
+set "WORKTEMP=%DOWNLOADS%\MYCAR_PLUS_V6_12_KEY_TEMP"
+set "LOG=%DOWNLOADS%\ATUALIZACAO_MYCAR_V6_12_KEY_LOG.txt"
+set "DIAGNOSTICO=%DOWNLOADS%\DIAGNOSTICO_MYCAR_V6_12.txt"
+set "APK_DESTINO=%DOWNLOADS%\MYCAR_PLUS_V6_12_KEY_DEBUG.apk"
 set "STUDIO=C:\Program Files\Android\Android Studio\bin\studio64.exe"
 set "STAGE=INICIALIZACAO"
 set "MOTIVO=Falha nao identificada"
 set "MODIFICOU_PROJETO=0"
 
 >"%LOG%" echo ============================================================
->>"%LOG%" echo ATUALIZACAO MYCAR+ V6.11 R2 KEY - CORRECAO DA LIMPEZA FINAL
+>>"%LOG%" echo ATUALIZACAO MYCAR+ V6.12 KEY - CORRECAO DE INICIALIZACAO E PERIODO PADRAO
 >>"%LOG%" echo Inicio: %DATE% %TIME%
 >>"%LOG%" echo Projeto: %PROJETO%
->>"%LOG%" echo Escopo: V6.11 preservada; limpeza explicita de residuos da instalacao anterior
+>>"%LOG%" echo Escopo: V6.12; painel renderizado antes do splash e periodo padrao unificado
 >>"%LOG%" echo Diagnostico: %DIAGNOSTICO%
 >>"%LOG%" echo ============================================================
 
 >"%DIAGNOSTICO%" echo ============================================================
->>"%DIAGNOSTICO%" echo DIAGNOSTICO MYCAR+ V6.11 R2
+>>"%DIAGNOSTICO%" echo DIAGNOSTICO MYCAR+ V6.12
 >>"%DIAGNOSTICO%" echo Inicio: %DATE% %TIME%
 >>"%DIAGNOSTICO%" echo ============================================================
 
 echo.
 echo ============================================================
-echo ATUALIZACAO MYCAR+ V6.11 R2 KEY - CORRECAO DA LIMPEZA FINAL
+echo ATUALIZACAO MYCAR+ V6.12 KEY - CORRECAO DE INICIALIZACAO E PERIODO PADRAO
 echo ============================================================
 
 set "ZIP=%DOWNLOADS%\%ZIP_ESPERADO%"
@@ -73,7 +73,7 @@ if not exist "%PROJETO%\package.json" (
 
 set "STAMP=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%"
 set "STAMP=%STAMP: =0%"
-set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V6_11_R2_%STAMP%"
+set "BACKUP=%USERPROFILE%\Documents\GitHub\MyCarPlus_BACKUP_ANTES_V6_12_%STAMP%"
 
 echo.
 echo [1/12] Validando e extraindo o pacote sem alterar o projeto...
@@ -159,8 +159,8 @@ if exist "%PROJETO%\ATUALIZAR_MYCAR_V6_09_KEY.bat" (
   set "MOTIVO=Limpeza controlada nao removeu ATUALIZAR_MYCAR_V6_09_KEY.bat"
   goto :fim_erro
 )
-if exist "%PROJETO%\ATUALIZAR_MYCAR_V6_11_R2_KEY.bat" (
-  set "MOTIVO=Limpeza controlada nao removeu ATUALIZAR_MYCAR_V6_11_R2_KEY.bat"
+if exist "%PROJETO%\ATUALIZAR_MYCAR_V6_12_KEY.bat" (
+  set "MOTIVO=Limpeza controlada nao removeu ATUALIZAR_MYCAR_V6_12_KEY.bat"
   goto :fim_erro
 )
 if exist "%PROJETO%\VALIDACAO_PACOTE_V6_09_KEY.txt" (
@@ -186,14 +186,14 @@ if exist "%PROJETO%\data\MyCarPlus.restyled.xlsx.inspect.ndjson" (
 echo [OK] Limpeza controlada concluida.
 
 echo.
-echo [5/12] Copiando a V6.11 R2 para o projeto...
+echo [5/12] Copiando a V6.12 para o projeto...
 set "STAGE=COPIA_FONTE"
 set "MODIFICOU_PROJETO=1"
 robocopy "%FONTE%" "%PROJETO%" /E /R:2 /W:2 ^
  /XD "%FONTE%\.git" "%FONTE%\node_modules" "%FONTE%\android\.gradle" "%FONTE%\android\build" "%FONTE%\android\app\build" "%FONTE%\android\capacitor-cordova-android-plugins\build" ^
  /XF "local.properties" "*_LOG.txt" >>"%LOG%"
 if errorlevel 8 (
-  set "MOTIVO=Falha ao copiar a fonte V6.11 R2"
+  set "MOTIVO=Falha ao copiar a fonte V6.12"
   goto :fim_erro
 )
 echo [OK] Fonte atualizada.
@@ -304,7 +304,7 @@ set "STAGE=GITHUB"
 git add . >>"%LOG%" 2>&1
 git diff --cached --quiet
 if not errorlevel 1 goto :sem_commit
-git commit -m "Atualiza MyCar+ V6.11 R2 - corrige limpeza de residuos da instalacao" >>"%LOG%" 2>&1
+git commit -m "Atualiza MyCar+ V6.12 - corrige inicializacao e unifica periodos" >>"%LOG%" 2>&1
 if errorlevel 1 (
   set "MOTIVO=Falha ao criar commit Git"
   goto :fim_erro
@@ -346,10 +346,10 @@ if exist "%STUDIO%" (
 
 if exist "%WORKTEMP%" rmdir /S /Q "%WORKTEMP%"
 >>"%LOG%" echo [OK] Atualizacao concluida em %DATE% %TIME%.
->>"%DIAGNOSTICO%" echo [RESULTADO][OK] Atualizacao V6.11 R2 concluida.
+>>"%DIAGNOSTICO%" echo [RESULTADO][OK] Atualizacao V6.12 concluida.
 echo.
 echo ============================================================
-echo ATUALIZACAO V6.11 R2 CONCLUIDA COM SUCESSO
+echo ATUALIZACAO V6.12 CONCLUIDA COM SUCESSO
 echo APK: %APK_DESTINO%
 echo Log: %LOG%
 echo Diagnostico: %DIAGNOSTICO%

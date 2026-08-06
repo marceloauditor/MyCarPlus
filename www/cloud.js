@@ -210,7 +210,7 @@
   }
 
   async function writeSchemaMarker() {
-    await sdk.setDoc(metaRef(), { version: SCHEMA_VERSION, updatedAt: sdk.serverTimestamp(), appVersion: "6.11" }, { merge: true });
+    await sdk.setDoc(metaRef(), { version: SCHEMA_VERSION, updatedAt: sdk.serverTimestamp(), appVersion: "6.12" }, { merge: true });
   }
 
   async function purgeLegacyAlerts(remoteAlerts = null) {

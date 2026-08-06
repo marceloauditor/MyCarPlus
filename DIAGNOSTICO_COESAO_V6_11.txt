@@ -1,11 +1,13 @@
 ============================================================
-DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.11 R2
+DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.12
 Modo: installed
 Raiz: C:\Users\MRX\Documents\GitHub\MyCarPlus
 ============================================================
 [CHK-ROOT-001][OK] Pasta raiz — C:\Users\MRX\Documents\GitHub\MyCarPlus
-[CHK-VERSION-001][OK] Versões — APP 6.11 · npm 6.11.0 · Android 611
+[CHK-VERSION-001][OK] Versões — APP 6.12 · npm 6.12.0 · Android 612
 [CHK-PWA-001][OK] PWA e modo offline — motor, XLSX e Firebase runtime protegidos
+[CHK-STARTUP-001][OK] Inicialização sem tela preta — dados locais renderizados antes da retirada do splash
+[CHK-PERIOD-001][OK] Período padrão unificado — Executivo, Inteligência e gráficos alinhados
 [CHK-FIREBASE-001][OK] Firebase modular único — Auth, Firestore, App Check e IA na geração modular 12.16.0
 [CHK-SAVE-001][OK] Gravação transacional — estado, diário e fila protegidos
 [CHK-ACCOUNT-001][OK] Isolamento por Conta Google — espaços locais separados por UID
@@ -18,8 +20,8 @@ Raiz: C:\Users\MRX\Documents\GitHub\MyCarPlus
 [CHK-CALC-001][OK] Indicadores e centralização — motor matemático aprovado
 [CHK-STORAGE-001][OK] Gravação e fila local — transação, isolamento, versões e tombstones aprovados
 [CHK-COHESION-001][OK] Raiz, Web e Android — 27 arquivos idênticos
-[CHK-BAT-001][OK] BAT V6.11 R2 — ASCII/UTF-8 sem BOM e CRLF íntegro
+[CHK-BAT-001][OK] BAT V6.12 — ASCII/UTF-8 sem BOM e CRLF íntegro
 [CHK-MANIFEST-001][OK] Manifesto SHA-256 — dispensado após instalação
 ============================================================
-RESULTADO: APROVADO — 17 verificações.
+RESULTADO: APROVADO — 19 verificações.
 ============================================================

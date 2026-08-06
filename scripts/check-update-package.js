@@ -6,7 +6,7 @@ const cp = require("child_process");
 const args = Object.fromEntries(process.argv.slice(2).map((value, index, all) => value.startsWith("--") ? [value.slice(2), all[index + 1] && !all[index + 1].startsWith("--") ? all[index + 1] : true] : null).filter(Boolean));
 const root = path.resolve(String(args.root || path.resolve(__dirname, "..")));
 const mode = String(args.mode || "package");
-const diagnostic = path.resolve(String(args.diagnostic || path.join(root, "DIAGNOSTICO_MONTAGEM_V6_11_R2.txt")));
+const diagnostic = path.resolve(String(args.diagnostic || path.join(root, "DIAGNOSTICO_MONTAGEM_V6_12.txt")));
 const logFile = args.log ? path.resolve(String(args.log)) : null;
 const results = [];
 const read = (rel) => fs.readFileSync(path.join(root, rel), "utf8");
@@ -19,18 +19,31 @@ function check(code, title, fn) { try { const detail = fn() || "OK"; results.pus
 check("CHK-ROOT-001", "Pasta raiz", () => { requireCond(exists("package.json"), "package.json ausente"); return root; });
 check("CHK-VERSION-001", "Versões", () => {
   const pkg = JSON.parse(read("package.json")); const lock = JSON.parse(read("package-lock.json")); const app = read("app.js"); const gradle = read("android/app/build.gradle");
-  requireCond(pkg.version === "6.11.0" && lock.version === "6.11.0" && lock.packages?.[""]?.version === "6.11.0", "npm deve estar em 6.11.0");
-  requireCond(/APP_VERSION\s*=\s*"6\.11"/.test(app), "APP_VERSION 6.11 ausente");
-  requireCond(/versionCode\s+611\b/.test(gradle) && gradle.includes('versionName "6.11.0"'), "Android deve estar em 611/6.11.0");
-  return "APP 6.11 · npm 6.11.0 · Android 611";
+  requireCond(pkg.version === "6.12.0" && lock.version === "6.12.0" && lock.packages?.[""]?.version === "6.12.0", "npm deve estar em 6.12.0");
+  requireCond(/APP_VERSION\s*=\s*"6\.12"/.test(app), "APP_VERSION 6.12 ausente");
+  requireCond(/versionCode\s+612\b/.test(gradle) && gradle.includes('versionName "6.12.0"'), "Android deve estar em 612/6.12.0");
+  return "APP 6.12 · npm 6.12.0 · Android 612";
 });
 check("CHK-PWA-001", "PWA e modo offline", () => {
   const sw = read("sw.js"), html = read("index.html");
-  requireCond(sw.includes('mycar-plus-v6-11'), "cache V6.11 ausente");
+  requireCond(sw.includes('mycar-plus-v6-12'), "cache V6.12 ausente");
   requireCond(sw.includes('"indicator-calculations.js"') && sw.includes('"data/MyCarPlus.xlsx"'), "motor ou XLSX fora do APP_SHELL");
   requireCond(sw.includes('www.gstatic.com') && sw.includes('/firebasejs/12.16.0/'), "SDK Firebase não protegido por cache runtime");
-  requireCond(html.includes('indicator-calculations.js?v=611') && html.includes('app.js?v=611') && !html.includes('firebase-app-compat'), "HTML/cache-busting incompatível");
+  requireCond(html.includes('indicator-calculations.js?v=612') && html.includes('app.js?v=612') && !html.includes('firebase-app-compat'), "HTML/cache-busting incompatível");
   return "motor, XLSX e Firebase runtime protegidos";
+});
+check("CHK-STARTUP-001", "Inicialização sem tela preta", () => {
+  const app = read("app.js");
+  requireCond(app.includes("renderAll();\n  evaluateAlerts(true);") && app.includes("hideSplashAfterFirstPanelPaint"), "painel não é renderizado antes de ocultar o splash");
+  requireCond(!app.includes('window.addEventListener("load", () => setTimeout(() => document.getElementById("splashScreen")'), "ocultação antiga por temporizador ainda presente");
+  return "dados locais renderizados antes da retirada do splash";
+});
+check("CHK-PERIOD-001", "Período padrão unificado", () => {
+  const app = read("app.js"), html = read("index.html");
+  requireCond(app.includes("defaultAnalysisRangeForVehicle") && app.includes('start: bounds.first || "", end: currentLocalIsoDate()'), "regra primeiro movimento/data atual ausente");
+  requireCond(app.includes("function reportDefaultRange()") && app.includes("function chartDefaultRange()") && app.includes("defaultAnalysisRangeForVehicle(vehicle)"), "Relatório, IA e gráficos não compartilham a regra");
+  requireCond(html.includes("Padrão: primeiro movimento do veículo até a data atual."), "orientação visual do período não atualizada");
+  return "Executivo, Inteligência e gráficos alinhados";
 });
 check("CHK-FIREBASE-001", "Firebase modular único", () => {
   const cloud = read("cloud.js"), ai = read("ai-logic.js"), html = read("index.html");
@@ -108,9 +121,9 @@ check("CHK-COHESION-001", "Raiz, Web e Android", () => {
   for (const stale of ["package.json","package-lock.json","capacitor.config.json","icon.svg","mycar-plus-logo.png","data/MyCarPlus.restyled.xlsx","data/MyCarPlus.restyled.xlsx.inspect.ndjson"]) requireCond(!exists(path.join("www", stale)) && !exists(path.join("android/app/src/main/assets/public", stale)), `resíduo público: ${stale}`);
   return `${publicFiles.length} arquivos idênticos`;
 });
-check("CHK-BAT-001", "BAT V6.11 R2", () => {
-  const rel = "ATUALIZAR_MYCAR_V6_11_R2_KEY.bat"; requireCond(exists(rel), "BAT ausente"); const text = read(rel); const bytes = fs.readFileSync(path.join(root, rel));
-  requireCond(text.includes('set "VERSAO=6.11"') && text.includes("MYCAR_PLUS_V6_11_R2_KEY.zip"), "nomes/versão do BAT incorretos");
+check("CHK-BAT-001", "BAT V6.12", () => {
+  const rel = "ATUALIZAR_MYCAR_V6_12_KEY.bat"; requireCond(exists(rel), "BAT ausente"); const text = read(rel); const bytes = fs.readFileSync(path.join(root, rel));
+  requireCond(text.includes('set "VERSAO=6.12"') && text.includes("MYCAR_PLUS_V6_12_KEY.zip"), "nomes/versão do BAT incorretos");
   for (const stale of ["CORRECAO_BAT_V5_70.txt","VALIDACAO_PACOTE_V5_70_TREE.txt","validation.css","icon.svg","mycar-plus-logo.png","PACKAGE_REVISION.txt","MyCarPlus.restyled.xlsx","MyCarPlus.restyled.xlsx.inspect.ndjson"]) requireCond(text.includes(stale), `limpeza ausente no BAT: ${stale}`);
   requireCond(!(bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf), "BAT contém BOM");
   for (let i = 0; i < bytes.length; i += 1) if (bytes[i] === 0x0a) requireCond(i > 0 && bytes[i - 1] === 0x0d, `LF sem CR na posição ${i}`);
@@ -118,12 +131,12 @@ check("CHK-BAT-001", "BAT V6.11 R2", () => {
 });
 check("CHK-MANIFEST-001", "Manifesto SHA-256", () => {
   if (mode === "installed") return "dispensado após instalação";
-  const rel = "MANIFEST_SHA256_V6_11_R2.txt"; requireCond(exists(rel), "manifesto ausente");
+  const rel = "MANIFEST_SHA256_V6_12.txt"; requireCond(exists(rel), "manifesto ausente");
   const lines = read(rel).split(/\r?\n/).filter((line) => /^[a-f0-9]{64}\s+\*/i.test(line)); requireCond(lines.length > 30, "manifesto incompleto");
   for (const line of lines) { const match = line.match(/^([a-f0-9]{64})\s+\*(.+)$/i); requireCond(exists(match[2]), `ausente: ${match[2]}`); requireCond(sha(match[2]) === match[1].toLowerCase(), `hash divergente: ${match[2]}`); }
   return `${lines.length} hashes conferidos`;
 });
 
 const failed = results.filter((item) => !item.ok);
-const lines = ["============================================================", "DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.11 R2", `Modo: ${mode}`, `Raiz: ${root}`, "============================================================", ...results.map((item) => `[${item.code}][${item.ok ? "OK" : "ERRO"}] ${item.title} — ${item.detail}`), "============================================================", failed.length ? `RESULTADO: REPROVADO — ${failed.length} falha(s).` : `RESULTADO: APROVADO — ${results.length} verificações.`, "============================================================"];
+const lines = ["============================================================", "DIAGNÓSTICO DE MONTAGEM E ATUALIZAÇÃO — MYCAR+ V6.12", `Modo: ${mode}`, `Raiz: ${root}`, "============================================================", ...results.map((item) => `[${item.code}][${item.ok ? "OK" : "ERRO"}] ${item.title} — ${item.detail}`), "============================================================", failed.length ? `RESULTADO: REPROVADO — ${failed.length} falha(s).` : `RESULTADO: APROVADO — ${results.length} verificações.`, "============================================================"];
 fs.writeFileSync(diagnostic, lines.join("\r\n") + "\r\n"); if (logFile) fs.appendFileSync(logFile, lines.join("\r\n") + "\r\n"); console.log(lines.join("\n")); process.exit(failed.length ? 1 : 0);

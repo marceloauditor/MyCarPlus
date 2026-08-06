@@ -322,3 +322,9 @@ Gravação transacional, isolamento por UID, conflitos explícitos, Firebase mod
 V6.11 R2 — 05/08/2026
 1. Corrigida limpeza da instalação quando a raiz ainda continha ativos e arquivos de dados de versões anteriores.
 2. Mantida a versão funcional 6.11 sem alterações de regras ou dados.
+
+
+V6.12 — 06/08/2026
+- Corrigida tela preta entre splash e painel: renderAll executado após carga local e antes de ocultar splash.
+- Período padrão unificado: primeiro movimento do veículo até a data atual em Executivo, Inteligência e Gráficos.
+- APP 6.12, npm 6.12.0 e Android 612/6.12.0.

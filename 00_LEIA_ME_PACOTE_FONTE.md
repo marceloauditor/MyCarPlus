@@ -1,17 +1,13 @@
-# PACOTE FONTE — MYCAR+ V6.11 R2
+# MYCAR+ V6.12 — PACOTE FONTE
 
-Versão de estabilização e encerramento do projeto.
+Este pacote contém a fonte oficial Web/PWA e Android do MyCar+.
 
-Principais medidas:
-- gravação local com diário de recuperação e fila criada no mesmo fluxo;
-- dados locais isolados por Conta Google;
-- conflitos entre aparelhos preservados para decisão do usuário;
-- Firebase modular 12.16.0 compartilhado pela sincronização e pela IA;
-- funcionamento offline com o motor de indicadores e banco XLSX no cache;
-- eliminação total do modelo antigo de alertas, inclusive no Firebase;
-- remoção de funções órfãs, arquivos duplicados e artefatos técnicos;
-- validação de estrutura no Firestore e limpeza de exclusões antigas;
-- versão APP 6.11, npm 6.11.0 e Android 611 / 6.11.0;
-- publicação automática das regras do Firestore quando o Firebase CLI estiver disponível.
+## Conteúdo principal
 
-Coloque `MYCAR_PLUS_V6_11_KEY.zip` e `ATUALIZAR_MYCAR_V6_11_KEY.bat` juntos em Downloads e execute o BAT.
+- versão APP 6.12, npm 6.12.0 e Android 612 / 6.12.0;
+- correção da tela preta entre o logotipo e o painel;
+- período padrão unificado da primeira movimentação do veículo até a data atual;
+- fonte pública sincronizada entre raiz, `www` e Android;
+- BAT de atualização, checklist, manifesto SHA-256 e projeto Android.
+
+Execute `ATUALIZAR_MYCAR_V6_12_KEY.bat` com o ZIP `MYCAR_PLUS_V6_12_KEY.zip` na pasta Downloads.
