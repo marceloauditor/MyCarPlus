@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
-set "DIAG=%~dp0DIAGNOSTICO_MONTAGEM_V6_12.txt"
+set "DIAG=%~dp0DIAGNOSTICO_MONTAGEM_V6_13.txt"
 node.exe "%~dp0scripts\check-update-package.js" --root "%~dp0" --mode package --diagnostic "%DIAG%"
 if errorlevel 1 (
-  echo CHECKLIST V6.12 REPROVADO. Consulte: %DIAG%
+  echo CHECKLIST V6.13 REPROVADO. Consulte: %DIAG%
   pause
   exit /b 1
 )
-echo CHECKLIST V6.12 APROVADO.
+echo CHECKLIST V6.13 APROVADO.
 pause

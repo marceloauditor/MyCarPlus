@@ -1,0 +1,7 @@
+MYCAR+ V6.13 KEY
+Pacote final de encerramento com tendência centralizada de Custo mensal e apresentação contábil de Receitas entre parênteses.
+Pasta interna esperada: MYCAR_PLUS_V6_13_KEY
+BAT esperado: ATUALIZAR_MYCAR_V6_13_KEY.bat
+APP: 6.13
+npm: 6.13.0
+Android: 613 / 6.13.0

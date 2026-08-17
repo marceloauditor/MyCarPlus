@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="styles.css?v=612">
+<link rel="stylesheet" href="styles.css?v=613">
 </head>
 <body>
 <div id="splashScreen" class="splash-screen" aria-label="Carregando MyCar+">
@@ -28,7 +28,7 @@
 <div class="header-menu-wrap header-menu-leading">
 <button id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
 <div id="headerMenu" class="header-menu" hidden>
-<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.12</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
+<div class="header-menu-head"><div><strong>MyCar+</strong><small>Versão 6.13</small></div><button type="button" id="headerMenuClose" aria-label="Fechar menu">×</button></div>
 <small class="menu-group-title">OPERAÇÃO</small>
 <button data-menu-page="cadastros">⚙ Cadastros e parâmetros</button>
 <button data-menu-page="alertas">⚠ Alertas e manutenção</button>
@@ -49,7 +49,7 @@
 <div id="headerMenuBackdrop" class="header-menu-backdrop" hidden></div>
 <div class="header-brand-block">
 <div class="mycar-wordmark header-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></div>
-<span class="app-version" id="homeVersion">v6.12</span>
+<span class="app-version" id="homeVersion">v6.13</span>
 </div>
 <div class="header-actions">
 <button type="button" id="homeCloudStatus" class="home-cloud-status" aria-label="Abrir status de sincronização" title="Status de sincronização"><span class="cloud-dot offline"></span></button>
@@ -478,10 +478,10 @@
 </div>
 </div>
 <div class="help-card" id="helpManualContent">
-<h3>Manual de utilização — MyCar+ V6.12</h3>
+<h3>Manual de utilização — MyCar+ V6.13</h3>
 <p>Guia completo dos cadastros, lançamentos, rateios, indicadores, relatórios, gráficos, alertas, sincronização e proteção dos dados do veículo.</p>
 <details open><summary>1. Visão geral e veículo selecionado</summary><p>O MyCar+ organiza todas as informações por veículo. A seleção da tela inicial controla lançamentos, indicadores, relatórios, gráficos e alertas. Veículos ativos aceitam novos registros; veículos inativos preservam todo o histórico para consulta, mas não geram novos alertas vencidos. Inativar um veículo não exclui seus dados.</p></details>
-<details><summary>2. Painel inteligente</summary><p>O painel apresenta indicadores históricos de custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Custos usam dias corridos inclusivos; o consumo usa apenas ciclos completos com litros e distância maiores que zero. Abaixo ficam Tendências, MyCar Score, Utilização e Composição dos Grupos. Na composição, Abastecimento, Administrativo e Manutenção formam as despesas; Receitas aparecem separadamente e são subtraídas no Custo líquido.</p></details>
+<details><summary>2. Painel inteligente</summary><p>O painel apresenta indicadores históricos de custo por km, custo por dia, custo mensal, custo total líquido, consumo médio e último consumo. Custos usam dias corridos inclusivos; o consumo usa apenas ciclos completos com litros e distância maiores que zero. Em Tendências são mostradas as variações de Consumo, Custo por km e Custo mensal; a tendência do custo mensal compara duas janelas consecutivas de igual duração e é calculada pelo motor central de indicadores. Abaixo ficam MyCar Score, Utilização e Composição dos Grupos. Na composição, Abastecimento, Administrativo e Manutenção formam as despesas; Receitas aparecem separadamente, entre parênteses, e são subtraídas no Custo líquido.</p></details>
 <details><summary>3. Central de Cadastros</summary><p>Cadastre, consulte, altere ou exclua veículos, itens, fornecedores, motoristas e formas de pagamento. Cada item pertence exclusivamente a Abastecimento, Manutenção, Administrativo ou Receita. As listas são apresentadas em ordem alfabética, respeitam o veículo selecionado quando aplicável e não permitem usar item de outro grupo.</p></details>
 <details><summary>4. Cadastro rápido</summary><p>Nos lançamentos, as listas de itens e fornecedores exibem ao final a ação verde “Incluir novo...”. O novo cadastro é criado no grupo correto sem perder o que já foi digitado. Motorista permite apenas selecionar um cadastro existente. Em Receita, o fornecedor é apresentado ao usuário como Pagador.</p></details>
 <details><summary>5. Regras gerais dos lançamentos</summary><p>Na guia Lançar, escolha Abastecimento, Manutenção, Administrativo, Receita ou Movimentos. Informe data, hodômetro, item, valor e os demais campos do grupo. Um movimento pode conter vários itens. O aplicativo preserva os dados preenchidos quando encontra erro e só conclui após validar os campos obrigatórios.</p></details>
@@ -519,7 +519,7 @@
 <img class="about-app-logo" src="about-logo.png?v=610" alt="Logotipo do MyCar+" onerror="this.onerror=null;this.src='icon-192.png?v=610'">
 </div>
 <h3 class="mycar-wordmark about-wordmark" aria-label="MyCar+"><span class="brand-m">M</span><span class="brand-y">y</span><span class="brand-car">Car</span><span class="brand-plus">+</span></h3>
-<p><strong>Versão:</strong> 6.12</p>
+<p><strong>Versão:</strong> 6.13</p>
 <div class="about-info-stack">
 <strong>Desenvolvedor:</strong>
 <span class="about-developer-name">Marcelo Ribeiro</span>
@@ -999,17 +999,17 @@
 </dialog>
 <script src="jszip.min.js">
 </script>
-<script src="firebase-config.js?v=612">
+<script src="firebase-config.js?v=613">
 </script>
-<script type="module" src="ai-logic.js?v=612">
+<script type="module" src="ai-logic.js?v=613">
 </script>
-<script src="mycarplus-db.js?v=612">
+<script src="mycarplus-db.js?v=613">
 </script>
-<script src="report-manager.js?v=612"></script>
-<script src="indicator-calculations.js?v=612"></script>
-<script src="app.js?v=612">
+<script src="report-manager.js?v=613"></script>
+<script src="indicator-calculations.js?v=613"></script>
+<script src="app.js?v=613">
 </script>
-<script src="cloud.js?v=612">
+<script src="cloud.js?v=613">
 </script>
 </body>
 </html>

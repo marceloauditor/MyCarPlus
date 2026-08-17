@@ -355,6 +355,55 @@
     };
   }
 
+  function monthlyCostTrend(source = []) {
+    const rows = [...source]
+      .filter((movement) => dateKey(movement))
+      .sort((a, b) => dateKey(a).localeCompare(dateKey(b)));
+    if (rows.length < 2) {
+      return { previous: null, recent: null, changePercent: Number.NaN, windowDays: 0, previousStart: "", previousEnd: "", recentStart: "", recentEnd: "" };
+    }
+    const firstKey = dateKey(rows[0]);
+    const lastKey = dateKey(rows.at(-1));
+    const totalDays = inclusiveDaysBetween(firstKey, lastKey);
+    const windowDays = Math.floor(totalDays / 2);
+    if (windowDays < 1) {
+      return { previous: null, recent: null, changePercent: Number.NaN, windowDays: 0, previousStart: "", previousEnd: "", recentStart: "", recentEnd: "" };
+    }
+    const shiftDateKey = (key, offsetDays) => {
+      const date = dateAtNoon(key);
+      if (!date) return "";
+      date.setDate(date.getDate() + offsetDays);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+    const recentEnd = lastKey;
+    const recentStart = shiftDateKey(recentEnd, -(windowDays - 1));
+    const previousEnd = shiftDateKey(recentStart, -1);
+    const previousStart = shiftDateKey(previousEnd, -(windowDays - 1));
+    const inWindow = (movement, start, end) => {
+      const key = dateKey(movement);
+      return key && key >= start && key <= end;
+    };
+    const previousRows = rows.filter((movement) => inWindow(movement, previousStart, previousEnd));
+    const recentRows = rows.filter((movement) => inWindow(movement, recentStart, recentEnd));
+    const previousNet = financialTotals(previousRows).net;
+    const recentNet = financialTotals(recentRows).net;
+    const previous = monthlyAverage(previousNet, windowDays);
+    const recent = monthlyAverage(recentNet, windowDays);
+    return {
+      previous,
+      recent,
+      changePercent: previous > 0 ? percentageChange(recent, previous) : Number.NaN,
+      windowDays,
+      previousStart,
+      previousEnd,
+      recentStart,
+      recentEnd,
+    };
+  }
+
   function categoryCostMetrics(groupValues = [], distanceKm = 0, days = 1) {
     const gross = groupValues.reduce((total, row) => total + number(row.value), 0);
     return groupValues.map((row) => ({
@@ -537,6 +586,7 @@
     distanceCovered,
     financialIndicators,
     dashboardIndicators,
+    monthlyCostTrend,
     categoryCostMetrics,
     valuesPerDistance,
     valuesPerDay,

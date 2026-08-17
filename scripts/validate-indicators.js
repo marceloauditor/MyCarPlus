@@ -78,5 +78,14 @@ assert.equal(allocation.summaries[0].lastInstallmentValue, 33.34);
 const oneDay = calc.financialIndicators(100, 50, calc.inclusiveDaysBetween("2026-08-05", "2026-08-05"));
 assert.equal(oneDay.days, 1);
 assert.equal(oneDay.monthlyCost, 3044);
+
+const monthlyTrend = calc.monthlyCostTrend([
+  { grupo: "MANUTENÇÃO", valor: 100, data_hora: "2026-01-01T12:00:00" },
+  { grupo: "MANUTENÇÃO", valor: 200, data_hora: "2026-01-20T12:00:00" },
+]);
+assert.equal(monthlyTrend.windowDays, 10);
+close(monthlyTrend.previous, 304.4, "custo mensal anterior da tendência");
+close(monthlyTrend.recent, 608.8, "custo mensal recente da tendência");
+close(monthlyTrend.changePercent, 100, "tendência central do custo mensal");
 console.log("VALIDAÇÃO DOS INDICADORES: APROVADA");
 console.log("Motor central conferido: finanças, consumo, combustível, gráficos, rateio e projeções.");

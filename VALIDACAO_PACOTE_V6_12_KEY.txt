@@ -1,7 +1,0 @@
-MYCAR+ V6.12 KEY
-Pacote de atualização com correção da inicialização visual e unificação do período padrão.
-Pasta interna esperada: MYCAR_PLUS_V6_12_KEY
-BAT esperado: ATUALIZAR_MYCAR_V6_12_KEY.bat
-APP: 6.12
-npm: 6.12.0
-Android: 612 / 6.12.0

@@ -328,3 +328,13 @@ V6.12 — 06/08/2026
 - Corrigida tela preta entre splash e painel: renderAll executado após carga local e antes de ocultar splash.
 - Período padrão unificado: primeiro movimento do veículo até a data atual em Executivo, Inteligência e Gráficos.
 - APP 6.12, npm 6.12.0 e Android 612/6.12.0.
+
+
+V6.13 — 17/08/2026 — ENCERRAMENTO FINAL
+- Painel Inteligente: Distância retirada da seção Tendências e substituída por Custo mensal.
+- Tendência do Custo mensal centralizada em indicator-calculations.js por meio de monthlyCostTrend().
+- Comparação do Custo mensal realizada entre duas janelas consecutivas de igual duração.
+- Composição dos Grupos: Receitas exibidas entre parênteses em vez de sinal negativo, preservando a dedução no Custo líquido.
+- Manual, validações, pacote KEY e atualizador alinhados à versão final.
+- APP 6.13, npm 6.13.0 e Android 613/6.13.0.
+- V6.13 definida como base oficial para futuras manutenções.

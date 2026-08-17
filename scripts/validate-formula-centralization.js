@@ -9,7 +9,7 @@ const required = [
   "dashboardIndicators", "financialIndicators", "financialTotals", "netCost", "competenceNetCost", "groupFinancialRows",
   "sumValues", "aggregateValuesBy", "aggregateRecordsBy", "signedMovementValue", "movementConsumption", "isValidFuelCycle",
   "validFuelCycles", "latestFuelConsumption", "consumptionSummary", "detailedConsumptionSummary", "fuelParticipation",
-  "aggregateFuelBy", "valuesPerDistance", "valuesPerDay", "percentage", "percentageChange", "perDay", "annualProjection",
+  "aggregateFuelBy", "valuesPerDistance", "valuesPerDay", "percentage", "percentageChange", "perDay", "annualProjection", "monthlyCostTrend",
   "litersFromValuePrice", "installmentPreview", "allocationSchedule",
 ];
 required.forEach((name) => {
