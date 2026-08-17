@@ -1,0 +1,7 @@
+MYCAR+ V6.14 KEY
+Pacote final de encerramento com Tendência denominada Eficiência, Custo mensal centralizado, Receitas entre parênteses e alinhamento móvel uniforme da Composição dos Grupos.
+Pasta interna esperada: MYCAR_PLUS_V6_14_KEY
+BAT esperado: ATUALIZAR_MYCAR_V6_14_KEY.bat
+APP: 6.14
+npm: 6.14.0
+Android: 614 / 6.14.0

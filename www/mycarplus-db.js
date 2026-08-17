@@ -1,6 +1,6 @@
 
 /*
- * MyCar+ V6.13
+ * MyCar+ V6.14
  * Banco oficial único: data/MyCarPlus.xlsx
  * Este módulo lê e exporta diretamente a estrutura do arquivo MyCarPlus.xlsx.
  */

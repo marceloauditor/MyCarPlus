@@ -338,3 +338,9 @@ V6.13 — 17/08/2026 — ENCERRAMENTO FINAL
 - Manual, validações, pacote KEY e atualizador alinhados à versão final.
 - APP 6.13, npm 6.13.0 e Android 613/6.13.0.
 - V6.13 definida como base oficial para futuras manutenções.
+
+
+V6.14 — 17/08/2026
+- Tendência "Consumo" renomeada visualmente para "Eficiência", sem alteração da fórmula central.
+- Composição dos Grupos corrigida no celular: valores dos grupos e Custo líquido mantidos alinhados à direita.
+- Base final de encerramento atualizada de V6.13 para V6.14.

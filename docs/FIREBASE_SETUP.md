@@ -1,4 +1,4 @@
-# Configuração dos dados online — MyCar+ V6.13
+# Configuração dos dados online — MyCar+ V6.14
 
 1. Crie um projeto no Firebase.
 2. Ative Authentication > Sign-in method > Google.

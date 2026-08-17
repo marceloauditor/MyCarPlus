@@ -1,8 +1,12 @@
-CHECKLIST MYCAR+ V6.13
-[ ] APP_VERSION 6.13
-[ ] npm 6.13.0
-[ ] Android 613 / 6.13.0
-[ ] cache mycar-plus-v6-13
+CHECKLIST MYCAR+ V6.14
+[ ] APP_VERSION 6.14
+[ ] npm 6.14.0
+[ ] Android 614 / 6.14.0
+[ ] cache mycar-plus-v6-14
+[ ] Tendência nomeada Eficiência
+[ ] Custo mensal centralizado
+[ ] Receitas entre parênteses
+[ ] valores da Composição dos Grupos alinhados à direita no celular
 [ ] renderAll antes de ocultar splash
 [ ] período padrão: primeiro movimento até data atual
 [ ] raiz, www e Android idênticos

@@ -1,4 +1,4 @@
-const CACHE = "mycar-plus-v6-13";
+const CACHE = "mycar-plus-v6-14";
 const APP_SHELL = [
   "./", "index.html", "styles.css", "report-manager.js", "indicator-calculations.js", "app.js",
   "mycarplus-db.js", "cloud.js", "ai-logic.js", "firebase-config.js", "jszip.min.js",

@@ -1211,3 +1211,11 @@ html[data-theme="dark"] .ai-tip-section .ai-tip-card *{
 .ai-tip-section .ai-tip-card p{margin:5px 0 0!important}
 
 /* V6.11 — indicadores financeiros e consumo padronizados por motor único */
+
+
+/* MyCar+ V6.14 — composição dos grupos alinhada no celular */
+@media(max-width:420px){
+  .composition-row>div:first-child{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .composition-row>div:first-child strong{margin-top:0;margin-left:auto;text-align:right;white-space:nowrap}
+  .composition-card-total strong{margin-left:auto;text-align:right}
+}
